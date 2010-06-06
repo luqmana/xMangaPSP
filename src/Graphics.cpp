@@ -67,8 +67,8 @@ namespace xM {
 			sceGuDepthFunc(GU_GEQUAL);
 			sceGuEnable(GU_DEPTH_TEST);
 			//sceGuFrontFace(GU_CW);
-			//sceGuShadeModel(GU_SMOOTH);
-			sceGuEnable(GU_CULL_FACE);
+			//sceGuEnable(GU_CULL_FACE);
+			sceGuShadeModel(GU_SMOOTH);
 			sceGuEnable(GU_CLIP_PLANES);
         	sceGuFinish();
 			sceGuSync(0,0);

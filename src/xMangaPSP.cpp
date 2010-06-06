@@ -65,10 +65,10 @@ int main(int argc, char **argv) {
 	
 	// A quad
 	xM::Gfx::Vertex __attribute__((aligned(16))) quad[4] = {
-		{ GU_COLOR(1.0f, 1.0f, 1.0f, 0.0f), -1.0f,  1.0f, 0.0f},     // Top-Left point
-		{ GU_COLOR(0.0f, 0.0f, 0.0f, 0.0f),  1.0f,  1.0f, 0.0f},     // Top-Right point
-		{ GU_COLOR(0.0f, 0.0f, 0.0f, 0.0f), -1.0f, -1.0f, 0.0f},     // Bottom-Left point
-		{ GU_COLOR(1.0f, 1.0f, 1.0f, 0.0f),  1.0f, -1.0f, 0.0f}      // Bottom-Right point
+		{ GU_COLOR(1.0f, 1.0f, 1.0f, 0.5f), -1.0f,  1.0f, 0.0f},     // Top-Left point
+		{ GU_COLOR(1.0f, 0.0f, 0.0f, 0.0f),  1.0f,  1.0f, 0.0f},     // Top-Right point
+		{ GU_COLOR(0.0f, 1.0f, 0.0f, 0.0f), -1.0f, -1.0f, 0.0f},     // Bottom-Left point
+		{ GU_COLOR(0.0f, 0.0f, 1.0f, 0.0f),  1.0f, -1.0f, 0.0f}      // Bottom-Right point
 	};
 	
 	xM::Gfx::initGu();
@@ -105,15 +105,17 @@ int main(int argc, char **argv) {
 			// Move 3 units right
 			ScePspFVector3 move = {1.5f, 0.0f, -3.0f};
 			sceGumTranslate(&move);
-			sceGumRotateX(rQuad);
+			sceGumRotateY(rQuad);
 		
 		}
 	
 		// Draw the quad
 		sceGumDrawArray(GU_TRIANGLE_STRIP, GU_COLOR_8888 | GU_VERTEX_32BITF | GU_TRANSFORM_3D, 4, 0, quad);
 	
-		rTri += (1.0f * timer.getDeltaTime());
-		rQuad -= (1.0f * timer.getDeltaTime());
+		double dT = timer.getDeltaTime();
+	
+		rTri += (1.0f * dT);
+		rQuad -= (1.0f * dT);
 	
 		sceGuFinish();
 		sceGuSync(0, 0);
