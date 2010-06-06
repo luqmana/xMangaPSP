@@ -30,6 +30,8 @@
 #define _FPS_H
 
 // BEGIN Includes
+#include "xM/Util/Timer.h"
+
 #include <stdio.h>
 #include <psptypes.h>
 #include <psprtc.h>
@@ -51,9 +53,7 @@ namespace xM {
 		extern char fpsDisplay[100];
 		
 		// Used to calculate FPS
-		extern u32 tickResolution;
-		extern u64 fpsTicksNow;
-		extern u64 fpsTicksLast;
+		extern xM::Util::Timer fpsTimer;
 		
 		/**
 		 * Displays the FPS.

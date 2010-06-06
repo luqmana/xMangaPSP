@@ -124,7 +124,7 @@ int main(int argc, char **argv) {
 	
 		xM::Util::FPS();
 	
-		//sceDisplayWaitVblankStart();
+		sceDisplayWaitVblankStart();
 	
 		xM::Gfx::frameBuffer0 = sceGuSwapBuffers();
 	

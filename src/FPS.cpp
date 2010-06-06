@@ -49,30 +49,22 @@ namespace xM {
 		char fpsDisplay[100];
 		
 		// Used to calculate FPS
-		u32 ticksResolution = 0;
-		u64 fpsTicksNow = 0;
-		u64 fpsTicksLast = 0;
+		xM::Util::Timer fpsTimer;		
 		
 		/**
 		 * Displays the FPS.
 		 */
 		void FPS(void) {
 		
-			if (ticksResolution == 0)
-				ticksResolution = sceRtcGetTickResolution();
-				
-			if (fpsTicksLast == 0)
-				sceRtcGetCurrentTick(&fpsTicksLast);
-		
+			if (!fpsTimer.isStarted())
+				fpsTimer.start();
+								
 			// Increment
 			fps++;
 			
-			// Get ticks
-			sceRtcGetCurrentTick(&fpsTicksNow);
+			if (fpsTimer.getDeltaTicks() >= 1.0f) {
 			
-			if (((fpsTicksNow - fpsTicksLast) / ((float)ticksResolution)) >= 1.0f) {
-			
-				fpsTicksLast = fpsTicksNow;
+				fpsTimer.start();
 				sprintf(fpsDisplay, "FPS: %d", fps);
 				fps = 0;
 							
