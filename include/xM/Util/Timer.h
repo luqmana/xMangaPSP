@@ -44,24 +44,91 @@ namespace xM {
 		
 			private:
 			
-				double deltaTime;
-				
-				u64 timeNow;
-				u64 timeLast;
+				/**
+				 * Resolution of the tick counter.
+				 * Ticks per second
+				 */
 				u32 tickResolution;
+				
+				/**
+				 * The ticks when the timer was started.
+				 */
+				u64 startTicks;
+				
+				/**
+				 * The ticks stored when the timer was paused.
+				 */
+				u64 pauseTicks;
+				
+				/**
+				 * Has the timer been started?
+				 */
+				bool started;
+				
+				/**
+				 * Has the timer been paused?
+				 */
+				bool paused;
 				
 			public:
 			
+				/**
+				 * Initializes the timer.
+				 */
 				Timer(void);
 				
 				/**
-				 * Get the difference.
+				 * Start the timer.
+				 * 
+				 * @access public
+				 */
+				void start(void);
+				
+				/**
+				 * Stop the timer.
+				 * 
+				 * @access public
+				 */
+				void stop(void);
+				
+				/**
+				 * Pause the timer.
+				 * 
+				 * @access public
+				 */
+				void pause(void);
+				
+				/**
+				 * Unpause the timer.
+				 * 
+				 * @access public
+				 */
+				void unpause(void);
+				
+				/**
+				 * Get the delta of ticks.
 				 * 
 				 * @access public
 				 * 
+				 * @param bool reset[optional] Reset after getting delta?
+				 * 
 				 * @return double
 				 */
-				double getDeltaTime(void);
+				double getDeltaTicks(bool reset = false);
+				
+				/**
+				 * Is timer started?
+				 * 
+				 * @return bool
+				 */
+				bool isStarted(void);
+				
+				/**
+				 * Is timer paused?
+				 * 
+				 * @return bool
+				 */
+				bool isPaused(void);
 				
 		};
 			

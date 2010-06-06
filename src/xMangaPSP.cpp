@@ -75,7 +75,9 @@ int main(int argc, char **argv) {
 	
 	xM::Gfx::setUpPerspectiveView();
 	
+	// Create a timer and start it
 	xM::Util::Timer timer;
+	timer.start();
 	
 	float rTri = 0.0f;
 	float rQuad= 0.0f;
@@ -105,15 +107,15 @@ int main(int argc, char **argv) {
 			// Move 3 units right
 			ScePspFVector3 move = {1.5f, 0.0f, -3.0f};
 			sceGumTranslate(&move);
-			sceGumRotateY(rQuad);
+			sceGumRotateX(rQuad);
 		
 		}
 	
 		// Draw the quad
 		sceGumDrawArray(GU_TRIANGLE_STRIP, GU_COLOR_8888 | GU_VERTEX_32BITF | GU_TRANSFORM_3D, 4, 0, quad);
 	
-		double dT = timer.getDeltaTime();
-	
+		double dT = timer.getDeltaTicks(true);
+		
 		rTri += (1.0f * dT);
 		rQuad -= (1.0f * dT);
 	
@@ -122,7 +124,7 @@ int main(int argc, char **argv) {
 	
 		xM::Util::FPS();
 	
-		sceDisplayWaitVblankStart();
+		//sceDisplayWaitVblankStart();
 	
 		xM::Gfx::frameBuffer0 = sceGuSwapBuffers();
 	
