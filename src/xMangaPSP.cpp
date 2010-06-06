@@ -31,7 +31,7 @@
 // BEGIN Includes
 #include "xM/Std/Callbacks.h"
 #include "xM/Gfx/Graphics.h"
-#include "xM/Util/FPS.h"
+#include "xM/Util/Stats.h"
 #include "xM/Util/Timer.h"
 // END Includes
 
@@ -55,75 +55,130 @@ int main(int argc, char **argv) {
     pspDebugScreenInit();
     // Red text
     pspDebugScreenSetTextColor(0xFF0000FF);
-	
-	// A triangle
-	xM::Gfx::Vertex __attribute__((aligned(16))) triangle[3] = {
-		{ GU_COLOR(1.0f, 0.0f, 0.0f, 0.0f),  0.0f,  1.0f, 0.0f},     // Top point
-		{ GU_COLOR(0.0f, 1.0f, 0.0f, 0.0f),  1.0f, -1.0f, 0.0f},     // Right point
-		{ GU_COLOR(0.0f, 0.0f, 1.0f, 0.0f), -1.0f, -1.0f, 0.0f}      // Left point
-	};
-	
-	// A quad
+
+	// A quad	
 	xM::Gfx::Vertex __attribute__((aligned(16))) quad[4] = {
-		{ GU_COLOR(1.0f, 1.0f, 1.0f, 0.5f), -1.0f,  1.0f, 0.0f},     // Top-Left point
-		{ GU_COLOR(1.0f, 0.0f, 0.0f, 0.0f),  1.0f,  1.0f, 0.0f},     // Top-Right point
-		{ GU_COLOR(0.0f, 1.0f, 0.0f, 0.0f), -1.0f, -1.0f, 0.0f},     // Bottom-Left point
-		{ GU_COLOR(0.0f, 0.0f, 1.0f, 0.0f),  1.0f, -1.0f, 0.0f}      // Bottom-Right point
+		{GU_COLOR(1.0f, 1.0f, 1.0f, 1.0f), -50.0f, -50.0f, 0.0f}, // Top-Left point
+		{GU_COLOR(1.0f, 0.0f, 0.0f, 1.0f), 50.0f,  -50.0f, 0.0f}, // Top-Right point
+		{GU_COLOR(0.0f, 1.0f, 0.0f, 1.0f), -50.0f, 50.0f, 0.0f}, // Bottom-Left point
+		{GU_COLOR(0.0f, 0.0f, 1.0f, 1.0f), 50.0f, 50.0f, 0.0f} // Bottom-Right point
 	};
-	
-	xM::Gfx::initGu();
-	
-	xM::Gfx::setUpPerspectiveView();
+	// A second quad	
+	xM::Gfx::Vertex __attribute__((aligned(16))) quad2[4] = {
+		{GU_COLOR(0.0f, 0.0f, 0.0f, 0.5f), -25.0f, -25.0f, 0.0f}, // Top-Left point
+		{GU_COLOR(0.0f, 0.0f, 0.0f, 0.5f), 25.0f,  -25.0f, 0.0f}, // Top-Right point
+		{GU_COLOR(0.0f, 0.0f, 0.0f, 0.5f), -25.0f, 25.0f, 0.0f}, // Bottom-Left point
+		{GU_COLOR(0.0f, 0.0f, 0.0f, 0.5f), 25.0f, 25.0f, 0.0f} // Bottom-Right point
+	};
+	// Triangle
+	xM::Gfx::Vertex __attribute__((aligned(16))) triangle[3] = {   
+       {GU_COLOR(1.0f, 0.0f, 0.0f, 1.0f), 0.0f, -50.0f, 0.0f}, // Top, red
+       {GU_COLOR(0.0f, 1.0f, 0.0f, 1.0f), 50.0f, 50.0f, 0.0f}, // Right, green
+       {GU_COLOR(0.0f, 0.0f, 1.0f, 1.0f), -50.0f, 50.0f, 0.0f}, // Left, blue
+	};
+		
+	// Initiate the GU
+	xM::Gfx::initGu();	
 	
 	// Create a timer and start it
 	xM::Util::Timer timer;
 	timer.start();
 	
-	float rTri = 0.0f;
-	float rQuad= 0.0f;
+	float rotate = 0.0f;
 	
 	while (1) {
 	
 		sceGuStart(GU_DIRECT, xM::Gfx::displayList);
-	
+		
+		sceGuDisable(GU_TEXTURE_2D);
+			
 		// Clear screen [colour and depth]
-		sceGuClear(GU_COLOR_BUFFER_BIT | GU_DEPTH_BUFFER_BIT);
-	
+		xM::Gfx::clearScreen();
+		
+		// Setup ortho view
+		xM::Gfx::setUpOrthoView();
+						
 		sceGumMatrixMode(GU_MODEL);
 		sceGumLoadIdentity(); // Reset
 		{
-			// Move 1.5 units left and 3 units in
-			ScePspFVector3 move = {-1.5f, 0.0f, -3.0f};
-			sceGumTranslate(&move);
-			sceGumRotateY(rTri);
-		
-		}
-	
-		// Draw the triangle
-		sceGumDrawArray(GU_TRIANGLES, GU_COLOR_8888 | GU_VERTEX_32BITF | GU_TRANSFORM_3D, 3, 0, triangle);
-	
-		sceGumLoadIdentity(); // Reset
-		{
-			// Move 3 units right
-			ScePspFVector3 move = {1.5f, 0.0f, -3.0f};
-			sceGumTranslate(&move);
-			sceGumRotateX(rQuad);
+			
+			ScePspFVector3 pos = {240.0f, 160.0f, 0.0f};
+			
+			// Move
+			sceGumTranslate(&pos);
+			
+			// Rotate
+			sceGumRotateZ(-rotate);
 		
 		}
 	
 		// Draw the quad
 		sceGumDrawArray(GU_TRIANGLE_STRIP, GU_COLOR_8888 | GU_VERTEX_32BITF | GU_TRANSFORM_3D, 4, 0, quad);
-	
-		double dT = timer.getDeltaTicks(true);
 		
-		rTri += (1.0f * dT);
-		rQuad -= (1.0f * dT);
+		sceGumMatrixMode(GU_MODEL);
+		sceGumLoadIdentity(); // Reset
+		{
+			
+			ScePspFVector3 pos = {240.0f, 160.0f, 0.0f};
+			
+			// Move
+			sceGumTranslate(&pos);
+			
+			// Rotate
+			sceGumRotateZ(rotate);
+		
+		}
+	
+		// Draw the quad
+		sceGumDrawArray(GU_TRIANGLE_STRIP, GU_COLOR_8888 | GU_VERTEX_32BITF | GU_TRANSFORM_3D, 4, 0, quad2);
+		
+		sceGumLoadIdentity(); // Reset
+		{
+			
+			ScePspFVector3 pos = {140.0f, 100.0f, 0.0f};
+			
+			// Move
+			sceGumTranslate(&pos);
+			
+			// Rotate
+			sceGumRotateZ(-rotate);
+		
+		}
+		
+		// Draw the triangle
+		sceGumDrawArray(GU_TRIANGLES, GU_COLOR_8888 | GU_VERTEX_32BITF | GU_TRANSFORM_3D, 3, 0, triangle);
+		
+		sceGumLoadIdentity(); // Reset
+		{
+			
+			ScePspFVector3 pos = {360.0f, 160.0f, 0.0f};
+			
+			// Move
+			sceGumTranslate(&pos);
+			
+			// Rotate
+			sceGumRotateZ(rotate);
+		
+		}
+		
+		// Another Triangle
+		xM::Gfx::Vertex __attribute__((aligned(16))) triangle2[3] = {   
+    	   {GU_COLOR((rand()%256) / 255.0f, 0.0f, 0.0f, (rand()%50) / 100.0f), 0.0f, -50.0f, 0.0f}, // Top
+    	   {GU_COLOR(0.0f, (rand()%256) / 255.0f, 0.0f, 1.0f), 50.0f, 50.0f, 0.0f}, // Right
+	       {GU_COLOR(0.0f, 0.0f, (rand()%256) / 255.0f, (rand()%85) / 100.0f), -50.0f, 50.0f, 0.0f}, // Left
+		};
+		
+		// Draw the triangle
+		sceGumDrawArray(GU_TRIANGLES, GU_COLOR_8888 | GU_VERTEX_32BITF | GU_TRANSFORM_3D, 3, 0, triangle2);
+			
+		rotate -= (1.0f * timer.getDeltaTicks(true));
 	
 		sceGuFinish();
 		sceGuSync(0, 0);
 	
+		xM::Util::MEM();
 		xM::Util::FPS();
-	
+
 		sceDisplayWaitVblankStart();
 	
 		xM::Gfx::frameBuffer0 = sceGuSwapBuffers();

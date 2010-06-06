@@ -20,59 +20,35 @@
  */
  
 /**
- * FPS calc utility.
- * sceRtcGetCurrentTick( &fpsTickNow );
-
+ * Various utilities.
+ * Header file.
+ * 
  * @package xMangaPSP
  */
 
-#ifndef _FPS_CPP
-#define _FPS_CPP
+#ifndef _UTILS_H
+#define _UTILS_H
 
 // BEGIN Includes
-#include "xM/Gfx/Graphics.h"
-#include "xM/Util/FPS.h"
+#include <sstream>
+#include <string>
 // END Includes
+
+// BEGIN Defines
+#define MAX(x, y) ((x) > (y) ? (x) : (y))
+#define pspPrintf pspDebugScreenPrintf 		// Cause we're lazy :P
+// END Defines
 
 namespace xM {
 
 	namespace Util {
 	
-		/**
-		 * Frames-per-second
-		 */
-		int fps = 0;
+		template <class T>
+		inline std::string toString(const T& t) {
 		
-		/**
-		 * FPS info string.
-		 */
-		char fpsDisplay[100];
-		
-		// Used to calculate FPS
-		xM::Util::Timer fpsTimer;		
-		
-		/**
-		 * Displays the FPS.
-		 */
-		void FPS(void) {
-		
-			if (!fpsTimer.isStarted())
-				fpsTimer.start();
-								
-			// Increment
-			fps++;
-			
-			if (fpsTimer.getDeltaTicks() >= 1.0f) {
-			
-				fpsTimer.start();
-				sprintf(fpsDisplay, "FPS: %d", fps);
-				fps = 0;
-							
-			}
-			
-			pspDebugScreenSetOffset((int)xM::Gfx::frameBuffer0);
-			pspDebugScreenSetXY(0, 0);
-			pspDebugScreenPrintf(fpsDisplay);
+			std::stringstream sS;
+			sS << t;
+			return sS.str();
 		
 		}
 			
@@ -80,4 +56,4 @@ namespace xM {
 
 }
 
-#endif /* _FPS_CPP */
+#endif /* _UTILS_H */

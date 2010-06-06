@@ -20,22 +20,21 @@
  */
  
 /**
- * FPS calc utility.
- * Header file.
+ * Stat utilities.
  * 
  * @package xMangaPSP
  */
 
-#ifndef _FPS_H
-#define _FPS_H
+#ifndef _STATS_CPP
+#define _STATS_CPP
 
 // BEGIN Includes
-#include "xM/Util/Timer.h"
+#include "xM/Gfx/Graphics.h"
+#include "xM/Util/Stats.h"
+#include "xM/Util/Utils.h"
 
-#include <stdio.h>
-#include <psptypes.h>
-#include <psprtc.h>
-#include <pspdebug.h>
+#include <string>
+#include <pspsysmem.h>
 // END Includes
 
 namespace xM {
@@ -45,23 +44,55 @@ namespace xM {
 		/**
 		 * Frames-per-second
 		 */
-		extern int fps;
+		int fps = 0;
 		
 		/**
 		 * FPS info string.
 		 */
-		extern char fpsDisplay[100];
+		std::string fpsDisplay;
 		
 		// Used to calculate FPS
-		extern xM::Util::Timer fpsTimer;
+		xM::Util::Timer fpsTimer;		
 		
 		/**
 		 * Displays the FPS.
 		 */
-		void FPS(void);
+		void FPS(void) {
+		
+			if (!fpsTimer.isStarted())
+				fpsTimer.start();
+								
+			// Increment
+			fps++;
+			
+			if (fpsTimer.getDeltaTicks() >= 1.0f) {
+			
+				fpsTimer.start();
+				fpsDisplay.assign("FPS: ");
+				fpsDisplay.append(xM::Util::toString(fps));
+				fps = 0;
+							
+			}
+			
+			pspDebugScreenSetOffset((int)xM::Gfx::frameBuffer0);
+			pspDebugScreenSetXY(0, 0);
+			pspPrintf(fpsDisplay.c_str());
+		
+		}
+		
+		/**
+		 * Displays free memory.
+		 */
+		void MEM(void) {
+		
+			pspDebugScreenSetOffset((int)xM::Gfx::frameBuffer0);
+			pspDebugScreenSetXY(0, 0);
+			pspPrintf("\nFree Mem: %d", sceKernelTotalFreeMemSize());
+		
+		}
 			
 	}
 
 }
 
-#endif /* _FPS_H */
+#endif /* _STATS_CPP */

@@ -36,7 +36,7 @@ namespace xM {
 
 	namespace Gfx {
 			
-		void *displayList;
+		unsigned int __attribute__((aligned(16))) displayList[262144];
 		void *frameBuffer0;
 	
 		/**
@@ -44,7 +44,7 @@ namespace xM {
 		 */
 		void initGu(void) {
 		
-			displayList = memalign(16, 640);
+			//displayList = memalign(16, 1600);
 			frameBuffer0 = 0;
 		
 			// No suprise what this does
@@ -57,19 +57,44 @@ namespace xM {
 			sceGuDispBuffer(SCR_WIDTH, SCR_HEIGHT, (void*)0x88000, BUF_WIDTH);
 			sceGuDepthBuffer((void*)0x110000, BUF_WIDTH);
  
+ 			// Set viewport
 			sceGuOffset(2048 - (SCR_WIDTH / 2), 2048 - (SCR_HEIGHT / 2));
 			sceGuViewport(2048, 2048, SCR_WIDTH, SCR_HEIGHT);
 			sceGuDepthRange(65535, 0);
 			
 			// Set render states
+			
+			// Don't render anything outside specified range
 			sceGuScissor(0, 0, SCR_WIDTH, SCR_HEIGHT);
+			
+			// Enable that ^
 			sceGuEnable(GU_SCISSOR_TEST);
-			sceGuDepthFunc(GU_GEQUAL);
-			sceGuEnable(GU_DEPTH_TEST);
-			//sceGuFrontFace(GU_CW);
+			
+			// Disable depth testing
+			sceGuDisable(GU_DEPTH_TEST);
+			
+			// Front face is clockwise
+			sceGuFrontFace(GU_CW);
+			
+			// Enable culling
 			//sceGuEnable(GU_CULL_FACE);
+			
+			// Enable smooth shading
 			sceGuShadeModel(GU_SMOOTH);
+			
+			// Clipping on
 			sceGuEnable(GU_CLIP_PLANES);
+			
+			// Enable alpha blending
+			sceGuEnable(GU_BLEND);
+			sceGuBlendFunc(GU_ADD, GU_SRC_ALPHA, GU_ONE_MINUS_SRC_ALPHA, 0, 0);
+						
+			// Set clear colour as black
+			sceGuClearColor(GU_COLOR(0.0f, 0.0f, 0.0f, 1.0f)); 
+			
+			// Set clear depth as 0
+			sceGuClearDepth(0);
+			
         	sceGuFinish();
 			sceGuSync(0,0);
  
@@ -83,7 +108,7 @@ namespace xM {
 		 * Sets up the projection matrix in a perspective view.
 		 */
 		void setUpPerspectiveView(void) {
-		
+		 								
 			// Setup matrices
 			sceGumMatrixMode(GU_PROJECTION);
 			sceGumLoadIdentity(); // Reset
@@ -91,11 +116,32 @@ namespace xM {
  
         	sceGumMatrixMode(GU_VIEW);
 			sceGumLoadIdentity(); // Reset
+					
+		}
+		
+		/**
+		 * Sets up the projection matrix in a orthographic view.
+		 */
+		void setUpOrthoView(void) {
+		 								
+			// Setup matrices
+			sceGumMatrixMode(GU_PROJECTION);
+			sceGumLoadIdentity(); // Reset
+			sceGumOrtho(0.0f, SCR_WIDTH, SCR_HEIGHT, 0.0f, -1.0f, 1.0f);
  
- 			// Clear colour to black
-			sceGuClearColor(GU_COLOR(0.0f, 0.0f, 0.0f, 1.0f)); 
-			// Clear depth 0
-			sceGuClearDepth(0);
+        	sceGumMatrixMode(GU_VIEW);
+			sceGumLoadIdentity(); // Reset
+					
+		}
+		
+		/**
+		 * Clears the screen.
+		 * Colour and buffer.
+		 */
+		void clearScreen(void) {
+		
+			// Clear screen and depth buffer
+			sceGuClear(GU_COLOR_BUFFER_BIT|GU_DEPTH_BUFFER_BIT);
 		
 		}
 		

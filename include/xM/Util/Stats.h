@@ -20,74 +20,54 @@
  */
  
 /**
- * Graphic stuff.
+ * Stat utilities.
  * Header file.
  * 
  * @package xMangaPSP
  */
 
-#ifndef _Graphics_H
-#define _Graphics_H
+#ifndef _STATS_H
+#define _STATS_H
 
 // BEGIN Includes
-#include <pspdisplay.h>
-#include <pspgu.h>
-#include <pspgum.h>
+#include "xM/Util/Timer.h"
 
-#include <malloc.h>
+#include <stdio.h>
+#include <psptypes.h>
+#include <psprtc.h>
+#include <pspdebug.h>
+#include <string>
 // END Includes
-
-// BEGIN Defines
-#define BUF_WIDTH (512)  // Buffer width
-#define SCR_WIDTH (480)  // Screen width
-#define SCR_HEIGHT (272) // Screen height
-// END Defines
 
 namespace xM {
 
-	namespace Gfx {
+	namespace Util {
 	
 		/**
-		 * Convenience type definition to define a point/pixel.
+		 * Frames-per-second
 		 */
-		typedef struct {
-		
-			unsigned int colour;
-			float x, y, z;
-		
-		} Vertex;
-		
-		extern unsigned int __attribute__((aligned(16))) displayList[262144];
-		extern void *frameBuffer0;
-	
-		/**
-		 * Initiates the GU.
-		 */
-		void initGu(void);
+		extern int fps;
 		
 		/**
-		 * Sets up the projection matrix in a perspective view.
+		 * FPS info string.
 		 */
-		void setUpPerspectiveView(void);
+		extern std::string fpsDisplay;
+		
+		// Used to calculate FPS
+		extern xM::Util::Timer fpsTimer;
 		
 		/**
-		 * Sets up the projection matrix in a orthographic view.
+		 * Displays the FPS.
 		 */
-		void setUpOrthoView(void);
+		void FPS(void);
 		
 		/**
-		 * Clears the screen.
-		 * Colour and buffer.
+		 * Displays free memory.
 		 */
-		void clearScreen(void);
-		
-		/**
-		 * Terminates the GU.
-		 */
-		void shutdownGu(void);
+		void MEM(void);
 			
 	}
 
 }
 
-#endif /* _Graphics_H */
+#endif /* _STATS_H */

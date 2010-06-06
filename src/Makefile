@@ -31,7 +31,7 @@
  EXTRA_CLEAN = 
  
  # Objects
- OBJS = xMangaPSP.o Callbacks.o Graphics.o FPS.o Timer.o
+ OBJS = xMangaPSP.o Callbacks.o Graphics.o Stats.o Timer.o
   
  # Defines
  MAJOR_VERSION = 1
@@ -45,7 +45,7 @@
  INCDIR = ../include
  
  # Library Directories
- LIBS = -lpspgum -lpspgu -lm -lpsprtc -lpspsdk
+ LIBS = -lpspgum -lpspgu -lm -lpsprtc -lpspsdk -lstdc++
  
  # Compiler Flags
  CFLAGS = -O3 -G4 -Wall -falign-functions=64 $(COMPILER_DEFINES)
