@@ -65,6 +65,9 @@
  # Build as prx for dynamic memory allocation
  BUILD_PRX = 1
  
+ # [Fake] sign so it can run on OFW
+ SIGN = 1
+ 
  # User Libraries
  USE_USER_LIBS = 1
   
