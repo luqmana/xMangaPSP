@@ -51,7 +51,7 @@
  
  # Compiler Flags
  #CFLAGS = -g -O3 -G4 -Wall -falign-functions=64 $(COMPILER_DEFINES) $(shell freetype-config --cflags)
- CFLAGS = -O3 -G4 -Wall -falign-functions=64 $(COMPILER_DEFINES) $(shell freetype-config --cflags)
+ CFLAGS = -O3 -G4 -Wall -falign-functions=64 $(COMPILER_DEFINES) -I$(PSPDEV)/psp/include/freetype2/
  #LDFLAGS = -g
  CXXFLAGS = $(CFLAGS) -fno-exceptions -fno-rtti
  ASFLAGS = 
