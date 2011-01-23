@@ -1,9 +1,7 @@
 /*
- * $Id: MangaViewState.h 83 2009-12-30 02:09:40Z chaotic@luqmanrocks.co.cc $
- * 
- * This file is part of the OneMangaPSP application.
+ * This file is part of the xMangaPSP application.
  *
- * Copyright (C) 2009  Luqman Aden <www.luqmanrocks.co.cc>.
+ * Copyright (C) Luqman Aden <www.luqmanrocks.co.cc>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,17 +22,19 @@
 /**
  * Header for MangaViewState.
  * 
- * @package OneMangaPSP
+ * @package xMangaPSP
  */
 
 #ifndef _MangaViewState_H
-#define _MangaViewState_H
+#define _MangaViewState_H
+
 // BEGIN Includes
 #include "State.h"
 #include "MangaAPI.h"
 // END Includes
 
-class MangaViewState : public State {		
+class MangaViewState : public State {
+		
 	public:
 				
 		MangaViewState(int imageIndex);
@@ -57,7 +57,7 @@ class MangaViewState : public State {
 		ImageList imageList;
 		
 		// Holds all textures
-	   	std::map <std::string, OMTexture > textures;
+	   	std::map <std::string, xMTexture > textures;
 	   	
 	   	// Manga image
 	   	MangaImage* mImage;

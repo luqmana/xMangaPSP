@@ -1,9 +1,7 @@
 /*
- * $Id: AboutState.h 85 2010-01-02 16:57:15Z chaotic@luqmanrocks.co.cc $
- * 
- * This file is part of the OneMangaPSP application.
+ * This file is part of the xMangaPSP application.
  *
- * Copyright (C) 2009  Luqman Aden <www.luqmanrocks.co.cc>.
+ * Copyright (C) Luqman Aden <www.luqmanrocks.co.cc>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,16 +22,18 @@
 /**
  * Header for AboutState.
  * 
- * @package OneMangaPSP
+ * @package xMangaPSP
  */
 
 #ifndef _AboutState_H
-#define _AboutState_H
+#define _AboutState_H
+
 // BEGIN Includes
 #include "State.h"
 // END Includes
 
-class AboutState : public State {		
+class AboutState : public State {
+		
 	public:
 				
 		void init();
@@ -53,10 +53,10 @@ class AboutState : public State {
 	private:
 
 		// Hold all credit items
-	    std::vector <OMStrArray> creditItems;
+	    std::vector <xMStrArray> creditItems;
 
 	    // Holds all textures
-	   	std::map <std::string, OMTexture > textures;
+	   	std::map <std::string, xMTexture > textures;
 	   	
 	   	// Counter for displaying menu
 	   	int minList, maxList, selected;

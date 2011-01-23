@@ -1,9 +1,7 @@
 /*
- * $Id: TitleState.cpp 86 2010-01-03 04:12:17Z chaotic@luqmanrocks.co.cc $
- * 
- * This file is part of the OneMangaPSP application.
+ * This file is part of the xMangaPSP application.
  *
- * Copyright (C) 2009  Luqman Aden <www.luqmanrocks.co.cc>.
+ * Copyright (C) Luqman Aden <www.luqmanrocks.co.cc>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,14 +22,14 @@
 /**
  * TitleState Class.
  * 
- * @package OneMangaPSP
+ * @package xMangaPSP
  */
 
 #ifndef _TitleState_CPP
 #define _TitleState_CPP
 
 // BEGIN Includes
-#include "OneMangaPSP.h"
+#include "xMangaPSP.h"
 #include "States/TitleState.h"
 #include "States/MenuState.h"
 // END Includes
@@ -50,9 +48,9 @@ void TitleState::init() {
 	
 	// Load surface
     if (this->which == 1)
-		image = engine->sdlSurfaceFromPakFile("Resources.omle", "Splash1.png");
+		image = engine->sdlSurfaceFromPakFile("Res.xmr", "Splash1.png");
 	else if (this->which == 2)
-		image = engine->sdlSurfaceFromPakFile("Resources.omle", "Splash2.png");
+		image = engine->sdlSurfaceFromPakFile("Res.xmr", "Splash2.png");
     	
 	// Error check
 	if (image == NULL)

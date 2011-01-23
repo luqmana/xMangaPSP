@@ -1,9 +1,7 @@
-/*
- * $Id: Timer.cpp 61 2009-11-30 02:22:09Z chaotic@luqmanrocks.co.cc $
- * 
- * This file is part of the OneMangaPSP application.
+/* 
+ * This file is part of the xMangaPSP application.
  *
- * Copyright (C) 2009  Luqman Aden <www.luqmanrocks.co.cc>.
+ * Copyright (C) Luqman Aden <www.luqmanrocks.co.cc>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +22,7 @@
 /**
  * Timer class.
  * 
- * @package OneMangaPSP
+ * @package xMangaPSP
  */
  
 #ifndef _Timer_CPP

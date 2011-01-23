@@ -1,9 +1,7 @@
-/*
- * $Id: MangaAPI.cpp 86 2010-01-03 04:12:17Z chaotic@luqmanrocks.co.cc $
- * 
- * This file is part of the OneMangaPSP application.
+/* 
+ * This file is part of the xMangaPSP application.
  *
- * Copyright (C) 2009  Luqman Aden <www.luqmanrocks.co.cc>.
+ * Copyright (C) Luqman Aden <www.luqmanrocks.co.cc>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +22,7 @@
 /**
  * Manga API Handler.
  * 
- * @package OneMangaPSP
+ * @package xMangaPSP
  */
 
 #ifndef _MangaAPI_CPP
@@ -76,11 +74,48 @@ int getMangaList(MangaAPIRequest request) {
 	// Handle different APIs
 	switch (request.api) {
 					
-		case OneMangaAPI:
+		case MangaStreamAPI:
+		    
+		    std::string dlBuffer;
+			
+			int res = downloadFile("http://omp.leonex.co.cc/api/?api=MangaStream", dlBuffer);
+			
+			if (res != -1) {
+						
+				// No error so try to parse JSON
+			
+				cJSON* root = cJSON_Parse(dlBuffer.c_str());
+				cJSON* mangas = cJSON_GetObjectItem(root, "Manga");
+				int i = 0;
+				
+				for (i; i < cJSON_GetArraySize(mangas); i++) {
+				
+					MangaListItem item;
+				
+					item.name = cJSON_GetObjectItem(cJSON_GetArrayItem(mangas, i), "name")->valuestring;
+					item.apiHandle = cJSON_GetObjectItem(cJSON_GetArrayItem(mangas, i), "apiHandle")->valuestring;
+					
+					mangaList.push_back(item);
+				
+				}
+				cJSON_Delete(root);
+							
+			} else {
+			
+				error = dlBuffer;
+				
+				// 1 = Net Error
+				return 1;
+				
+			}
+		    
+		    break;
+					
+		/*case OneMangaAPI: {
 			
 			std::string dlBuffer;
 			
-			int res = downloadFile("http://omp.leonex.co.cc/api2/", dlBuffer);
+			int res = downloadFile("http://omp.leonex.co.cc/api/?api=OneManga", dlBuffer);
 			
 			if (res != -1) {
 						
@@ -111,7 +146,7 @@ int getMangaList(MangaAPIRequest request) {
 				
 			}
 						
-			break;
+			} break;*/
 					
 	}		
 		
@@ -132,16 +167,17 @@ int getChapterList(MangaAPIRequest request) {
 
 	// Handle different APIs
 	switch (request.api) {
-					
-		case OneMangaAPI:
+	
+	    case MangaStreamAPI:
 			
 			std::string dlBuffer;
 			std::string url;
 			
 			// Format URL
-			url = "http://omp.leonex.co.cc/api2/";
+			url = "http://omp.leonex.co.cc/api/";
 			url.append(request.mangaApiHandle);
 			url.append("/");
+			url.append("?api=MangaStream");
 			
 			int res = downloadFile(url, dlBuffer);
 			
@@ -181,6 +217,55 @@ int getChapterList(MangaAPIRequest request) {
 						
 			break;
 					
+		/*case OneMangaAPI: {
+			
+			std::string dlBuffer;
+			std::string url;
+			
+			// Format URL
+			url = "http://omp.leonex.co.cc/api/";
+			url.append(request.mangaApiHandle);
+			url.append("/");
+			url.append("?api=OneManga");
+			
+			int res = downloadFile(url, dlBuffer);
+			
+			if (res != -1) {
+						
+				// Add some meta data
+				chapterList.manga = request.manga;
+				chapterList.mangaApiHandle = request.mangaApiHandle;
+			
+				// No error so try to parse JSON
+			
+				cJSON* root = cJSON_Parse(dlBuffer.c_str());
+				cJSON* chapters = cJSON_GetObjectItem(root, "Chapters");
+				int i = 0;
+				
+				for (i; i < cJSON_GetArraySize(chapters); i++) {
+				
+					ChapterListItem item;
+				
+					item.name = cJSON_GetObjectItem(cJSON_GetArrayItem(chapters, i), "name")->valuestring;
+					item.apiHandle = cJSON_GetObjectItem(cJSON_GetArrayItem(chapters, i), "apiHandle")->valuestring;
+					//item.firstImage = cJSON_GetObjectItem(cJSON_GetArrayItem(chapters, i), "firstImage")->valuestring;
+					
+					chapterList.list.push_back(item);
+				
+				}
+				cJSON_Delete(root);
+							
+			} else {
+			
+				error = dlBuffer;
+				
+				// 1 = Net Error
+				return 1;
+				
+			}
+						
+			} break;*/
+					
 	}		
 		
 	// 0 -Success
@@ -202,18 +287,19 @@ int getImageList(MangaAPIRequest request) {
 
 	// Handle different APIs
 	switch (request.api) {
-					
-		case OneMangaAPI:
+	
+	    case MangaStreamAPI:
 			
 			std::string dlBuffer;
 			std::string url;
 
 			// Format URL
-			url = "http://omp.leonex.co.cc/api2/";
+			url = "http://omp.leonex.co.cc/api/";
 			url.append(request.mangaApiHandle);
 			url.append("/");
 			url.append(request.chapterApiHandle);
 			url.append("/");
+			url.append("?api=MangaStream");
 			
 			int res = downloadFile(url, dlBuffer);
 			
@@ -253,6 +339,57 @@ int getImageList(MangaAPIRequest request) {
 						
 			break;
 					
+		/*case OneMangaAPI: {
+			
+			std::string dlBuffer;
+			std::string url;
+
+			// Format URL
+			url = "http://omp.leonex.co.cc/api/";
+			url.append(request.mangaApiHandle);
+			url.append("/");
+			url.append(request.chapterApiHandle);
+			url.append("/");
+			url.append("?api=OneManga");
+			
+			int res = downloadFile(url, dlBuffer);
+			
+			if (res != -1) {
+						
+				// Add some meta data
+				imageList.manga = request.manga;
+				imageList.mangaApiHandle = request.mangaApiHandle;
+				imageList.chapter = request.chapter;
+				imageList.chapterApiHandle = request.chapterApiHandle;
+			
+				// No error so try to parse JSON
+			
+				cJSON* root = cJSON_Parse(dlBuffer.c_str());
+				cJSON* images = cJSON_GetObjectItem(root, "Images");
+				int i = 0;
+				
+				for (i; i < cJSON_GetArraySize(images); i++) {
+				
+					ImageListItem item;
+				
+					item.image = cJSON_GetObjectItem(cJSON_GetArrayItem(images, i), "image")->valuestring;
+					
+					imageList.list.push_back(item);
+				
+				}
+				cJSON_Delete(root);
+							
+			} else {
+			
+				error = dlBuffer;
+				
+				// 1 = Net Error
+				return 1;
+				
+			}
+						
+			} break;*/
+					
 	}		
 		
 	// 0 -Success
@@ -271,11 +408,11 @@ int getRecentMangaList(MangaAPIRequest request) {
 	// Handle different APIs
 	switch (request.api) {
 					
-		case OneMangaAPI:
+	    case MangaStreamAPI:
 			
 			std::string dlBuffer;
 			
-			int res = downloadFile("http://omp.leonex.co.cc/api2/Recent-Manga/", dlBuffer);
+			int res = downloadFile("http://omp.leonex.co.cc/api/Recent-Manga/?api=MangaStream", dlBuffer);
 			
 			if (res != -1) {
 						
@@ -312,6 +449,47 @@ int getRecentMangaList(MangaAPIRequest request) {
 						
 			break;
 					
+		/*case OneMangaAPI: {
+			
+			std::string dlBuffer;
+			
+			int res = downloadFile("http://omp.leonex.co.cc/api/Recent-Manga/?api=OneManga", dlBuffer);
+			
+			if (res != -1) {
+						
+				// No error so try to parse JSON
+			
+				cJSON* root = cJSON_Parse(dlBuffer.c_str());
+				cJSON* mangas = cJSON_GetObjectItem(root, "Manga");
+				int i = 0;
+				
+				for (i; i < cJSON_GetArraySize(mangas); i++) {
+				
+					RecentMangaListItem item;
+				
+					item.name = cJSON_GetObjectItem(cJSON_GetArrayItem(mangas, i), "name")->valuestring;
+					item.date = cJSON_GetObjectItem(cJSON_GetArrayItem(mangas, i), "date")->valuestring;
+					item.manga = cJSON_GetObjectItem(cJSON_GetArrayItem(mangas, i), "manga")->valuestring;
+					item.mangaApiHandle = cJSON_GetObjectItem(cJSON_GetArrayItem(mangas, i), "mangaApiHandle")->valuestring;
+					item.chapter = cJSON_GetObjectItem(cJSON_GetArrayItem(mangas, i), "chapter")->valuestring;
+					item.chapterApiHandle = cJSON_GetObjectItem(cJSON_GetArrayItem(mangas, i), "chapterApiHandle")->valuestring;
+					
+					recentMangaList.push_back(item);
+				
+				}
+				cJSON_Delete(root);
+							
+			} else {
+			
+				error = dlBuffer;
+				
+				// 1 = Net Error
+				return 1;
+				
+			}
+						
+			} break;*/
+					
 	}		
 		
 	// 0 -Success
@@ -345,20 +523,21 @@ int getImage(MangaAPIRequest request, MangaImage*& mangaImage) {
 	
 	// Handle different APIs
 	switch (request.api) {
-					
-		case OneMangaAPI:
+	
+	    case MangaStreamAPI:
 			
 			std::string dlBuffer;
 			std::string url;
 			
 			// Format URL
-			url = "http://omp.leonex.co.cc/api2/";
+			url = "http://omp.leonex.co.cc/api/";
 			url.append(request.mangaApiHandle);
 			url.append("/");
 			url.append(request.chapterApiHandle);
 			url.append("/");
 			url.append(request.imageList.list[request.imageIndex].image);
 			url.append("/");
+			url.append("?api=MangaStream");
 						
 			int res = downloadFile(url, dlBuffer);
 			
@@ -443,6 +622,104 @@ int getImage(MangaAPIRequest request, MangaImage*& mangaImage) {
 						
 			break;
 					
+		/*case OneMangaAPI: {
+			
+			std::string dlBuffer;
+			std::string url;
+			
+			// Format URL
+			url = "http://omp.leonex.co.cc/api2/";
+			url.append(request.mangaApiHandle);
+			url.append("/");
+			url.append(request.chapterApiHandle);
+			url.append("/");
+			url.append(request.imageList.list[request.imageIndex].image);
+			url.append("/");
+			url.append("?api=OneManga");
+						
+			int res = downloadFile(url, dlBuffer);
+			
+			if (res != -1) {
+			
+				// Create temp surface for images
+				SDL_Surface* image = engine->sdlSurfaceFromImageRaw(dlBuffer);
+				
+				if (image == NULL) {
+				
+					// 2 = SDL Conversion error
+					error = "MangaAPI: Unable to create surface from image data.";
+					return 2;
+				
+				}
+				
+				mangaImage->w = image->w;
+				mangaImage->h = image->h;
+				
+				// Calculating and parsing different parts of image
+				// Here we split the image into segments of 512x512
+				int wFit = ceil((float)image->w / 512);
+				int hFit = ceil((float)image->h / 512);
+				int i = 0, j = 0;
+				SDL_Rect clip;
+								
+				for (i = 0; i < hFit; i++) {
+				
+					for (j = 0; j < wFit; j++) {
+					
+						clip.x = 512 * j; clip.y = 512 * i;
+						
+						if (j == wFit - 1)
+							clip.w = image->w - (512 * (wFit - 1));
+						else
+							clip.w = 512;
+							
+						if (i == hFit - 1)
+							clip.h = image->h - (512 * (hFit - 1));
+						else
+							clip.h = 512;
+							
+						MangaImageSection sect;
+							
+						//printf("Making texture\n"); // <-- DEBUG
+						
+						// Convert to texture
+						sect.texture = engine->glTextureFromSDLSurface(image, &clip, true);
+
+						// Error check
+						if (glIsTexture(sect.texture.texture) == GL_FALSE) {
+						
+							// 3 = OpenGL Conversion error
+							error = "MangaAPI: Unable to convert surface segment to OpenGL texture.";
+							return 3;
+						
+						}
+						
+						sect.x = clip.x;
+						sect.y = clip.y;
+						sect.w = clip.w;
+						sect.h = clip.h;
+						
+						mangaImage->sections.push_back(sect);
+						
+					
+					}
+				
+				}
+				
+				// Free temp surface
+				SDL_FreeSurface(image);
+							
+			} else {
+			
+				error = dlBuffer;
+				
+				// 1 = Net Error
+				return 1;
+				
+			}
+						
+			} break;*/
+					
 	}		
 		
 	// 0 -Success
@@ -474,13 +751,13 @@ int mangaApiHandler(void*) {
 										
 						SDL_Event mangaApiEvent;
 							
-						mangaApiEvent.type = SDL_OMMANGAAPIEVENT;
+						mangaApiEvent.type = SDL_xMANGAAPIEVENT;
 						mangaApiEvent.user.data1 = (void*)request.id; // So user can compare ids
 						
 						if (retValue == 0)
-							mangaApiEvent.user.code = OMMangaApiSuccess;
+							mangaApiEvent.user.code = xMangaApiSuccess;
 						else if (retValue == 1)
-							mangaApiEvent.user.code = OMMangaApiError;
+							mangaApiEvent.user.code = xMangaApiError;
 							
 						// Push event onto quene
 						FE_PushEvent(&mangaApiEvent);
@@ -498,13 +775,13 @@ int mangaApiHandler(void*) {
 																
 						SDL_Event mangaApiEvent;
 							
-						mangaApiEvent.type = SDL_OMMANGAAPIEVENT;
+						mangaApiEvent.type = SDL_xMANGAAPIEVENT;
 						mangaApiEvent.user.data1 = (void*)request.id; // So user can compare ids
 						
 						if (retValue == 0)
-							mangaApiEvent.user.code = OMMangaApiSuccess;
+							mangaApiEvent.user.code = xMangaApiSuccess;
 						else if (retValue == 1)
-							mangaApiEvent.user.code = OMMangaApiError;
+							mangaApiEvent.user.code = xMangaApiError;
 							
 						// Push event onto quene
 						FE_PushEvent(&mangaApiEvent);
@@ -522,13 +799,13 @@ int mangaApiHandler(void*) {
 																
 						SDL_Event mangaApiEvent;
 							
-						mangaApiEvent.type = SDL_OMMANGAAPIEVENT;
+						mangaApiEvent.type = SDL_xMANGAAPIEVENT;
 						mangaApiEvent.user.data1 = (void*)request.id; // So user can compare ids
 						
 						if (retValue == 0)
-							mangaApiEvent.user.code = OMMangaApiSuccess;
+							mangaApiEvent.user.code = xMangaApiSuccess;
 						else if (retValue == 1)
-							mangaApiEvent.user.code = OMMangaApiError;
+							mangaApiEvent.user.code = xMangaApiError;
 							
 						// Push event onto quene
 						FE_PushEvent(&mangaApiEvent);
@@ -546,13 +823,13 @@ int mangaApiHandler(void*) {
 										
 						SDL_Event mangaApiEvent;
 							
-						mangaApiEvent.type = SDL_OMMANGAAPIEVENT;
+						mangaApiEvent.type = SDL_xMANGAAPIEVENT;
 						mangaApiEvent.user.data1 = (void*)request.id; // So user can compare ids
 						
 						if (retValue == 0)
-							mangaApiEvent.user.code = OMMangaApiSuccess;
+							mangaApiEvent.user.code = xMangaApiSuccess;
 						else if (retValue == 1)
-							mangaApiEvent.user.code = OMMangaApiError;
+							mangaApiEvent.user.code = xMangaApiError;
 							
 						// Push event onto quene
 						FE_PushEvent(&mangaApiEvent);
@@ -581,9 +858,9 @@ int mangaApiHandler(void*) {
 						if (retValue == 1) {
 						
 							SDL_Event mangaApiEvent;
-							mangaApiEvent.type = SDL_OMMANGAAPIEVENT;
+							mangaApiEvent.type = SDL_xMANGAAPIEVENT;
 							mangaApiEvent.user.data1 = (void*)request.id; // So user can compare ids
-							mangaApiEvent.user.code = OMMangaApiError;
+							mangaApiEvent.user.code = xMangaApiError;
 							// Push event onto quene
 							FE_PushEvent(&mangaApiEvent);
 						
@@ -595,14 +872,14 @@ int mangaApiHandler(void*) {
 							
 							SDL_Event mangaApiEvent;
 							
-							mangaApiEvent.type = SDL_OMMANGAAPIEVENT;
+							mangaApiEvent.type = SDL_xMANGAAPIEVENT;
 							mangaApiEvent.user.data1 = (void*)request.id; // So user can compare ids
 							mangaApiEvent.user.data2 = (void*)imageIndex;
 							
 							if (retValue == 0)
-								mangaApiEvent.user.code = OMMangaApiSuccess;
+								mangaApiEvent.user.code = xMangaApiSuccess;
 							else if (retValue == 1)
-								mangaApiEvent.user.code = OMMangaApiError;
+								mangaApiEvent.user.code = xMangaApiError;
 								
 							// Push event onto quene
 							FE_PushEvent(&mangaApiEvent);
@@ -612,9 +889,9 @@ int mangaApiHandler(void*) {
 							/*if (retValue == 1) {
 							
 								SDL_Event mangaApiEvent;
-								mangaApiEvent.type = SDL_OMMANGAAPIEVENT;
+								mangaApiEvent.type = SDL_xMANGAAPIEVENT;
 								mangaApiEvent.user.data1 = (void*)request.id; // So user can compare ids
-								mangaApiEvent.user.code = OMMangaApiError;
+								mangaApiEvent.user.code = xMangaApiError;
 								// Push event onto quene
 								FE_PushEvent(&mangaApiEvent);
 							
@@ -628,14 +905,14 @@ int mangaApiHandler(void*) {
 									
 									SDL_Event mangaApiEvent;
 							
-									mangaApiEvent.type = SDL_OMMANGAAPIEVENT;
+									mangaApiEvent.type = SDL_xMANGAAPIEVENT;
 									mangaApiEvent.user.data1 = (void*)request.id; // So user can compare ids
 									mangaApiEvent.user.data2 = (void*)imageIndex;
 									
 									if (retValue == 0)
-										mangaApiEvent.user.code = OMMangaApiSuccess;
+										mangaApiEvent.user.code = xMangaApiSuccess;
 									else if (retValue == 1)
-										mangaApiEvent.user.code = OMMangaApiError;
+										mangaApiEvent.user.code = xMangaApiError;
 										
 									// Push event onto quene
 									FE_PushEvent(&mangaApiEvent);
@@ -674,18 +951,18 @@ int mangaApiHandler(void*) {
 							
 							SDL_Event mangaApiEvent;
 					
-							mangaApiEvent.type = SDL_OMMANGAAPIEVENT;
+							mangaApiEvent.type = SDL_xMANGAAPIEVENT;
 							mangaApiEvent.user.data1 = (void*)request.id; // So user can compare ids
 							mangaApiEvent.user.data2 = (void*)(imageIndex + 1);
 							
 							if (retValue == 0) {
 							
-								mangaApiEvent.user.code = OMMangaApiSuccess;
+								mangaApiEvent.user.code = xMangaApiSuccess;
 								delOld = true;
 								
 							} else if (retValue == 1) {
 							
-								mangaApiEvent.user.code = OMMangaApiError;
+								mangaApiEvent.user.code = xMangaApiError;
 								delOld = false;
 								
 							}
@@ -727,9 +1004,9 @@ int mangaApiHandler(void*) {
 									
 									SDL_Event mangaApiEvent;
 					
-									mangaApiEvent.type = SDL_OMMANGAAPIEVENT;
+									mangaApiEvent.type = SDL_xMANGAAPIEVENT;
 									mangaApiEvent.user.data1 = (void*)request.id; // So user can compare ids
-									mangaApiEvent.user.code = OMMangaApiError;
+									mangaApiEvent.user.code = xMangaApiError;
 										
 									// Push event onto quene
 									FE_PushEvent(&mangaApiEvent);
@@ -745,14 +1022,14 @@ int mangaApiHandler(void*) {
 									
 									SDL_Event mangaApiEvent;
 									
-									mangaApiEvent.type = SDL_OMMANGAAPIEVENT;
+									mangaApiEvent.type = SDL_xMANGAAPIEVENT;
 									mangaApiEvent.user.data1 = (void*)request.id; // So user can compare ids
 									mangaApiEvent.user.data2 = (void*)0;
 									
 									if (retValue == 0)
-										mangaApiEvent.user.code = OMMangaApiSuccess;
+										mangaApiEvent.user.code = xMangaApiSuccess;
 									else if (retValue == 1)
-										mangaApiEvent.user.code = OMMangaApiError;
+										mangaApiEvent.user.code = xMangaApiError;
 										
 									// Push event onto quene
 									FE_PushEvent(&mangaApiEvent);
@@ -767,10 +1044,10 @@ int mangaApiHandler(void*) {
 								
 								SDL_Event mangaApiEvent;
 					
-								mangaApiEvent.type = SDL_OMMANGAAPIEVENT;
+								mangaApiEvent.type = SDL_xMANGAAPIEVENT;
 								mangaApiEvent.user.data1 = (void*)request.id; // So user can compare ids
-								mangaApiEvent.user.data2 = (void*)12; // Just set to 12 so we can check for it later
-								mangaApiEvent.user.code = OMMangaApiError;
+								mangaApiEvent.user.data2 = (void*)xMangaApiNoNextChapter;
+								mangaApiEvent.user.code = xMangaApiError;
 									
 								// Push event onto quene
 								FE_PushEvent(&mangaApiEvent);
@@ -828,18 +1105,18 @@ int mangaApiHandler(void*) {
 							
 							SDL_Event mangaApiEvent;
 					
-							mangaApiEvent.type = SDL_OMMANGAAPIEVENT;
+							mangaApiEvent.type = SDL_xMANGAAPIEVENT;
 							mangaApiEvent.user.data1 = (void*)request.id; // So user can compare ids
 							mangaApiEvent.user.data2 = (void*)(imageIndex - 1);
 							
 							if (retValue == 0) {
 							
-								mangaApiEvent.user.code = OMMangaApiSuccess;
+								mangaApiEvent.user.code = xMangaApiSuccess;
 								delOld = true;
 								
 							} else if (retValue == 1) {
 							
-								mangaApiEvent.user.code = OMMangaApiError;
+								mangaApiEvent.user.code = xMangaApiError;
 								delOld = false;
 								
 							}
@@ -881,9 +1158,9 @@ int mangaApiHandler(void*) {
 									
 									SDL_Event mangaApiEvent;
 					
-									mangaApiEvent.type = SDL_OMMANGAAPIEVENT;
+									mangaApiEvent.type = SDL_xMANGAAPIEVENT;
 									mangaApiEvent.user.data1 = (void*)request.id; // So user can compare ids
-									mangaApiEvent.user.code = OMMangaApiError;
+									mangaApiEvent.user.code = xMangaApiError;
 										
 									// Push event onto quene
 									FE_PushEvent(&mangaApiEvent);
@@ -899,18 +1176,18 @@ int mangaApiHandler(void*) {
 									
 									SDL_Event mangaApiEvent;
 									
-									mangaApiEvent.type = SDL_OMMANGAAPIEVENT;
+									mangaApiEvent.type = SDL_xMANGAAPIEVENT;
 									mangaApiEvent.user.data1 = (void*)request.id; // So user can compare ids
 									mangaApiEvent.user.data2 = (void*)(imageList.list.size() - 1);
 									
 									if (retValue == 0) {
 									
-										mangaApiEvent.user.code = OMMangaApiSuccess;
+										mangaApiEvent.user.code = xMangaApiSuccess;
 										delOld = true;
 										
 									} else if (retValue == 1) {
 									
-										mangaApiEvent.user.code = OMMangaApiError;
+										mangaApiEvent.user.code = xMangaApiError;
 										delOld = false;
 										
 									}
@@ -926,10 +1203,10 @@ int mangaApiHandler(void*) {
 								
 								SDL_Event mangaApiEvent;
 					
-								mangaApiEvent.type = SDL_OMMANGAAPIEVENT;
+								mangaApiEvent.type = SDL_xMANGAAPIEVENT;
 								mangaApiEvent.user.data1 = (void*)request.id; // So user can compare ids
-								mangaApiEvent.user.data2 = (void*)12; // Just set to 12 so we can check for it later
-								mangaApiEvent.user.code = OMMangaApiError;
+								mangaApiEvent.user.data2 = (void*)xMangaApiNoPrevChapter;
+								mangaApiEvent.user.code = xMangaApiError;
 									
 								// Push event onto quene
 								FE_PushEvent(&mangaApiEvent);

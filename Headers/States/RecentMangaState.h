@@ -1,9 +1,7 @@
 /*
- * $Id: RecentMangaState.h 84 2009-12-31 03:42:09Z chaotic@luqmanrocks.co.cc $
- * 
- * This file is part of the OneMangaPSP application.
+ * This file is part of the xMangaPSP application.
  *
- * Copyright (C) 2009  Luqman Aden <www.luqmanrocks.co.cc>.
+ * Copyright (C) Luqman Aden <www.luqmanrocks.co.cc>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,17 +22,19 @@
 /**
  * Header for RecentMangaState.
  * 
- * @package OneMangaPSP
+ * @package xMangaPSP
  */
 
 #ifndef _RecentMangaState_H
-#define _RecentMangaState_H
+#define _RecentMangaState_H
+
 // BEGIN Includes
 #include "State.h"
 #include "MangaAPI.h"
 // END Includes
 
-class RecentMangaState : public State {		
+class RecentMangaState : public State {
+		
 	public:
 				
 		void init();
@@ -55,7 +55,7 @@ class RecentMangaState : public State {
 		RecentMangaList recentMangaList;
 		
 		// Holds all textures
-	   	std::map <std::string, OMTexture > textures;
+	   	std::map <std::string, xMTexture > textures;
 	   	
 	   	// Counter for displaying menu
 	   	int minList, maxList, selected;

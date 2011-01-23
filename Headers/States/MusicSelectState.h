@@ -1,9 +1,7 @@
 /*
- * $Id: MusicSelectState.h 85 2010-01-02 16:57:15Z chaotic@luqmanrocks.co.cc $
- * 
- * This file is part of the OneMangaPSP application.
+ * This file is part of the xMangaPSP application.
  *
- * Copyright (C) 2009  Luqman Aden <www.luqmanrocks.co.cc>.
+ * Copyright (C) Luqman Aden <www.luqmanrocks.co.cc>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,16 +22,18 @@
 /**
  * Header for Music Selection State.
  * 
- * @package OneMangaPSP
+ * @package xMangaPSP
  */
 
 #ifndef _MusicSelectState_H
-#define _MusicSelectState_H
+#define _MusicSelectState_H
+
 // BEGIN Includes
 #include "State.h"
 // END Includes
 
-class MusicSelectState : public State {		
+class MusicSelectState : public State {
+		
 	public:
 				
 		void init();

@@ -1,9 +1,7 @@
 /*
- * $Id: LeXEngine.h 86 2010-01-03 04:12:17Z chaotic@luqmanrocks.co.cc $
- * 
- * This file is part of the OneMangaPSP application.
+ * This file is part of the xMangaPSP application.
  *
- * Copyright (C) 2009  Luqman Aden <www.luqmanrocks.co.cc>.
+ * Copyright (C) Luqman Aden <www.luqmanrocks.co.cc>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +22,7 @@
 /**
  * Header for LeX Engine.
  * 
- * @package OneMangaPSP
+ * @package xMangaPSP
  */
 
 #ifndef _LeXEngine_H
@@ -36,7 +34,7 @@
 #endif
 
 // BEGIN Includes
-#include "OMPStandard.h"
+#include "xMPStandard.h"
 
 #include <psputility.h>
 
@@ -74,7 +72,7 @@ typedef struct {
 	int w, pw;
 	int h, ph;
 
-} OMTexture;
+} xMTexture;
 
 class State;
 
@@ -479,7 +477,8 @@ class LeXEngine {
 		/**
 		 * Popup the standard PSP net dialog.
 		 * 
-		 * @access public		 * 
+		 * @access public
+		 * 
 		 * @return pspUtilityNetconfData
 		 */
 		pspUtilityNetconfData showPspNetDialog();
@@ -539,9 +538,9 @@ class LeXEngine {
 		 * @param SDL_Rect*[optional] clip The portion to use.
 		 * @param bool smooth Use GL_LINEAR.
 		 * 
-		 * @return OMTexture The texture + extra info.
+		 * @return xMTexture The texture + extra info.
 		 */
-		OMTexture glTextureFromSDLSurface(SDL_Surface *surface, SDL_Rect *clip = NULL, bool smooth = false);
+		xMTexture glTextureFromSDLSurface(SDL_Surface *surface, SDL_Rect *clip = NULL, bool smooth = false);
 		
 		/**
 		 * Render an OpenGL texture at desired coordinates.
@@ -550,10 +549,10 @@ class LeXEngine {
 		 * 
 		 * @param int x X coordinate.
 		 * @param int y Y coordinate.
-		 * @param OMTexture texture The texture to render.
+		 * @param xMTexture texture The texture to render.
 		 * @param bool smooth Use GL_LINEAR.
 		 */
-		void renderGlTexture(int x, int y, OMTexture texture, bool smooth = false);
+		void renderGlTexture(int x, int y, xMTexture texture, bool smooth = false);
 		
 		/**
 		 * Open from memory[RAW].
@@ -589,9 +588,9 @@ class LeXEngine {
 		 * @param TTF_Font* font The font to use.
 		 * @param SDL_Color textColour Text colour.
 		 * 
-		 * @return OMTexture The texture.
+		 * @return xMTexture The texture.
 		 */
-		OMTexture ttfTexture(const char* text, TTF_Font *font, SDL_Color textColour);
+		xMTexture ttfTexture(const char* text, TTF_Font *font, SDL_Color textColour);
 		
 		/**
 		 * Get jostick number {which}.

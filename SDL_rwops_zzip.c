@@ -1,11 +1,10 @@
 /*
- * $Id: SDL_rwops_zzip.c 81 2009-12-29 02:58:45Z chaotic@luqmanrocks.co.cc $
  *      Copyright (c) 2001 Guido Draheim <guidod@gmx.de>
  *      Use freely under the restrictions of the ZLIB License
  *
  *      (this example uses errno which might not be multithreaded everywhere)
  * 
- * 		Modded for use with OneMangaPSP.
+ * 		Modded for use with xMangaPSP.
  */
 
 #include <SDL_rwops_zzip.h>

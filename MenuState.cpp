@@ -1,9 +1,7 @@
 /*
- * $Id: MenuState.cpp 86 2010-01-03 04:12:17Z chaotic@luqmanrocks.co.cc $
- * 
- * This file is part of the OneMangaPSP application.
+ * This file is part of the xMangaPSP application.
  *
- * Copyright (C) 2009  Luqman Aden <www.luqmanrocks.co.cc>.
+ * Copyright (C) Luqman Aden <www.luqmanrocks.co.cc>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,25 +22,25 @@
 /**
  * MenuState Class.
  * 
- * @package OneMangaPSP
+ * @package xMangaPSP
  */
 
 #ifndef _MenuState_CPP
 #define _MenuState_CPP
 
 // BEGIN Includes
-#include "OneMangaPSP.h"
+#include "xMangaPSP.h"
 #include "States/MenuState.h"
 #include "States/AboutState.h"
 #include "States/BookmarkState.h"
 #include "States/MangaSelectState.h"
 #include "States/RecentMangaState.h"
-#include "OMPUtil.h"
+#include "xMPUtil.h"
 // END Includes
 
 MenuState::MenuState() {
 
-	OMStrArray tempMap;
+	xMStrArray tempMap;
 
 	tempMap["name"] = "Manga";
 	tempMap["description"] = "Read your favourite manga.";
@@ -73,7 +71,7 @@ MenuState::MenuState() {
 	tempMap.clear();*/
 	
 	tempMap["name"] = "About";
-	tempMap["description"] = "See more info on OneMangaPSP.";
+	tempMap["description"] = "See more info on xMangaPSP.";
 	tempMap["action"] = "about";
 	
 	menuItems.push_back(tempMap);
@@ -91,14 +89,14 @@ MenuState::MenuState() {
 void MenuState::init() {
 	    
 	// Loads common resources if necessary
-    OMPUtil::loadCommonResources();    
+    xMPUtil::loadCommonResources();    
 	    	
 	SDL_Color textColour = {239, 237, 230};
 	
 	ResourceManager::getFont("SansBold15")->setColour(textColour);
 	
 	// Load main UI
-	OMPUtil::loadMainUI();
+	xMPUtil::loadMainUI();
 	
 	// Main UI
 	this->textures["MainUI"] = ResourceManager::getTexture("MainUI");
@@ -134,7 +132,7 @@ void MenuState::shutdown() {
     glDeleteTextures(1, &this->textures["ActionDescription"].texture);
     
     // Unload main UI
-	OMPUtil::unloadMainUI();
+	xMPUtil::unloadMainUI();
 
 }
 
@@ -164,18 +162,18 @@ void MenuState::handleInput() {
         	
         		break;
         		
-        	case SDL_OMMANGAAPIEVENT:
+        	case SDL_xMANGAAPIEVENT:
         	
         		// Check for corresponding event
 				if ((int)event.user.data1 == mangaListApiRequestId) {
 				
 					// Error/Success checking
-					if ((int)event.user.code == OMMangaApiError) {
+					if ((int)event.user.code == xMangaApiError) {
 					
 						engine->logMsg("MenuState: Manga API error! [%s]", MangaAPI::getError().c_str());
 						engine->showPspMsgDialog("Unable to load Manga list. Please verify your internet connection works and try restarting the app.", false);
 						
-					} else if ((int)event.user.code == OMMangaApiSuccess) {
+					} else if ((int)event.user.code == xMangaApiSuccess) {
 					
 						printf("Loaded manga list!\n");
 						mangaListApiRequestId = -1;
@@ -186,12 +184,12 @@ void MenuState::handleInput() {
 				} else if ((int)event.user.data1 == recentMangaListApiRequestId) {
 				
 					// Error/Success checking
-					if ((int)event.user.code == OMMangaApiError) {
+					if ((int)event.user.code == xMangaApiError) {
 					
 						engine->logMsg("MenuState: Manga API error! [%s]", MangaAPI::getError().c_str());
 						engine->showPspMsgDialog("Unable to load Recent Manga list. Please verify your internet connection works and try restarting the app.", false);
 						
-					} else if ((int)event.user.code == OMMangaApiSuccess) {
+					} else if ((int)event.user.code == xMangaApiSuccess) {
 					
 						printf("Loaded recent manga list!\n");
 						recentMangaListApiRequestId = -1;
@@ -301,7 +299,7 @@ void MenuState::handleLogic() {
 		if (action == "readManga") {
 
 			// Load Manga List		
-			mangaListApiRequestId = MangaAPI::requestMangaList(OneMangaAPI);
+			mangaListApiRequestId = MangaAPI::requestMangaList(MangaStreamAPI);
 			
 		} else if (action == "recentManga") {
 		
@@ -309,7 +307,7 @@ void MenuState::handleLogic() {
 			engine->showPspMsgDialog("Please be patient when loading recent manga as the manga list, chapter list AND image list have to be loaded.");
 				
 			// Load recent manga list
-			recentMangaListApiRequestId = MangaAPI::requestRecentMangaList(OneMangaAPI);
+			recentMangaListApiRequestId = MangaAPI::requestRecentMangaList(MangaStreamAPI);
 			
 		} else if (action == "viewBookmarks") {
 		
@@ -356,7 +354,7 @@ void MenuState::render() {
 	engine->renderGlTexture(0, 0, this->textures["MainUI"]);
 		
 	// Draw Battery Icons
-	OMPUtil::drawBatteryIcon();
+	xMPUtil::drawBatteryIcon();
 	
 	// Draw Time
 	engine->renderGlTexture(425, 8, this->textures["Time"]);
@@ -420,7 +418,7 @@ void MenuState::render() {
 	ResourceManager::getFont("SansBold15")->glDraw(10, 232, itemDesc.c_str());
                 
 	if (mangaListApiRequestId != -1 || recentMangaListApiRequestId != -1)
-		OMPUtil::drawLoadingIcon();
+		xMPUtil::drawLoadingIcon();
                                 	
 	// Flush
     glFlush();

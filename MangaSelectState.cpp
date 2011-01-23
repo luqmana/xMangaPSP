@@ -1,9 +1,7 @@
 /*
- * $Id: MangaSelectState.cpp 86 2010-01-03 04:12:17Z chaotic@luqmanrocks.co.cc $
- * 
- * This file is part of the OneMangaPSP application.
+ * This file is part of the xMangaPSP application.
  *
- * Copyright (C) 2009  Luqman Aden <www.luqmanrocks.co.cc>.
+ * Copyright (C) Luqman Aden <www.luqmanrocks.co.cc>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,18 +22,18 @@
 /**
  * MangaSelectState Class.
  * 
- * @package OneMangaPSP
+ * @package xMangaPSP
  */
 
 #ifndef _MangaSelectState_CPP
 #define _MangaSelectState_CPP
 
 // BEGIN Includes
-#include "OneMangaPSP.h"
+#include "xMangaPSP.h"
 #include "States/MangaSelectState.h"
 #include "States/ChapterSelectState.h"
 #include "States/MenuState.h"
-#include "OMPUtil.h"
+#include "xMPUtil.h"
 // END Includes
 
 void MangaSelectState::init() {
@@ -44,7 +42,7 @@ void MangaSelectState::init() {
 	mangaList = MangaAPI::getMangaList();
 
 	// Load main UI
-	OMPUtil::loadMainUI();
+	xMPUtil::loadMainUI();
 
 	// Get resource
     this->textures["MainUI"] = ResourceManager::getTexture("MainUI");
@@ -79,7 +77,7 @@ void MangaSelectState::shutdown() {
     glDeleteTextures(1, &this->textures["ActionDescription"].texture);
     
     // Unload main UI
-	OMPUtil::unloadMainUI();
+	xMPUtil::unloadMainUI();
 
 }
 
@@ -109,18 +107,18 @@ void MangaSelectState::handleInput() {
         	
         		break;
         		
-        	case SDL_OMMANGAAPIEVENT:
+        	case SDL_xMANGAAPIEVENT:
         	
         		// Check for corresponding event
 				if ((int)event.user.data1 == mangaApiRequestId) {
 				
 					// Error/Success checking
-					if ((int)event.user.code == OMMangaApiError) {
+					if ((int)event.user.code == xMangaApiError) {
 					
 						engine->logMsg("MangaSelectState: Manga API error! [%s]", MangaAPI::getError().c_str());
 						engine->showPspMsgDialog("Unable to load Chapter list. Please verify your internet connection works and try restarting the app.", false);
 						
-					} else if ((int)event.user.code == OMMangaApiSuccess) {
+					} else if ((int)event.user.code == xMangaApiSuccess) {
 					
 						printf("Loaded chapter list!\n");
 						mangaApiRequestId = -1;
@@ -246,7 +244,7 @@ void MangaSelectState::handleLogic() {
 	if (doAction == true) {
 		
 		// Load Chapter List		
-		mangaApiRequestId = MangaAPI::requestChapterList(OneMangaAPI, this->mangaList[selected].name, this->mangaList[selected].apiHandle);
+		mangaApiRequestId = MangaAPI::requestChapterList(MangaStreamAPI, this->mangaList[selected].name, this->mangaList[selected].apiHandle);
 		
 		// Reset flag
 		doAction = false;
@@ -272,7 +270,7 @@ void MangaSelectState::render() {
 	engine->renderGlTexture(0, 0, this->textures["MainUI"]);
 		
 	// Draw Battery Icons
-	OMPUtil::drawBatteryIcon();
+	xMPUtil::drawBatteryIcon();
 	
 	// Draw Time
 	engine->renderGlTexture(425, 8, this->textures["Time"]);
@@ -331,7 +329,7 @@ void MangaSelectState::render() {
 	} while (i <= maxList);
 	
 	if (mangaApiRequestId != -1)
-		OMPUtil::drawLoadingIcon();
+		xMPUtil::drawLoadingIcon();
 		
 	glFlush();
 

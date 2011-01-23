@@ -1,9 +1,7 @@
 /*
- * $Id: MangaViewState.cpp 86 2010-01-03 04:12:17Z chaotic@luqmanrocks.co.cc $
- * 
- * This file is part of the OneMangaPSP application.
+ * This file is part of the xMangaPSP application.
  *
- * Copyright (C) 2009  Luqman Aden <www.luqmanrocks.co.cc>.
+ * Copyright (C) Luqman Aden <www.luqmanrocks.co.cc>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,17 +22,17 @@
 /**
  * MangaViewState Class.
  * 
- * @package OneMangaPSP
+ * @package xMangaPSP
  */
 
 #ifndef _MangaViewState_CPP
 #define _MangaViewState_CPP
 
 // BEGIN Includes
-#include "OneMangaPSP.h"
+#include "xMangaPSP.h"
 #include "States/MangaViewState.h"
 #include "States/ImageSelectState.h"
-#include "OMPUtil.h"
+#include "xMPUtil.h"
 #include "BookmarkManager.h"
 // END Includes
 
@@ -84,7 +82,7 @@ void MangaViewState::shutdown() {
     glDeleteTextures(1, &this->textures["Time"].texture);
     
     // Unload main UI
-	OMPUtil::unloadMainUI();
+	xMPUtil::unloadMainUI();
 
 }
 
@@ -114,24 +112,26 @@ void MangaViewState::handleInput() {
         	
         		break;
         		
-        	case SDL_OMMANGAAPIEVENT:
+        	case SDL_xMANGAAPIEVENT:
         	
         		// Check for corresponding event
 				if ((action == 1 || action == 2) && (int)event.user.data1 == mangaApiRequestId) {
 				
 					// Error/Success checking
-					if ((int)event.user.code == OMMangaApiError) {
+					if ((int)event.user.code == xMangaApiError) {
 					
 						engine->logMsg("MangaViewState: Manga API error! [%s]", MangaAPI::getError().c_str());
 						
-						if ((int)event.user.data2 == 12)
-							engine->showPspMsgDialog("Sorry but the next chapter isn't out yet or there is no previous chapter. Check back later.", false);
+						if ((int)event.user.data2 == xMangaApiNoNextChapter)
+							engine->showPspMsgDialog("Sorry but the next chapter isn't out yet. Check back later.", false);
+						else if ((int)event.user.data2 == xMangaApiNoPrevChapter)
+						    engine->showPspMsgDialog("Sorry but there is no previous chapter.", false);
 						else
-							engine->showPspMsgDialog("Unable to next/prev Image. Please verify your internet connection works and try restarting the app.", false);
+							engine->showPspMsgDialog("Unable to load next/prev image. Please verify your internet connection works and try restarting the app.", false);
 						
 						action = -1;
 						
-					} else if ((int)event.user.code == OMMangaApiSuccess) {
+					} else if ((int)event.user.code == xMangaApiSuccess) {
 											
 						// Set manga image
 						mImage = MangaAPI::getMangaImage();
@@ -333,12 +333,12 @@ void MangaViewState::handleLogic() {
 		if (action == 1) {
 		
 			// Request next image
-			mangaApiRequestId = MangaAPI::requestNextImage(OneMangaAPI, this->imageList, this->imageIndex);
+			mangaApiRequestId = MangaAPI::requestNextImage(MangaStreamAPI, this->imageList, this->imageIndex);
 		
 		} else if (action == 2) {
 		
 			// Request prev image
-			mangaApiRequestId = MangaAPI::requestPrevImage(OneMangaAPI, this->imageList, this->imageIndex);
+			mangaApiRequestId = MangaAPI::requestPrevImage(MangaStreamAPI, this->imageList, this->imageIndex);
 		
 		}
 		
@@ -377,8 +377,8 @@ void MangaViewState::render() {
 	
 	for (i; i < this->mImage->sections.size(); i++) {
 	
-		int x = this->mImage->sections[i].x + posX;
-		int y = this->mImage->sections[i].y + posY;
+		int x = this->mImage->sections[i].x + posX - 1;
+		int y = this->mImage->sections[i].y + posY - 1;
 						
 		// TODO: Only render if within viewing area
 		engine->renderGlTexture(x, y, this->mImage->sections[i].texture, true);
@@ -406,7 +406,7 @@ void MangaViewState::render() {
 		glColor4f(1.0, 1.0, 1.0, 0.8);
 		
 		// Draw Battery Icons
-		OMPUtil::drawBatteryIcon();
+		xMPUtil::drawBatteryIcon();
 		
 		// Draw Time
 		engine->renderGlTexture(425, 8, this->textures["Time"]);
@@ -420,7 +420,7 @@ void MangaViewState::render() {
 		
 	// Draw loading indicator
 	if (action != -1)
-		OMPUtil::drawLoadingIcon(448, 240, false);
+		xMPUtil::drawLoadingIcon(448, 240, false);
 
 }
 

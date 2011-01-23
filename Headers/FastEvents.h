@@ -1,5 +1,4 @@
 /*
-    $Id: FastEvents.h 79 2009-12-27 02:40:59Z chaotic@luqmanrocks.co.cc $
     
     Copyright (C) 2002 Bob Pendleton
 
@@ -28,7 +27,7 @@
 /**
  * Fast Events library
  * 
- * @project OneMangaPSP
+ * @project xMangaPSP
  */
 
 #ifndef _FASTEVENTS_H_

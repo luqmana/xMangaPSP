@@ -1,9 +1,7 @@
 /*
- * $Id: TitleState.h 75 2009-12-24 04:17:52Z chaotic@luqmanrocks.co.cc $
- * 
- * This file is part of the OneMangaPSP application.
+ * This file is part of the xMangaPSP application.
  *
- * Copyright (C) 2009  Luqman Aden <www.luqmanrocks.co.cc>.
+ * Copyright (C) Luqman Aden <www.luqmanrocks.co.cc>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,17 +22,19 @@
 /**
  * Header for TitleState.
  * 
- * @package OneMangaPSP
+ * @package xMangaPSP
  */
 
 #ifndef _TitleState_H
-#define _TitleState_H
+#define _TitleState_H
+
 // BEGIN Includes
 #include "State.h"
 #include "Timer.h"
 // END Includes
 
-class TitleState : public State {		
+class TitleState : public State {
+		
 	public:
 				
 		TitleState(int which);
@@ -54,7 +54,7 @@ class TitleState : public State {
 	private:
 	
 		// Holds all textures
-	   	std::map <std::string, OMTexture > textures;
+	   	std::map <std::string, xMTexture > textures;
 	   	
 	   	// Info on which splash to render
 	   	int which;

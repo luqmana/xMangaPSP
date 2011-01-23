@@ -1,9 +1,7 @@
-/*
- * $Id: AboutState.cpp 86 2010-01-03 04:12:17Z chaotic@luqmanrocks.co.cc $
- * 
- * This file is part of the OneMangaPSP application.
+/* 
+ * This file is part of the xMangaPSP application.
  *
- * Copyright (C) 2009  Luqman Aden <www.luqmanrocks.co.cc>.
+ * Copyright (C) Luqman Aden <www.luqmanrocks.co.cc>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,17 +22,17 @@
 /**
  * AboutState Class.
  * 
- * @package OneMangaPSP
+ * @package xMangaPSP
  */
 
 #ifndef _AboutState_CPP
 #define _AboutState_CPP
 
 // BEGIN Includes
-#include "OneMangaPSP.h"
+#include "xMangaPSP.h"
 #include "States/AboutState.h"
 #include "States/MenuState.h"
-#include "OMPUtil.h"
+#include "xMPUtil.h"
 // END Includes
 
 void AboutState::init() {
@@ -42,7 +40,7 @@ void AboutState::init() {
 	// Start Credits Music
 	engine->playBGMusic("credits.mp3", true);
 
-	OMStrArray tempMap;
+	xMStrArray tempMap;
 	
 	tempMap["contributer"] = "Chaotic(X[SinZ])";
 	tempMap["contribution"] = "The creator.";
@@ -56,7 +54,7 @@ void AboutState::init() {
 	creditItems.push_back(tempMap);
 	tempMap.clear();
 	
-	tempMap["contributer"] = "OneManga.com";
+	tempMap["contributer"] = "MangaStream.com";
 	tempMap["contribution"] = "Providing a wonderful place for reading manga online.";
 	
 	creditItems.push_back(tempMap);
@@ -68,8 +66,8 @@ void AboutState::init() {
 	creditItems.push_back(tempMap);
 	tempMap.clear();
 	
-	tempMap["contributer"] = "Th3man";
-	tempMap["contribution"] = "Providing me a PSP to test with.";
+	tempMap["contributer"] = "Th3man / Baba";
+	tempMap["contribution"] = "Providing me a PSP[go] to test with.";
 	
 	creditItems.push_back(tempMap);
 	tempMap.clear();
@@ -79,9 +77,15 @@ void AboutState::init() {
 	
 	creditItems.push_back(tempMap);
 	tempMap.clear();
+	
+	tempMap["contributer"] = "Samoi, kgsws, etc";
+	tempMap["contribution"] = "For providing/helping with the signing tool.";
+	
+	creditItems.push_back(tempMap);
+	tempMap.clear();
 
 	// Load main UI
-	OMPUtil::loadMainUI();
+	xMPUtil::loadMainUI();
 
 	// Get resource
     this->textures["MainUI"] = ResourceManager::getTexture("MainUI");
@@ -96,8 +100,11 @@ void AboutState::init() {
 	// Title text
 	this->textures["TitleText"] = ResourceManager::getFont("SansBold15")->getGlTexture("About & Credits");
 	
+	std::stringstream info;
+	info << "xMangaPSP v" << _MAJOR_VERSION << "." << _MINOR_VERSION << " Contributers:";
+	
 	// Info text
-	this->textures["Info"] = ResourceManager::getFont("SansBold15")->getGlTexture("OneMangaPSP v1.0 Contributers:");
+	this->textures["Info"] = ResourceManager::getFont("SansBold15")->getGlTexture(info.str().c_str());
 	
 	// Contribution Label
 	this->textures["ContributionLabel"] = ResourceManager::getFont("SansBold15")->getGlTexture("Contribution:");
@@ -118,7 +125,7 @@ void AboutState::shutdown() {
     glDeleteTextures(1, &this->textures["ContributionLabel"].texture);
     
     // Unload main UI
-	OMPUtil::unloadMainUI();
+	xMPUtil::unloadMainUI();
 	
 	// Restart BG Music
 	engine->playBGMusic(bgMusicFile, true);
@@ -255,7 +262,7 @@ void AboutState::render() {
 	engine->renderGlTexture(0, 0, this->textures["MainUI"]);
 		
 	// Draw Battery Icons
-	OMPUtil::drawBatteryIcon();
+	xMPUtil::drawBatteryIcon();
 	
 	// Draw Time
 	engine->renderGlTexture(425, 8, this->textures["Time"]);

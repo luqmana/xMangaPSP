@@ -1,9 +1,7 @@
 /*
- * $Id: State.h 74 2009-12-23 05:25:31Z chaotic@luqmanrocks.co.cc $
- * 
- * This file is part of the OneMangaPSP application.
+ * This file is part of the xMangaPSP application.
  *
- * Copyright (C) 2009  Luqman Aden <www.luqmanrocks.co.cc>.
+ * Copyright (C) Luqman Aden <www.luqmanrocks.co.cc>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,17 +22,19 @@
 /**
  * Header for State.
  * 
- * @package OneMangaPSP
+ * @package xMangaPSP
  */
 
 #ifndef _State_H
-#define _State_H
+#define _State_H
+
 // BEGIN Includes
 #include "LeXEngine.h"
 #include "ResourceManager.h"
 // END Includes
 
-class State {		
+class State {
+		
 	public:
 	
 		LeXEngine *engine;

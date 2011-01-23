@@ -1,9 +1,7 @@
 /*
- * $Id: ResourceManager.cpp 86 2010-01-03 04:12:17Z chaotic@luqmanrocks.co.cc $
- * 
- * This file is part of the OneMangaPSP application.
+ * This file is part of the xMangaPSP application.
  *
- * Copyright (C) 2009  Luqman Aden <www.luqmanrocks.co.cc>.
+ * Copyright (C) Luqman Aden <www.luqmanrocks.co.cc>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +22,7 @@
 /**
  * Resource Manager.
  * 
- * @package OneMangaPSP
+ * @package xMangaPSP
  */
 
 #ifndef _ResourceManager_CPP
@@ -35,10 +33,10 @@
 // END Includes
 
 // All the textures
-std::map <std::string, OMTexture> textures;
+std::map <std::string, xMTexture> textures;
 
 // All the fonts
-std::map <std::string, OMText* > fonts;
+std::map <std::string, xMText* > fonts;
 
 /**
  * Is a texture?
@@ -58,9 +56,9 @@ bool ResourceManager::isTexture(std::string key) {
  * 
  * @param std::string key Key to access texture.
  *
- * @return OMTexture The texture.
+ * @return xMTexture The texture.
  */
-OMTexture ResourceManager::getTexture(std::string key) {
+xMTexture ResourceManager::getTexture(std::string key) {
 
 	return textures[key];
 	
@@ -149,9 +147,9 @@ bool ResourceManager::isFont(std::string key) {
  * 
  * @param std::string key Key to access font.
  *
- * @return OMText* The font.
+ * @return xMText* The font.
  */
-OMText* ResourceManager::getFont(std::string key) {
+xMText* ResourceManager::getFont(std::string key) {
 
 	return fonts[key];
 
@@ -161,11 +159,11 @@ OMText* ResourceManager::getFont(std::string key) {
  * Load a new font into the ResourceManager.
  * 
  * @param std::string key Key to access texture.
- * @param OMText* font The font.
+ * @param xMText* font The font.
  * 
  * @return bool true|false Success or not.
  */
-bool ResourceManager::loadFont(std::string key, OMText *font) {
+bool ResourceManager::loadFont(std::string key, xMText *font) {
 
 	// Null pointer check
 	if (font == NULL) {
@@ -219,12 +217,12 @@ void ResourceManager::cleanUp() {
 
 	// Cleanup fonts
 	// Frees OpenGL textures
-	for (std::map<std::string, OMTexture>::const_iterator iter = textures.begin(); iter != textures.end(); ++iter)
+	for (std::map<std::string, xMTexture>::const_iterator iter = textures.begin(); iter != textures.end(); ++iter)
 		glDeleteTextures(1, &iter->second.texture);
 
 	// Cleanup fonts
 	// Calls each fonts destructor method
-	for (std::map<std::string, OMText* >::const_iterator iter = fonts.begin(); iter != fonts.end(); ++iter)
+	for (std::map<std::string, xMText* >::const_iterator iter = fonts.begin(); iter != fonts.end(); ++iter)
 		delete iter->second;
 
 }

@@ -1,9 +1,7 @@
 /*
- * $Id: ResourceManager.h 86 2010-01-03 04:12:17Z chaotic@luqmanrocks.co.cc $
- * 
- * This file is part of the OneMangaPSP application.
+ * This file is part of the xMangaPSP application.
  *
- * Copyright (C) 2009  Luqman Aden <www.luqmanrocks.co.cc>.
+ * Copyright (C) Luqman Aden <www.luqmanrocks.co.cc>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,16 +22,16 @@
 /**
  * Header for Resource Manager
  * 
- * @package OneMangaPSP
+ * @package xMangaPSP
  */
 
 #ifndef _ResourceManager_H
 #define _ResourceManager_H
 
 // BEGIN Includes
-#include "OMPStandard.h"
-#include "OneMangaPSP.h"
-#include "OMText.h"
+#include "xMPStandard.h"
+#include "xMangaPSP.h"
+#include "xMText.h"
 #include <vector>
 // END Includes
 
@@ -53,9 +51,9 @@ namespace ResourceManager {
 	 * 
 	 * @param std::string key Key to access texture.
 	 *
-	 * @return OMTexture The texture.
+	 * @return xMTexture The texture.
 	 */
-	OMTexture getTexture(std::string key);
+	xMTexture getTexture(std::string key);
 	
 	/**
 	 * Load a new texture into the ResourceManager.
@@ -89,19 +87,19 @@ namespace ResourceManager {
 	 * 
 	 * @param std::string key Key to access font.
 	 *
-	 * @return OMText* The font.
+	 * @return xMText* The font.
 	 */
-	OMText* getFont(std::string key);
+	xMText* getFont(std::string key);
 	
 	/**
 	 * Load a new font into the ResourceManager.
 	 * 
 	 * @param std::string key Key to access texture.
-	 * @param OMText* font The font.
+	 * @param xMText* font The font.
 	 * 
 	 * @return bool true|false Success or not.
 	 */
-	bool loadFont(std::string key, OMText *font);
+	bool loadFont(std::string key, xMText *font);
 	
 	/**
 	 * Unloads a font.

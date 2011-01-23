@@ -1,9 +1,7 @@
 /*
- * $Id: BookmarkState.cpp 86 2010-01-03 04:12:17Z chaotic@luqmanrocks.co.cc $
- * 
- * This file is part of the OneMangaPSP application.
+ * This file is part of the xMangaPSP application.
  *
- * Copyright (C) 2009  Luqman Aden <www.luqmanrocks.co.cc>.
+ * Copyright (C) Luqman Aden <www.luqmanrocks.co.cc>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,20 +22,20 @@
 /**
  * BookmarkState Class.
  * 
- * @package OneMangaPSP
+ * @package xMangaPSP
  */
 
 #ifndef _BookmarkState_CPP
 #define _BookmarkState_CPP
 
 // BEGIN Includes
-#include "OneMangaPSP.h"
+#include "xMangaPSP.h"
 #include "States/BookmarkState.h"
 #include "States/ChapterSelectState.h"
 #include "States/ImageSelectState.h"
 #include "States/MangaViewState.h"
 #include "States/MenuState.h"
-#include "OMPUtil.h"
+#include "xMPUtil.h"
 // END Includes
 
 void BookmarkState::init() {
@@ -58,7 +56,7 @@ void BookmarkState::init() {
 	ResourceManager::getFont("SansBold15")->setColour(textColour);
 	
 	// Load main UI
-	OMPUtil::loadMainUI();
+	xMPUtil::loadMainUI();
 	
 	// Main UI
 	this->textures["MainUI"] = ResourceManager::getTexture("MainUI");
@@ -93,7 +91,7 @@ void BookmarkState::shutdown() {
     glDeleteTextures(1, &this->textures["ActionDescription"].texture);
     
     // Unload main UI
-	OMPUtil::unloadMainUI();
+	xMPUtil::unloadMainUI();
 
 }
 
@@ -123,18 +121,18 @@ void BookmarkState::handleInput() {
         	
         		break;
         		
-        	case SDL_OMMANGAAPIEVENT:
+        	case SDL_xMANGAAPIEVENT:
         	
         		// Check for corresponding event
 				if ((int)event.user.data1 == mangaListApiRequestId) {
 				
 					// Error/Success checking
-					if ((int)event.user.code == OMMangaApiError) {
+					if ((int)event.user.code == xMangaApiError) {
 					
 						engine->logMsg("BookmarkState: Manga API error! [%s]", MangaAPI::getError().c_str());
 						engine->showPspMsgDialog("Unable to load Manga list. Please verify your internet connection works and try restarting the app.", false);
 						
-					} else if ((int)event.user.code == OMMangaApiSuccess) {
+					} else if ((int)event.user.code == xMangaApiSuccess) {
 					
 						printf("Loaded manga list!\n");
 						mangaListApiRequestId = -1;
@@ -147,12 +145,12 @@ void BookmarkState::handleInput() {
 				} else if ((int)event.user.data1 == chapterListApiRequestId) {
 				
 					// Error/Success checking
-					if ((int)event.user.code == OMMangaApiError) {
+					if ((int)event.user.code == xMangaApiError) {
 					
 						engine->logMsg("BookmarkState: Manga API error! [%s]", MangaAPI::getError().c_str());
 						engine->showPspMsgDialog("Unable to load Chapter list. Please verify your internet connection works and try restarting the app.", false);
 						
-					} else if ((int)event.user.code == OMMangaApiSuccess) {
+					} else if ((int)event.user.code == xMangaApiSuccess) {
 					
 						printf("Loaded chapter list!\n");
 						chapterListApiRequestId = -1;
@@ -165,12 +163,12 @@ void BookmarkState::handleInput() {
 				} else if ((int)event.user.data1 == imageListApiRequestId) {
 				
 					// Error/Success checking
-					if ((int)event.user.code == OMMangaApiError) {
+					if ((int)event.user.code == xMangaApiError) {
 					
 						engine->logMsg("BookmarkState: Manga API error! [%s]", MangaAPI::getError().c_str());
 						engine->showPspMsgDialog("Unable to load Image list. Please verify your internet connection works and try restarting the app.", false);
 						
-					} else if ((int)event.user.code == OMMangaApiSuccess) {
+					} else if ((int)event.user.code == xMangaApiSuccess) {
 					
 						printf("Loaded image list!\n");
 						imageListApiRequestId = -1;
@@ -182,12 +180,12 @@ void BookmarkState::handleInput() {
 				} else if ((int)event.user.data1 == imageApiRequestId) {
 				
 					// Error/Success checking
-					if ((int)event.user.code == OMMangaApiError) {
+					if ((int)event.user.code == xMangaApiError) {
 					
 						engine->logMsg("BookmarkState: Manga API error! [%s]", MangaAPI::getError().c_str());
 						engine->showPspMsgDialog("Unable to load Image. Please verify your internet connection works and try restarting the app.", false);
 						
-					} else if ((int)event.user.code == OMMangaApiSuccess) {
+					} else if ((int)event.user.code == xMangaApiSuccess) {
 					
 						printf("Loaded image!\n");
 						imageApiRequestId = -1;
@@ -332,7 +330,7 @@ void BookmarkState::handleLogic() {
 		if (action == 1) {
 				
 			// Load manga list
-			mangaListApiRequestId = MangaAPI::requestMangaList(OneMangaAPI);		
+			mangaListApiRequestId = MangaAPI::requestMangaList(MangaStreamAPI);		
 		
 		} else if (action == 2) {
 		
@@ -354,7 +352,7 @@ void BookmarkState::handleLogic() {
 			apiHandle = parts[0];
 
 			// Load chapter list
-			chapterListApiRequestId = MangaAPI::requestChapterList(OneMangaAPI, manga, apiHandle);
+			chapterListApiRequestId = MangaAPI::requestChapterList(MangaStreamAPI, manga, apiHandle);
 			
 		} else if (action == 3) {
 		
@@ -384,7 +382,7 @@ void BookmarkState::handleLogic() {
 				mangaApiHandle = parts[0];
 				chapterApiHandle = parts[1];
 			
-				imageListApiRequestId = MangaAPI::requestImageList(OneMangaAPI, manga, mangaApiHandle, chapter, chapterApiHandle);
+				imageListApiRequestId = MangaAPI::requestImageList(MangaStreamAPI, manga, mangaApiHandle, chapter, chapterApiHandle);
 			
 			}
 		
@@ -416,7 +414,7 @@ void BookmarkState::handleLogic() {
 				}
 				
 				// Load image
-				imageApiRequestId = MangaAPI::requestImage(OneMangaAPI, iList, i);
+				imageApiRequestId = MangaAPI::requestImage(MangaStreamAPI, iList, i);
 			
 			}
 				
@@ -487,7 +485,7 @@ void BookmarkState::render() {
 	engine->renderGlTexture(0, 0, this->textures["MainUI"]);
 		
 	// Draw Battery Icons
-	OMPUtil::drawBatteryIcon();
+	xMPUtil::drawBatteryIcon();
 	
 	// Draw Time
 	engine->renderGlTexture(425, 8, this->textures["Time"]);
@@ -549,7 +547,7 @@ void BookmarkState::render() {
 	} while (i <= maxList);
 	
 	if (action != -1)
-		OMPUtil::drawLoadingIcon();
+		xMPUtil::drawLoadingIcon();
 		
 	glFlush();
 

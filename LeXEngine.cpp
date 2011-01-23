@@ -1,9 +1,7 @@
 /*
- * $Id: LeXEngine.cpp 86 2010-01-03 04:12:17Z chaotic@luqmanrocks.co.cc $
- * 
- * This file is part of the OneMangaPSP application.
+ * This file is part of the xMangaPSP application.
  *
- * Copyright (C) 2009  Luqman Aden <www.luqmanrocks.co.cc>.
+ * Copyright (C) Luqman Aden <www.luqmanrocks.co.cc>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +22,7 @@
 /**
  * LeX Engine.
  * 
- * @package OneMangaPSP
+ * @package xMangaPSP
  */
 
 #ifndef _LeXEngine_CPP
@@ -32,7 +30,7 @@
 
 // BEGIN Includes
 #include "LeXEngine.h"
-#include "OMPNetwork.h"
+#include "xMPNetwork.h"
 #include "State.h"
 
 // Extra string support
@@ -351,6 +349,7 @@ void LeXEngine::setupScreen() {
 			this->videoModeFlags = (~SDL_DOUBLEBUF);
 	
 		// Enable OpenGL Double Buffer
+
 		if (this->initFlags & LeXInitOpenGLDB)
 			SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 		
@@ -590,7 +589,8 @@ void LeXEngine::render() {
  * 
  * @access public
  */
-void LeXEngine::updateScreen() {
+void LeXEngine::updateScreen() {
+
 	// Vertical sync
 	sceDisplayWaitVblankStart();
 	
@@ -976,7 +976,8 @@ pspUtilityMsgDialogParams LeXEngine::showPspErrDialog(const unsigned int errorNu
 /**
  * Popup the standard PSP net dialog.
  * 
- * @access public * 
+ * @access public
+ * 
  * @return pspUtilityNetconfData
  */
 pspUtilityNetconfData LeXEngine::showPspNetDialog() {
@@ -1284,12 +1285,12 @@ SDL_Surface* LeXEngine::sdlSurfaceFromPakFile(const std::string& pakFile, const 
  * @param SDL_Rect*[optional] clip The portion to use.
  * @param bool smooth Use GL_LINEAR.
  * 
- * @return OMTexture The texture + extra info.
+ * @return xMTexture The texture + extra info.
  */
-OMTexture LeXEngine::glTextureFromSDLSurface(SDL_Surface *surface, SDL_Rect *clip, bool smooth) {
+xMTexture LeXEngine::glTextureFromSDLSurface(SDL_Surface *surface, SDL_Rect *clip, bool smooth) {
 
 	// Custom texture struct
-	OMTexture texture;
+	xMTexture texture;
 	
 	// Add info
 	texture.texture = 0;
@@ -1401,10 +1402,10 @@ OMTexture LeXEngine::glTextureFromSDLSurface(SDL_Surface *surface, SDL_Rect *cli
  * 
  * @param int x X coordinate.
  * @param int y Y coordinate.
- * @param OMTexture texture The texture to render.
+ * @param xMTexture texture The texture to render.
  * @param bool smooth Use GL_LINEAR.
  */
-void LeXEngine::renderGlTexture(int x, int y, OMTexture texture, bool smooth) {
+void LeXEngine::renderGlTexture(int x, int y, xMTexture texture, bool smooth) {
 
 	if (glIsTexture(texture.texture) == GL_FALSE) {
 	
@@ -1523,11 +1524,11 @@ TTF_Font* LeXEngine::ttfFontFromPak(const std::string& pakFile, const std::strin
  * @param TTF_Font* font The font to use.
  * @param SDL_Color textColour Text colour.
  * 
- * @return OMTexture The texture.
+ * @return xMTexture The texture.
  */
-OMTexture LeXEngine::ttfTexture(const char* text, TTF_Font *font, SDL_Color textColour) {
+xMTexture LeXEngine::ttfTexture(const char* text, TTF_Font *font, SDL_Color textColour) {
 
-	OMTexture texture;
+	xMTexture texture;
 
 	// Invalid font test
 	if (font == NULL) {

@@ -1,5 +1,4 @@
 /*
-  $Id: cJSON.c 68 2009-12-02 00:39:26Z chaotic@luqmanrocks.co.cc $
   Copyright (c) 2009 Dave Gamble
 
   Permission is hereby granted, free of charge, to any person obtaining a copy

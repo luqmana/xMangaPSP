@@ -1,9 +1,7 @@
 /*
- * $Id: MangaAPI.h 79 2009-12-27 02:40:59Z chaotic@luqmanrocks.co.cc $
- * 
- * This file is part of the OneMangaPSP application.
+ * This file is part of the xMangaPSP application.
  *
- * Copyright (C) 2009  Luqman Aden <www.luqmanrocks.co.cc>.
+ * Copyright (C) Luqman Aden <www.luqmanrocks.co.cc>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,27 +22,29 @@
 /**
  * Header for Manga API Handler.
  * 
- * @package OneMangaPSP
+ * @package xMangaPSP
  */
 
 #ifndef _MangaAPI_H
 #define _MangaAPI_H
 
 // BEGIN Includes
-#include "OMPStandard.h"
-#include "OneMangaPSP.h"
-#include "OMPNetwork.h"
+#include "xMPStandard.h"
+#include "xMangaPSP.h"
+#include "xMPNetwork.h"
 #include <vector>
 // END Includes
 
 // Event flags
-#define SDL_OMMANGAAPIEVENT (SDL_USEREVENT + 2)
+#define SDL_xMANGAAPIEVENT (SDL_USEREVENT + 2)
 
 // Event codes
 enum {
 
-	OMMangaApiError,
-	OMMangaApiSuccess
+	xMangaApiError,
+	xMangaApiSuccess,
+	xMangaApiNoNextChapter,
+	xMangaApiNoPrevChapter
 
 };
 
@@ -64,7 +64,8 @@ enum MangaAPIRequestType {
 // Supported APIs
 enum SupportedMangaAPI {
 
-	OneMangaAPI
+    MangaStreamAPI//,
+	//OneMangaAPI
 
 };
 
@@ -150,7 +151,7 @@ typedef struct {
 
 	int x, y;
 	int w, h;
-	OMTexture texture;
+	xMTexture texture;
 	
 } MangaImageSection;
 

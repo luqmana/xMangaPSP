@@ -1,9 +1,7 @@
 /*
- * $Id: BookmarkState.h 84 2009-12-31 03:42:09Z chaotic@luqmanrocks.co.cc $
- * 
- * This file is part of the OneMangaPSP application.
+ * This file is part of the xMangaPSP application.
  *
- * Copyright (C) 2009  Luqman Aden <www.luqmanrocks.co.cc>.
+ * Copyright (C) Luqman Aden <www.luqmanrocks.co.cc>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,17 +22,19 @@
 /**
  * Header for BookmarkState.
  * 
- * @package OneMangaPSP
+ * @package xMangaPSP
  */
 
 #ifndef _BookmarkState_H
-#define _BookmarkState_H
+#define _BookmarkState_H
+
 // BEGIN Includes
 #include "State.h"
 #include "BookmarkManager.h"
 // END Includes
 
-class BookmarkState : public State {		
+class BookmarkState : public State {
+		
 	public:
 				
 		void init();
@@ -55,7 +55,7 @@ class BookmarkState : public State {
 		Bookmarks bookmarks;
 		
 		// Holds all textures
-	   	std::map <std::string, OMTexture > textures;
+	   	std::map <std::string, xMTexture > textures;
 	   	
 	   	// Counter for displaying menu
 	   	int minList, maxList, selected;

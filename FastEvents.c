@@ -1,6 +1,4 @@
-/*
-	$Id: FastEvents.c 79 2009-12-27 02:40:59Z chaotic@luqmanrocks.co.cc $
-	
+/*	
     Copyright (C) 2002 Bob Pendleton
 
     This library is free software; you can redistribute it and/or
@@ -28,7 +26,7 @@
 /**
  * Fast Events library
  * 
- * @project OneMangaPSP
+ * @project xMangaPSP
  */
 
 #include <stdio.h>
