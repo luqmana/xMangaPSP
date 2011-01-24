@@ -1,6 +1,6 @@
  # This file is part of the xMangaPSP application.
  #
- # Copyright (C) 2010  Luqman Aden <www.luqmanrocks.co.cc>.
+ # Copyright (C) Luqman Aden <www.luqmanrocks.co.cc>.
  #
  # This program is free software: you can redistribute it and/or modify
  # it under the terms of the GNU General Public License as published by
@@ -30,16 +30,19 @@
  # Other files to be deleted when clean is called
  EXTRA_CLEAN = 
  
+ # States
+ STATES = MenuState.o
+ 
  # Objects
- OBJS = xMangaPSP.o Callbacks.o Graphics.o Stats.o Timer.o
+ OBJS = xMangaPSP.o Callbacks.o Graphics.o Stats.o Timer.o StateManager.o $(STATES)
   
  # Defines
  MAJOR_VERSION = 1
  MINOR_VERSION = 0
  EXTRA_VERSION = 
- API_VERSION = 4
+ API_VERSION   = 5
  
- COMPILER_DEFINES = -D_MAJOR_VERSION=$(MAJOR_VERSION) -D_MINOR_VERSION=$(MINOR_VERSION) -D_API_VERSION=$(API_VERSION) -D_EXTRA_VERION=$(EXTRA_VERSION) #-DTIXML_USE_STL
+ COMPILER_DEFINES = -D_MAJOR_VERSION=$(MAJOR_VERSION) -D_MINOR_VERSION=$(MINOR_VERSION) -D_API_VERSION=$(API_VERSION) -D_EXTRA_VERION=$(EXTRA_VERSION)
  
  # Include Directories
  INCDIR = ../include
@@ -53,19 +56,23 @@
  ASFLAGS = 
  
  # FW Version
- PSP_FW_VERSION = 500
+ PSP_FW_VERSION = 600
  
  # Extra Memory on SLIM and Lite
- PSP_LARGE_MEMORY = 1
+ # This option combined with the SIGN option below doesn't seem to work
+ #PSP_LARGE_MEMORY = 1
  
- # Build as prx for dynamic memory allocation
+ # Build as prx
  BUILD_PRX = 1
  
+ # [Fake] Sign
+ SIGN = 1
+ 
  # User Libraries
- #USE_USER_LIBS = 1
+ USE_USER_LIBS = 1
   
  # EBOOT.PBP Variables
- PSP_EBOOT_TITLE = xMangaPSP v$(MAJOR_VERSION).$(MINOR_VERSION)
+ PSP_EBOOT_TITLE = xMangaPSP v$(MAJOR_VERSION).$(MINOR_VERSION)$(EXTRA_VERSION)
  #PSP_EBOOT_SFO = PARAM.SFO
  #PSP_EBOOT_ICON = Resources/ICON0.png
  #PSP_EBOOT_ICON1 = Resources/ICON1.pmf

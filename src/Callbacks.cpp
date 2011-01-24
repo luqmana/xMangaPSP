@@ -1,7 +1,7 @@
 /**
  * This file is part of the xMangaPSP application.
  *
- * Copyright (C) 2010  Luqman Aden <www.luqmanrocks.co.cc>.
+ * Copyright (C) Luqman Aden <www.luqmanrocks.co.cc>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,12 +29,12 @@
 #define _Callbacks_CPP
 
 // BEGIN Includes
-#include "xM/Std/Callbacks.h"
+#include "xM/Stn/Callbacks.h"
 // END Includes
 
 namespace xM {
 
-	namespace Std {
+	namespace Stn {
 	
 		/**
 		 * The standard callback thread id.

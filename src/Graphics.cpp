@@ -1,7 +1,7 @@
 /**
  * This file is part of the xMangaPSP application.
  *
- * Copyright (C) 2010  Luqman Aden <www.luqmanrocks.co.cc>.
+ * Copyright (C) Luqman Aden <www.luqmanrocks.co.cc>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +30,8 @@
 
 // BEGIN Includes
 #include "xM/Gfx/Graphics.h"
+
+#include <cstring>
 // END Includes
 
 namespace xM {
@@ -43,6 +45,9 @@ namespace xM {
 		 * Initiates the GU.
 		 */
 		void initGu(void) {
+		
+		    // A sort of reset
+		    sceKernelDcacheWritebackAll();
 		
 			//displayList = memalign(16, 1600);
 			frameBuffer0 = 0;
@@ -146,6 +151,19 @@ namespace xM {
 		}
 		
 		/**
+		 * Perfoms a vertical sync and swaps the buffers.
+		 */
+		void syncAndSwap(void) {
+		
+		    // V-sync
+		    sceDisplayWaitVblankStart();
+	
+	        // Swap the front and back buffers
+		    frameBuffer0 = sceGuSwapBuffers();
+		
+		}
+		
+		/**
 		 * Terminates the GU.
 		 */
 		void shutdownGu(void) {
@@ -154,6 +172,64 @@ namespace xM {
 			
 			free(displayList);
 			free(frameBuffer0);
+		
+		}
+		
+		/**
+		 * Draw a simple one colour quad.
+		 * 
+		 * @param float x X position.
+		 * @param float y Y position.
+		 * @param float z Z position.
+		 * @param float w Quad width.
+		 * @param float h Quad height.
+		 * @param unsigned int colour Coolour of quad.
+		 */
+		void drawQuad(float x, float y, float z, float w, float h, unsigned int colour) {
+		
+		    drawQuad(x, y, z, w, h, colour, 0);
+		
+		}
+		
+		/**
+		 * Draw a simple one colour quad.
+		 * 
+		 * @param float x X position.
+		 * @param float y Y position.
+		 * @param float z Z position.
+		 * @param float w Quad width.
+		 * @param float h Quad height.
+		 * @param unsigned int colour Coolour of quad.
+		 * @param float rotate Rotation
+		 */
+		void drawQuad(float x, float y, float z, float w, float h, unsigned int colour, float rotate) {
+						
+		    Vertex quad[4] = {
+		        {colour, -(w / 2), -(h / 2), 0.0f}, // Top-Left point
+		        {colour, (w / 2),  -(h / 2), 0.0f}, // Top-Right point
+		        {colour, -(w / 2), (h / 2), 0.0f}, // Bottom-Left point
+		        {colour, (w / 2), (h / 2), 0.0f} // Bottom-Right point
+	        };
+	        
+	        sceGumMatrixMode(GU_MODEL);
+		    sceGumLoadIdentity(); // Reset
+		    {
+			
+			    ScePspFVector3 pos = {x, y, z};
+			
+			    // Move
+			    sceGumTranslate(&pos);
+			    
+			    // Rotate
+			    sceGumRotateZ(rotate);
+		
+		    }
+	
+	        Vertex* finalQuad = (Vertex*) sceGuGetMemory(sizeof(Vertex) * 4);
+            memcpy(finalQuad, quad, sizeof(Vertex) * 4);
+	
+		    // Draw the quad
+		    sceGumDrawArray(GU_TRIANGLE_STRIP, GU_COLOR_8888 | GU_VERTEX_32BITF | GU_TRANSFORM_3D, 4, 0, finalQuad);
 		
 		}
 			

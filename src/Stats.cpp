@@ -1,7 +1,7 @@
 /**
  * This file is part of the xMangaPSP application.
  *
- * Copyright (C) 2010  Luqman Aden <www.luqmanrocks.co.cc>.
+ * Copyright (C) Luqman Aden <www.luqmanrocks.co.cc>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -87,7 +87,7 @@ namespace xM {
 		
 			pspDebugScreenSetOffset((int)xM::Gfx::frameBuffer0);
 			pspDebugScreenSetXY(0, 0);
-			pspPrintf("\nFree Mem: %d", sceKernelTotalFreeMemSize());
+			pspPrintf("\nFree Mem: %d (%d)", sceKernelTotalFreeMemSize() / 1048576, sceKernelTotalFreeMemSize());
 		
 		}
 			

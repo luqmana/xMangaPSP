@@ -1,7 +1,7 @@
 /**
  * This file is part of the xMangaPSP application.
  *
- * Copyright (C) 2010  Luqman Aden <www.luqmanrocks.co.cc>.
+ * Copyright (C) Luqman Aden <www.luqmanrocks.co.cc>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,14 +33,15 @@
 #include <pspdisplay.h>
 #include <pspgu.h>
 #include <pspgum.h>
+#include <pspkernel.h>
 
 #include <malloc.h>
 // END Includes
 
 // BEGIN Defines
-#define BUF_WIDTH (512)  // Buffer width
-#define SCR_WIDTH (480)  // Screen width
-#define SCR_HEIGHT (272) // Screen height
+#define BUF_WIDTH  (512)  // Buffer width
+#define SCR_WIDTH  (480)  // Screen width
+#define SCR_HEIGHT (272)  // Screen height
 // END Defines
 
 namespace xM {
@@ -82,9 +83,39 @@ namespace xM {
 		void clearScreen(void);
 		
 		/**
+		 * Perfoms a vertical sync and swaps the buffers.
+		 */
+		void syncAndSwap(void);
+		
+		/**
 		 * Terminates the GU.
 		 */
 		void shutdownGu(void);
+		
+		/**
+		 * Draw a simple one colour quad.
+		 * 
+		 * @param float x X position.
+		 * @param float y Y position.
+		 * @param float z Z position.
+		 * @param float w Quad width.
+		 * @param float h Quad height.
+		 * @param unsigned int colour Coolour of quad.
+		 */
+		void drawQuad(float x, float y, float z, float w, float h, unsigned int colour);
+		
+		/**
+		 * Draw a simple one colour quad.
+		 * 
+		 * @param float x X position.
+		 * @param float y Y position.
+		 * @param float z Z position.
+		 * @param float w Quad width.
+		 * @param float h Quad height.
+		 * @param unsigned int colour Coolour of quad.
+		 * @param float rotate Rotation
+		 */
+		void drawQuad(float x, float y, float z, float w, float h, unsigned int colour, float rotate);
 			
 	}
 
