@@ -87,9 +87,6 @@ namespace xM {
 	            xM::Util::Timer timer;
 	            
 	            float rotate;
-	            
-	            xM::Gfx::Vertex* quad;
-	            xM::Gfx::Vertex* quad2;
 		        		
 		};
 			

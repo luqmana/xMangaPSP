@@ -36,33 +36,7 @@
 namespace xM {
 
 	namespace Stn {
-	
-		/**
-		 * The standard callback thread id.
-		 */
-		extern int callbackThreadId;
-		
-		/**
-		 * The exit callback id.
-		 */
-		extern int exitCallbackId;
-	
-		/**
-		 * The standard exit callback.
-		 * Triggered when HOME button is pressed.
-		 * 
-		 * @return int
-		 */
-		int exitCallback(int arg1, int arg2, void *common);
-		
-		/**
-		 * Standard callback thread handling function.
-		 * Registers various callbacks.
-		 * 
-		 * @return int
-		 */
-		int callbackThread(SceSize args, void *argp);
-		
+			
 		/**
 		 * Sets up the standard callback handling thread.
 		 */

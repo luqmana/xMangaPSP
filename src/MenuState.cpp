@@ -39,52 +39,12 @@
 namespace xM {
 
 	namespace States {
-	
-	    /*xM::Gfx::Vertex __attribute__((aligned(16))) quad[4] = {
-	        {GU_COLOR(1.0f, 1.0f, 1.0f, 1.0f), -50.0f, -50.0f, 0.0f}, // Top-Left point
-	        {GU_COLOR(1.0f, 0.0f, 0.0f, 1.0f), 50.0f,  -50.0f, 0.0f}, // Top-Right point
-	        {GU_COLOR(0.0f, 1.0f, 0.0f, 1.0f), -50.0f, 50.0f, 0.0f}, // Bottom-Left point
-	        {GU_COLOR(0.0f, 0.0f, 1.0f, 1.0f), 50.0f, 50.0f, 0.0f} // Bottom-Right point
-        };
-        	        
-        xM::Gfx::Vertex __attribute__((aligned(16))) quad2[4] = {
-	        {GU_COLOR(0.0f, 0.0f, 0.0f, 0.5f), -25.0f, -25.0f, 0.0f}, // Top-Left point
-	        {GU_COLOR(0.0f, 0.0f, 0.0f, 0.5f), 25.0f,  -25.0f, 0.0f}, // Top-Right point
-	        {GU_COLOR(0.0f, 0.0f, 0.0f, 0.5f), -25.0f, 25.0f, 0.0f}, // Bottom-Left point
-	        {GU_COLOR(0.0f, 0.0f, 0.0f, 0.5f), 25.0f, 25.0f, 0.0f} // Bottom-Right point
-        };*/
         
         /**
          * Start up code.
          */
         void Menu::init(void) {
                 
-            quad = new xM::Gfx::Vertex[4];
-            
-            // Top-Left point
-            quad[0].colour  = GU_COLOR(1.0f, 1.0f, 1.0f, 1.0f);
-            quad[0].x       = -50.0f;
-            quad[0].y       = -50.0f;
-            quad[0].z       =   0.0f;
-            
-            // Top-Right point
-            quad[1].colour  = GU_COLOR(1.0f, 0.0f, 0.0f, 1.0f);
-            quad[1].x       =  50.0f;
-            quad[1].y       = -50.0f;
-            quad[1].z       =   0.0f;
-            
-            // Bottom-Left point
-            quad[2].colour  = GU_COLOR(0.0f, 1.0f, 0.0f, 1.0f);
-            quad[2].x       = -50.0f;
-            quad[2].y       =  50.0f;
-            quad[2].z       =   0.0f;
-            
-            // Bottom-Right point
-            quad[3].colour  = GU_COLOR(0.0f, 0.0f, 1.0f, 1.0f);
-            quad[3].x       =  50.0f;
-            quad[3].y       =  50.0f;
-            quad[3].z       =   0.0f;
-	            
             rotate = 0.0f;
             timer.start();
         
@@ -95,11 +55,7 @@ namespace xM {
          */
         void Menu::cleanUp(void) {
         
-            delete [] quad;
-            //delete [] quad2;
             
-            quad = NULL;
-            //quad2 = NULL;
         
         }
         
@@ -143,26 +99,13 @@ namespace xM {
          * Done with the logic? Draw what's needed then.
          */
         void Menu::draw(void) {
-                
-            sceGumMatrixMode(GU_MODEL);
-		    sceGumLoadIdentity(); // Reset
-		    {
-			
-			    ScePspFVector3 pos = {240.0f, 160.0f, 0.0f};
-			
-			    // Move
-			    sceGumTranslate(&pos);
-			
-			    // Rotate
-			    sceGumRotateZ(-rotate);
-		
-		    }
 	
-		    // Draw the quad
-		    sceGumDrawArray(GU_TRIANGLE_STRIP, GU_COLOR_8888 | GU_VERTEX_32BITF | GU_TRANSFORM_3D, 4, 0, quad);
+		    // Draw the first quad rotating	    
+		    Gfx::drawQuad(240.0f, 160.0f, 0.0f, 100, 100, GU_COLOR(1.0f, 1.0f, 1.0f, 1.0f), GU_COLOR(1.0f, 0.0f, 0.0f, 1.0f),
+		                    GU_COLOR(0.0f, 1.0f, 0.0f, 1.0f), GU_COLOR(0.0f, 0.0f, 1.0f, 1.0f), rotate);
 		
-		    // Draw the second quad
-		    Gfx::drawQuad(240.0f, 160.0f, 0.0f, 50.0f, 50.0f, GU_COLOR(0.0f, 0.0f, 0.0f, 0.5f), rotate);
+		    // Draw the second quad rotating in the opposite direction twice as fast
+		    Gfx::drawQuad(240.0f, 160.0f, 0.0f, 50.0f, 50.0f, GU_COLOR(0.0f, 0.0f, 0.0f, 0.5f), -rotate * 2.0f);
 				        
         }
 		        					

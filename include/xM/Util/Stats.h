@@ -42,20 +42,7 @@
 namespace xM {
 
 	namespace Util {
-	
-		/**
-		 * Frames-per-second
-		 */
-		extern int fps;
-		
-		/**
-		 * FPS info string.
-		 */
-		extern std::string fpsDisplay;
-		
-		// Used to calculate FPS
-		extern xM::Util::Timer fpsTimer;
-		
+			
 		/**
 		 * Displays the FPS.
 		 */

@@ -51,8 +51,10 @@ namespace xM {
 		 */
 		std::string fpsDisplay;
 		
-		// Used to calculate FPS
-		xM::Util::Timer fpsTimer;		
+		/**
+		 * Used to calculate FPS
+		 */
+		Timer fpsTimer;		
 		
 		/**
 		 * Displays the FPS.
@@ -69,12 +71,12 @@ namespace xM {
 			
 				fpsTimer.start();
 				fpsDisplay.assign("FPS: ");
-				fpsDisplay.append(xM::Util::toString(fps));
+				fpsDisplay.append(Util::toString(fps));
 				fps = 0;
 							
 			}
 			
-			pspDebugScreenSetOffset((int)xM::Gfx::frameBuffer0);
+			pspDebugScreenSetOffset((int)Gfx::getFrameBuffer());
 			pspDebugScreenSetXY(0, 0);
 			pspPrintf(fpsDisplay.c_str());
 		
@@ -85,8 +87,10 @@ namespace xM {
 		 */
 		void MEM(void) {
 		
-			pspDebugScreenSetOffset((int)xM::Gfx::frameBuffer0);
+		    // Move cursor to correct position
+			pspDebugScreenSetOffset((int)Gfx::getFrameBuffer());
 			pspDebugScreenSetXY(0, 0);
+			
 			pspPrintf("\nFree Mem: %d (%d)", sceKernelTotalFreeMemSize() / 1048576, sceKernelTotalFreeMemSize());
 		
 		}

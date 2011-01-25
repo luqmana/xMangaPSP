@@ -78,40 +78,31 @@ int main(int argc, char **argv) {
 	stateManager->changeState(new States::Menu());
 			
 	// Initiate the GU
-	Gfx::initGu();	
+	Gfx::initGu();
+	
+	// Setup ortho view
+    Gfx::setUpOrthoView();
 		
 	while (true) {
+	
+	    // Begin frame
+	    Gfx::beginFrame();
 	
 	    // Handle user/system input/events
 		stateManager->handleEvents();
 		
 		// Handle logic and update accordingly
 		stateManager->handleLogic();
-		
-		// Rendering to display list begin
-		sceGuStart(GU_DIRECT, xM::Gfx::displayList);
-		
-		// Clear screen [colour and depth]
-		xM::Gfx::clearScreen();
-		
-		// Setup ortho view
-		xM::Gfx::setUpOrthoView();
-		
+				
 		// Draw
 		stateManager->draw();
-		
-		// The accompanying finish
-		sceGuFinish();
-		
-		// Wait for the currently executing display list
-		sceGuSync(GU_SYNC_FINISH, GU_SYNC_WHAT_DONE);
 	
 	    // Show some stats
 		Util::MEM();
 		Util::FPS();
 
-        // Vsync and swap buffers		
-		Gfx::syncAndSwap();
+        // End frame
+		Gfx::endFrame();
 	
 	}
 	
@@ -121,11 +112,10 @@ int main(int argc, char **argv) {
 	// Delete pointer
 	delete Engine::StateManager::sMInstance;
 	
-	xM::Gfx::shutdownGu();	
+	// Shutdown the gu and graphics subsystem
+	Gfx::shutdownGu();
 	
-	// Sleep so thread doesn't immediately exit
-	sceKernelSleepThread();
-	
+	// We never actually get here…
 	sceKernelExitGame();
 	
 	return 0;

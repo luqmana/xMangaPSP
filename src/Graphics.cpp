@@ -37,9 +37,38 @@
 namespace xM {
 
 	namespace Gfx {
-			
+		
+		/**
+		 * Stores the graphics commands.
+		 */	
 		unsigned int __attribute__((aligned(16))) displayList[262144];
+		
+		/**
+		 * Memory buffer containing a frame of data.
+		 */
 		void *frameBuffer0;
+		
+		/**
+		 * Get a pointer to the frame buffer.
+		 * 
+		 * @return void* Pointer to framebuffer.
+		 */
+		void* getFrameBuffer(void) {
+		
+		    return frameBuffer0;
+		    
+        }
+        
+        /**
+         * Get the display list.
+         *
+         * @return unsigned int* The display list.
+         */
+        unsigned int* getDisplayList(void) {
+        
+            return displayList;
+            
+        }
 	
 		/**
 		 * Initiates the GU.
@@ -151,6 +180,34 @@ namespace xM {
 		}
 		
 		/**
+		 * Prepare the GU for rendering.
+		 */
+		void beginFrame(void) {
+		
+		    // Render in direct mode
+            sceGuStart(GU_DIRECT, displayList);
+            
+            // Clear screen [colour and depth]
+		    clearScreen();
+		
+		}
+		
+		/**
+		 * End rendering 
+		 */
+		void endFrame(void) {
+		
+            sceGuFinish();
+		
+            // Wait for the currently executing display list
+            sceGuSync(GU_SYNC_FINISH, GU_SYNC_WHAT_DONE);
+            
+            // Vsync and swap buffers
+            syncAndSwap();
+		
+		}
+		
+		/**
 		 * Perfoms a vertical sync and swaps the buffers.
 		 */
 		void syncAndSwap(void) {
@@ -183,7 +240,7 @@ namespace xM {
 		 * @param float z Z position.
 		 * @param float w Quad width.
 		 * @param float h Quad height.
-		 * @param unsigned int colour Coolour of quad.
+		 * @param unsigned int colour Colour of quad.
 		 */
 		void drawQuad(float x, float y, float z, float w, float h, unsigned int colour) {
 		
@@ -199,16 +256,37 @@ namespace xM {
 		 * @param float z Z position.
 		 * @param float w Quad width.
 		 * @param float h Quad height.
-		 * @param unsigned int colour Coolour of quad.
+		 * @param unsigned int colour Colour of quad.
 		 * @param float rotate Rotation
 		 */
 		void drawQuad(float x, float y, float z, float w, float h, unsigned int colour, float rotate) {
 						
+		    drawQuad(x, y, z, w, h, colour, colour, colour, colour, rotate);
+		
+		}
+		
+		/**
+		 * Draw a quad. [The actual function]
+		 * 
+		 * @param float x X position.
+		 * @param float y Y position.
+		 * @param float z Z position.
+		 * @param float w Quad width.
+		 * @param float h Quad height.
+		 * @param unsigned int colourTopLeft Colour of quad extending from top left.
+		 * @param unsigned int colourTopRight Colour of quad extending from top right.
+		 * @param unsigned int colourBottomLeft Colour of quad extending from bottom left.
+		 * @param unsigned int colourBottomRight Colour of quad extending from bottom right.
+		 * @param float rotate Rotation
+		 */
+		void drawQuad(float x, float y, float z, float w, float h, unsigned int colourTopLeft, 
+		                unsigned int colourTopRight, unsigned int colourBottomLeft, unsigned int colourBottomRight, float rotate) {
+						
 		    Vertex quad[4] = {
-		        {colour, -(w / 2), -(h / 2), 0.0f}, // Top-Left point
-		        {colour, (w / 2),  -(h / 2), 0.0f}, // Top-Right point
-		        {colour, -(w / 2), (h / 2), 0.0f}, // Bottom-Left point
-		        {colour, (w / 2), (h / 2), 0.0f} // Bottom-Right point
+		        {colourTopLeft, -(w / 2), -(h / 2), 0.0f}, // Top-Left point
+		        {colourTopRight, (w / 2),  -(h / 2), 0.0f}, // Top-Right point
+		        {colourBottomLeft, -(w / 2), (h / 2), 0.0f}, // Bottom-Left point
+		        {colourBottomRight, (w / 2), (h / 2), 0.0f} // Bottom-Right point
 	        };
 	        
 	        sceGumMatrixMode(GU_MODEL);

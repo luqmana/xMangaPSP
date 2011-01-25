@@ -58,8 +58,19 @@ namespace xM {
 		
 		} Vertex;
 		
-		extern unsigned int __attribute__((aligned(16))) displayList[262144];
-		extern void *frameBuffer0;
+		/**
+		 * Get a pointer to the frame buffer.
+		 * 
+		 * @return void* Pointer to framebuffer.
+		 */
+		void* getFrameBuffer(void);
+		
+		/**
+         * Get the display list.
+         *
+         * @return unsigned int* The display list.
+         */
+        unsigned int* getDisplayList(void);
 	
 		/**
 		 * Initiates the GU.
@@ -83,6 +94,16 @@ namespace xM {
 		void clearScreen(void);
 		
 		/**
+		 * Prepare the GU for rendering.
+		 */
+		void beginFrame(void);
+		
+		/**
+		 * End rendering 
+		 */
+		void endFrame(void);
+		
+		/**
 		 * Perfoms a vertical sync and swaps the buffers.
 		 */
 		void syncAndSwap(void);
@@ -100,22 +121,39 @@ namespace xM {
 		 * @param float z Z position.
 		 * @param float w Quad width.
 		 * @param float h Quad height.
-		 * @param unsigned int colour Coolour of quad.
+		 * @param unsigned int colour Colour of quad.
 		 */
 		void drawQuad(float x, float y, float z, float w, float h, unsigned int colour);
 		
 		/**
-		 * Draw a simple one colour quad.
+		 * Draw a simple one colour quad with rotation.
 		 * 
 		 * @param float x X position.
 		 * @param float y Y position.
 		 * @param float z Z position.
 		 * @param float w Quad width.
 		 * @param float h Quad height.
-		 * @param unsigned int colour Coolour of quad.
+		 * @param unsigned int colour Colour of quad.
 		 * @param float rotate Rotation
 		 */
 		void drawQuad(float x, float y, float z, float w, float h, unsigned int colour, float rotate);
+		
+		/**
+		 * Draw a quad. [The actual function]
+		 * 
+		 * @param float x X position.
+		 * @param float y Y position.
+		 * @param float z Z position.
+		 * @param float w Quad width.
+		 * @param float h Quad height.
+		 * @param unsigned int colourTopLeft Colour of quad extending from top left.
+		 * @param unsigned int colourTopRight Colour of quad extending from top right.
+		 * @param unsigned int colourBottomLeft Colour of quad extending from bottom left.
+		 * @param unsigned int colourBottomRight Colour of quad extending from bottom right.
+		 * @param float rotate Rotation
+		 */
+		void drawQuad(float x, float y, float z, float w, float h, unsigned int colourTopLeft, 
+		                unsigned int colourTopRight, unsigned int colourBottomLeft, unsigned int colourBottomRight, float rotate);
 			
 	}
 
