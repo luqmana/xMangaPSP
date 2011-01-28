@@ -34,7 +34,8 @@
  STATES = MenuState.o
  
  # Objects
- OBJS = xMangaPSP.o Callbacks.o Graphics.o Stats.o Timer.o StateManager.o $(STATES)
+ OBJS  = xMangaPSP.o Callbacks.o Graphics.o Stats.o Timer.o StateManager.o Image.o
+ OBJS +=  $(STATES)
   
  # Defines
  MAJOR_VERSION = 1
@@ -45,10 +46,10 @@
  COMPILER_DEFINES = -D_MAJOR_VERSION=$(MAJOR_VERSION) -D_MINOR_VERSION=$(MINOR_VERSION) -D_API_VERSION=$(API_VERSION) -D_EXTRA_VERION=$(EXTRA_VERSION)
  
  # Include Directories
- INCDIR = ../include
+ INCDIR = ../include $(PSPDEV)/psp/include/
  
  # Library Directories
- LIBS = -lpspgum -lpspgu -lm -lpsprtc -lpspsdk -lstdc++
+ LIBS = -lpng -lz -lpspgum -lpspgu -lm -lpsprtc -lpspsdk -lstdc++
  
  # Compiler Flags
  CFLAGS = -O3 -G4 -Wall -falign-functions=64 $(COMPILER_DEFINES)
