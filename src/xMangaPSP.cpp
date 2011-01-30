@@ -18,7 +18,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
- 
+
 /**
  * Main function for xMangaPSP
  * 
@@ -58,67 +58,67 @@ PSP_MAIN_THREAD_ATTR(PSP_THREAD_ATTR_USER);
 
 /**
  * Set the PSP heap size.
- * Use everything but the specified amount. So about 1.5MB left for the system [i.e. plugins, threads, etc]
+ * Use only 10MB as heap
  */
-//PSP_HEAP_SIZE_KB(-1536);
+PSP_HEAP_SIZE_KB(10240);
 
 int main(int argc, char **argv) {
 
-	// Setup various callbacks for the PSP
-	Stn::setupCallbacks();
-	
-	// Init psp debug screen
+    // Setup various callbacks for the PSP
+    Stn::setupCallbacks();
+
+    // Init psp debug screen
     pspDebugScreenInit();
-    
+
     // Red text
     pspDebugScreenSetTextColor(0xFF0000FF);
-	
-	// Initiate the StateManager and set the initial state
-	Engine::StateManager* stateManager = Engine::StateManager::getInstance();
-	stateManager->changeState(new States::Menu());
-			
-	// Initiate the GU
-	Gfx::initGu();
-	
-	// Setup ortho view
+
+    // Initiate the StateManager and set the initial state
+    Engine::StateManager* stateManager = Engine::StateManager::getInstance();
+    stateManager->changeState(new States::Menu());
+
+    // Initiate the GU
+    Gfx::initGu();
+
+    // Setup ortho view
     Gfx::setUpOrthoView();
-		
-	while (true) {
-	
-	    // Begin frame
-	    Gfx::beginFrame();
-	
-	    // Handle user/system input/events
-		stateManager->handleEvents();
-		
-		// Handle logic and update accordingly
-		stateManager->handleLogic();
-				
-		// Draw
-		stateManager->draw();
-	
-	    // Show some stats
-		Util::MEM();
-		Util::FPS();
+
+    while (true) {
+
+        // Begin frame
+        Gfx::beginFrame();
+
+        // Handle user/system input/events
+        stateManager->handleEvents();
+
+        // Handle logic and update accordingly
+        stateManager->handleLogic();
+
+        // Draw
+        stateManager->draw();
+
+        // Show some stats
+        Util::MEM();
+        Util::FPS();
 
         // End frame
-		Gfx::endFrame();
-	
-	}
-	
-	// Let the states clean up
-	stateManager->cleanUp();
-	
-	// Delete pointer
-	delete Engine::StateManager::sMInstance;
-	
-	// Shutdown the gu and graphics subsystem
-	Gfx::shutdownGu();
-	
-	// We never actually get here…
-	sceKernelExitGame();
-	
-	return 0;
+        Gfx::endFrame();
+
+    }
+
+    // Let the states clean up
+    stateManager->cleanUp();
+
+    // Delete pointer
+    delete Engine::StateManager::sMInstance;
+
+    // Shutdown the gu and graphics subsystem
+    Gfx::shutdownGu();
+
+    // We never actually get here…
+    sceKernelExitGame();
+
+    return 0;
 
 }
 

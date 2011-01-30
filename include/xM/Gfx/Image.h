@@ -20,7 +20,7 @@
  */
  
 /**
- * Image loading stuff and.
+ * Image loading and stuff.
  * Header file.
  * 
  * @package xMangaPSP
@@ -41,57 +41,82 @@ namespace xM {
 
 	namespace Gfx {
 	
-	    typedef struct {
+	    class Image {
 	    
-	        unsigned int width, height;
-	        int bitDepth;
-	        int colourType;
-	        unsigned char* pixels;
+	        private:
+	        
+	            unsigned int width, height;
+	            int bitDepth;
+	            int colourType;
+	            int channels;
+	            char* pixels;
+	            bool swizzled;
+	        
+	        public:
+	        
+                /**
+                 * Default constructor.
+                 */
+                Image() { this->reset(); };
+                
+                /**
+                 * Return whether the image is swizzled or not.
+                 * 
+                 * @return bool Swizzle status.
+                 */
+                bool isSwizzled();
+                
+                /**
+                 * Load an image from a file.
+                 * 
+                 * @param const std::string& file File to load from.
+                 * 
+                 * @return bool Success or not?
+                 */
+                bool loadFile(const std::string& file);
+                
+                /**
+                 * Rearrange the pixels to optimize speed.
+                 */
+                void swizzle();
+                
+                /**
+                 * Reset
+                 */
+                void reset();
+                
+                /**
+	             * Render an image onto the screen.
+	             * 
+	             * @param float x X position to render to.
+	             * @param float y Y position to render to.
+	             */
+	            void draw(float x, float y);
+	            
+	            /**
+	             * Render part of an image onto the screen.
+	             * 
+	             * @param float x X position to render to.
+	             * @param float y Y position to render to.
+	             * @param int rWidth Width to render.
+	             * @param int rHeight Height to render.
+	             */
+	            void draw(float x, float y, int width, int height);
+	            
+	            /**
+	             * Render part of an image onto the screen.
+	             * 
+	             * @param float x X position to render to.
+	             * @param float y Y position to render to.
+	             * @param int rWidth Width to render.
+	             * @param int rHeight Height to render.
+	             * @param float xOffset Source x offset.
+	             * @param float yOffset Source y offset.
+	             */
+	            void draw(float x, float y, int width, int height, float xOffset, float yOffset);
 	    
-	    } Image;
-	    
-	    /**
-	     * Load an image from a file.
-	     * 
-	     * @param const std::string& file File to load from.
-	     * 
-	     * @return Image Struct with info about image.
-	     */
-	    Image imageFromFile(const std::string& file); 
-	    
-	    /**
-	     * Render an image onto the screen.
-	     * 
-	     * @param Image& img The image to render.
-	     * @param int x X position to render to.
-	     * @param int y Y position to render to.
-	     */
-	    void renderImage(Image& img, int x, int y);
-	    
-	    /**
-	     * Render part of an image onto the screen.
-	     * 
-	     * @param Image& img The image to render.
-	     * @param int x X position to render to.
-	     * @param int y Y position to render to.
-	     * @param int width Width to render.
-	     * @param int height Height to render.
-	     */
-	    void renderImage(Image& img, int x, int y, int width, int height);
-	    
-	    /**
-	     * Render part of an image onto the screen.
-	     * 
-	     * @param Image& img The image to render.
-	     * @param int x X position to render to.
-	     * @param int y Y position to render to.
-	     * @param int width Width to render.
-	     * @param int height Height to render.
-	     * @param int xOffset Source x offset.
-	     * @param int yOffset Source y offset.
-	     */
-	    void renderImage(Image& img, int x, int y, int width, int height, int xOffset, int yOffset);
-	
+	    };
+	    	
 	}
 
 }

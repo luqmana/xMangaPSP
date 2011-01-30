@@ -18,7 +18,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
- 
+
 /**
  * Sets up callbacks on the PSP.
  * 
@@ -34,68 +34,68 @@
 
 namespace xM {
 
-	namespace Stn {
-	
-		/**
-		 * The standard callback thread id.
-		 */
-		int callbackThreadId = -1;
-		
-		/**
-		 * The exit callback id.
-		 */
-		int exitCallbackId = -1;
-	
-		/**
-		 * The standard exit callback.
-		 * Triggered when HOME button is pressed.
-		 * 
-		 * @return int
-		 */
-		int exitCallback(int arg1, int arg2, void *common) {
-		
-			// Exit the game
-			sceKernelExitGame();
-			
-			return 0;
-		
-		}
-		
-		/**
-		 * Standard callback thread handling function.
-		 * Registers various callbacks.
-		 * 
-		 * @return int
-		 */
-		int callbackThread(SceSize args, void *argp) {
-					
-			// Create callback
-			exitCallbackId = sceKernelCreateCallback("Standard Exit Callback", exitCallback, NULL);
-			
-			// Register callback
-			sceKernelRegisterExitCallback(exitCallbackId);
-			
-			// Let the thread sleep
-			sceKernelSleepThreadCB();
-			
-			return 0;
-		
-		}
-		
-		/**
-		 * Sets up the standard callback handling thread.
-		 */
-		void setupCallbacks(void) {
-		
-			// Create the thread
-			callbackThreadId = sceKernelCreateThread("StandardCallbackThread", callbackThread, 0x11, 0xFA0, 0, 0);
-			
-			// Start it
-			sceKernelStartThread(callbackThreadId, 0, 0);
-		
-		}
-			
-	}
+    namespace Stn {
+
+        /**
+         * The standard callback thread id.
+         */
+        int callbackThreadId = -1;
+
+        /**
+         * The exit callback id.
+         */
+        int exitCallbackId = -1;
+
+        /**
+         * The standard exit callback.
+         * Triggered when HOME button is pressed.
+         *
+         * @return int
+         */
+        int exitCallback(int arg1, int arg2, void *common) {
+
+            // Exit the game
+            sceKernelExitGame();
+
+            return 0;
+
+        }
+
+        /**
+         * Standard callback thread handling function.
+         * Registers various callbacks.
+         *
+         * @return int
+         */
+        int callbackThread(SceSize args, void *argp) {
+
+            // Create callback
+            exitCallbackId = sceKernelCreateCallback("Standard Exit Callback", exitCallback, NULL);
+
+            // Register callback
+            sceKernelRegisterExitCallback(exitCallbackId);
+
+            // Let the thread sleep
+            sceKernelSleepThreadCB();
+
+            return 0;
+
+        }
+
+        /**
+         * Sets up the standard callback handling thread.
+         */
+        void setupCallbacks(void) {
+
+            // Create the thread
+            callbackThreadId = sceKernelCreateThread("StandardCallbackThread", callbackThread, 0x11, 0xFA0, 0, 0);
+
+            // Start it
+            sceKernelStartThread(callbackThreadId, 0, 0);
+
+        }
+
+    }
 
 }
 

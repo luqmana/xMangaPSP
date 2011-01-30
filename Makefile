@@ -21,40 +21,53 @@
  PSPSDK = $(shell psp-config --pspsdk-path)
  PSPBIN = $(PSPSDK)/../bin
  
- BUILD_DIR = ../build
+ BUILD_DIR = build
+ SRC_DIR = src
  
  # Targets
- TARGET = xMangaPSP
- EXTRA_TARGETS = $(BUILD_DIR)/EBOOT.PBP
+ TARGET 		= $(BUILD_DIR)/xMangaPSP
+ EXTRA_TARGETS 	= $(BUILD_DIR)/EBOOT.PBP
  
  # Other files to be deleted when clean is called
  EXTRA_CLEAN = 
  
- # States
- STATES = MenuState.o
+ # State Files
+ STATES = MenuState.cpp
  
- # Objects
- OBJS  = xMangaPSP.o Callbacks.o Graphics.o Stats.o Timer.o StateManager.o Image.o
- OBJS +=  $(STATES)
-  
+ # Source files
+ SRC  = xMangaPSP.cpp Callbacks.cpp Graphics.cpp Stats.cpp Timer.cpp StateManager.cpp Image.cpp Log.cpp
+ SRC  +=  $(STATES)
+ 
+ # Object files
+ OBJS  := $(patsubst %.cpp, $(BUILD_DIR)/%.o, $(filter %.cpp, $(SRC)))
+
  # Defines
  MAJOR_VERSION = 1
  MINOR_VERSION = 0
  EXTRA_VERSION = 
  API_VERSION   = 5
  
- COMPILER_DEFINES = -D_MAJOR_VERSION=$(MAJOR_VERSION) -D_MINOR_VERSION=$(MINOR_VERSION) -D_API_VERSION=$(API_VERSION) -D_EXTRA_VERION=$(EXTRA_VERSION)
+ # Debug mode
+ DEBUG = 1
+ 
+ COMPILER_DEFINES = -D_MAJOR_VERSION=$(MAJOR_VERSION) -D_MINOR_VERSION=$(MINOR_VERSION) -D_API_VERSION=$(API_VERSION) -D_EXTRA_VERION=$(EXTRA_VERSION) -D__xM_DEBUG=$(DEBUG)
  
  # Include Directories
- INCDIR = ../include $(PSPDEV)/psp/include/
+ INCDIR = $(SRC_DIR) $(SRC_DIR)/../include $(PSPDEV)/psp/include/
  
  # Library Directories
  LIBS = -lpng -lz -lpspgum -lpspgu -lm -lpsprtc -lpspsdk -lstdc++
  
  # Compiler Flags
- CFLAGS = -O3 -G4 -Wall -falign-functions=64 $(COMPILER_DEFINES)
+ CFLAGS = -Wall -falign-functions=64 $(COMPILER_DEFINES)
  CXXFLAGS = $(CFLAGS) -fno-exceptions -fno-rtti
- ASFLAGS = 
+ ASFLAGS =
+
+ ifeq ($(DEBUG), 1)
+ CFLAGS += -g
+ else
+ CFLAGS += -O3 -G4
+ endif
  
  # FW Version
  PSP_FW_VERSION = 600
@@ -73,17 +86,19 @@
  USE_USER_LIBS = 1
   
  # EBOOT.PBP Variables
- PSP_EBOOT_TITLE = xMangaPSP v$(MAJOR_VERSION).$(MINOR_VERSION)$(EXTRA_VERSION)
- #PSP_EBOOT_SFO = PARAM.SFO
- #PSP_EBOOT_ICON = Resources/ICON0.png
- #PSP_EBOOT_ICON1 = Resources/ICON1.pmf
- #PSP_EBOOT_UNKPNG = NULL
- #PSP_EBOOT_PIC1 = Resources/PIC1.png
- #PSP_EBOOT_SND0 = NULL
- #PSP_EBOOT_PSAR = NULL
- #PSP_EBOOT = EBOOT.PBP
- 
+ PSP_EBOOT 		= $(BUILD_DIR)/EBOOT.PBP
+ PSP_EBOOT_TITLE 	= xMangaPSP v$(MAJOR_VERSION).$(MINOR_VERSION)$(EXTRA_VERSION)
+ PSP_EBOOT_SFO 		= $(BUILD_DIR)/PARAM.SFO # A sort of description file, generated compile time
+ PSP_EBOOT_ICON 	= NULL # Main Program Icon		144 x 80
+ PSP_EBOOT_ICON1 	= NULL # Animated Program Icon		144 x 80
+ PSP_EBOOT_UNKPNG 	= NULL # Overlay Image			310 x 180
+ PSP_EBOOT_PIC1 	= NULL # Background			480 x 272
+ PSP_EBOOT_SND0 	= NULL # Background music
+ PSP_EBOOT_PSAR 	= NULL 
+  
  # Get the base makefile
  include $(PSPSDK)/lib/build.mak
  
- $(BUILD_DIR)/EBOOT.PBP: EBOOT.PBP
+ # Rule to keep src dir clean while building
+ $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
+	$(CXX) $(CXXFLAGS) -c -o $@ $<

@@ -18,7 +18,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
- 
+
 /**
  * Stat utilities.
  * 
@@ -39,63 +39,63 @@
 
 namespace xM {
 
-	namespace Util {
-	
-		/**
-		 * Frames-per-second
-		 */
-		int fps = 0;
-		
-		/**
-		 * FPS info string.
-		 */
-		std::string fpsDisplay;
-		
-		/**
-		 * Used to calculate FPS
-		 */
-		Timer fpsTimer;		
-		
-		/**
-		 * Displays the FPS.
-		 */
-		void FPS(void) {
-		
-			if (!fpsTimer.isStarted())
-				fpsTimer.start();
-								
-			// Increment
-			fps++;
-			
-			if (fpsTimer.getDeltaTicks() >= 1.0f) {
-			
-				fpsTimer.start();
-				fpsDisplay.assign("FPS: ");
-				fpsDisplay.append(Util::toString(fps));
-				fps = 0;
-							
-			}
-			
-			pspDebugScreenSetOffset((int)Gfx::getFrameBuffer());
-			pspDebugScreenSetXY(0, 0);
-			pspPrintf(fpsDisplay.c_str());
-		
-		}
-		
-		/**
-		 * Displays free memory.
-		 */
-		void MEM(void) {
-		
-		    // Move cursor to correct position
-			pspDebugScreenSetOffset((int)Gfx::getFrameBuffer());
-			pspDebugScreenSetXY(0, 0);
-			
-			pspPrintf("\nFree Mem: %d (%d)", sceKernelTotalFreeMemSize() / 1048576, sceKernelTotalFreeMemSize());
-		
-		}
-			
-	}
+    namespace Util {
+
+        /**
+         * Frames-per-second
+         */
+        int fps = 0;
+
+        /**
+         * FPS info string.
+         */
+        std::string fpsDisplay;
+
+        /**
+         * Used to calculate FPS
+         */
+        Timer fpsTimer;
+
+        /**
+         * Displays the FPS.
+         */
+        void FPS(void) {
+
+            if (!fpsTimer.isStarted())
+                fpsTimer.start();
+
+            // Increment
+            fps++;
+
+            if (fpsTimer.getDeltaTicks() >= 1.0f) {
+
+                fpsTimer.start();
+                fpsDisplay.assign("FPS: ");
+                fpsDisplay.append(Util::toString(fps));
+                fps = 0;
+
+            }
+
+            pspDebugScreenSetOffset((int) Gfx::getFrameBuffer());
+            pspDebugScreenSetXY(0, 0);
+            pspPrintf(fpsDisplay.c_str());
+
+        }
+
+        /**
+         * Displays free memory.
+         */
+        void MEM(void) {
+
+            // Move cursor to correct position
+            pspDebugScreenSetOffset((int) Gfx::getFrameBuffer());
+            pspDebugScreenSetXY(0, 0);
+
+            pspPrintf("\nFree Mem: %d (%d)", sceKernelTotalFreeMemSize() / 1048576, sceKernelTotalFreeMemSize());
+
+        }
+
+    }
 
 }
 

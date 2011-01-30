@@ -53,6 +53,7 @@ namespace xM {
 		 */
 		typedef struct {
 		
+		    float u, v;
 			unsigned int colour;
 			float x, y, z;
 		
@@ -118,32 +119,29 @@ namespace xM {
 		 * 
 		 * @param float x X position.
 		 * @param float y Y position.
-		 * @param float z Z position.
 		 * @param float w Quad width.
 		 * @param float h Quad height.
 		 * @param unsigned int colour Colour of quad.
 		 */
-		void drawQuad(float x, float y, float z, float w, float h, unsigned int colour);
-		
+		void drawQuad(float x, float y, float w, float h, unsigned int colour);
+				
 		/**
 		 * Draw a simple one colour quad with rotation.
 		 * 
 		 * @param float x X position.
 		 * @param float y Y position.
-		 * @param float z Z position.
 		 * @param float w Quad width.
 		 * @param float h Quad height.
 		 * @param unsigned int colour Colour of quad.
 		 * @param float rotate Rotation
 		 */
-		void drawQuad(float x, float y, float z, float w, float h, unsigned int colour, float rotate);
+		void drawQuad(float x, float y, float w, float h, unsigned int colour, float rotate);
 		
 		/**
 		 * Draw a quad. [The actual function]
 		 * 
 		 * @param float x X position.
 		 * @param float y Y position.
-		 * @param float z Z position.
 		 * @param float w Quad width.
 		 * @param float h Quad height.
 		 * @param unsigned int colourTopLeft Colour of quad extending from top left.
@@ -152,7 +150,7 @@ namespace xM {
 		 * @param unsigned int colourBottomRight Colour of quad extending from bottom right.
 		 * @param float rotate Rotation
 		 */
-		void drawQuad(float x, float y, float z, float w, float h, unsigned int colourTopLeft, 
+		void drawQuad(float x, float y, float w, float h, unsigned int colourTopLeft, 
 		                unsigned int colourTopRight, unsigned int colourBottomLeft, unsigned int colourBottomRight, float rotate);
 			
 	}

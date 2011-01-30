@@ -1,0 +1,6 @@
+1296373292: Image::loadFile — test.png
+1296373292: Image::loadFile — Unable to get file handle. [test.png]
+1296373797: Image::loadFile — ../resources/test.png
+1296373797: Image::loadFile — Unable to get file handle. [../resources/test.png]
+1296374112: Image::loadFile — test.png
+1296374642: Image::loadFile — test.png
