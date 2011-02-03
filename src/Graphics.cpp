@@ -305,7 +305,7 @@ namespace xM {
 
             // Draw the quad
             sceGumDrawArray(GU_TRIANGLE_STRIP, GU_TEXTURE_32BITF | GU_COLOR_8888 | GU_VERTEX_32BITF, 4, 0, finalQuad);
-
+            
         }
 
     }

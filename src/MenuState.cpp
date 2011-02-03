@@ -105,8 +105,8 @@ namespace xM {
             testImg.draw(120, 100);
 
             // Draw the first quad rotating
-            Gfx::drawQuad(240.0f - (100 / 2), 160.0f - (100 / 2), 100, 100, GU_COLOR(1.0f, 1.0f, 1.0f, 1.0f), GU_COLOR(1.0f, 0.0f, 0.0f, 1.0f),
-                    GU_COLOR(0.0f, 1.0f, 0.0f, 1.0f), GU_COLOR(0.0f, 0.0f, 1.0f, 1.0f), rotate);
+            Gfx::drawQuad(240.0f - (100 / 2), 160.0f - (100 / 2), 100, 100, GU_COLOR(1.0f, 1.0f, 1.0f, 1.0f), GU_COLOR(1.0f, 0.0f, 0.0f, 0.75f),
+                    GU_COLOR(0.0f, 1.0f, 0.0f, 0.50f), GU_COLOR(0.0f, 0.0f, 1.0f, 0.25f), rotate);
 
             // Draw the second quad rotating in the opposite direction 10 times as fast
             Gfx::drawQuad(240.0f - (50 / 2), 160.0f - (50 / 2), 50.0f, 50.0f, GU_COLOR(0.0f, 0.0f, 0.0f, 0.1f), -rotate * 10.0f);

@@ -18,7 +18,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
- 
+
 /**
  * Graphic stuff.
  * Header file.
@@ -46,114 +46,113 @@
 
 namespace xM {
 
-	namespace Gfx {
-	
-		/**
-		 * Convenience type definition to define a point/pixel.
-		 */
-		typedef struct {
-		
-		    float u, v;
-			unsigned int colour;
-			float x, y, z;
-		
-		} Vertex;
-		
-		/**
-		 * Get a pointer to the frame buffer.
-		 * 
-		 * @return void* Pointer to framebuffer.
-		 */
-		void* getFrameBuffer(void);
-		
-		/**
+    namespace Gfx {
+
+        /**
+         * Convenience type definition to define a point/pixel.
+         */
+        typedef struct {
+            float u, v;
+            unsigned int colour;
+            float x, y, z;
+
+        } Vertex;
+
+        /**
+         * Get a pointer to the frame buffer.
+         *
+         * @return void* Pointer to framebuffer.
+         */
+        void* getFrameBuffer(void);
+
+        /**
          * Get the display list.
          *
          * @return unsigned int* The display list.
          */
         unsigned int* getDisplayList(void);
-	
-		/**
-		 * Initiates the GU.
-		 */
-		void initGu(void);
-		
-		/**
-		 * Sets up the projection matrix in a perspective view.
-		 */
-		void setUpPerspectiveView(void);
-		
-		/**
-		 * Sets up the projection matrix in a orthographic view.
-		 */
-		void setUpOrthoView(void);
-		
-		/**
-		 * Clears the screen.
-		 * Colour and buffer.
-		 */
-		void clearScreen(void);
-		
-		/**
-		 * Prepare the GU for rendering.
-		 */
-		void beginFrame(void);
-		
-		/**
-		 * End rendering 
-		 */
-		void endFrame(void);
-		
-		/**
-		 * Perfoms a vertical sync and swaps the buffers.
-		 */
-		void syncAndSwap(void);
-		
-		/**
-		 * Terminates the GU.
-		 */
-		void shutdownGu(void);
-		
-		/**
-		 * Draw a simple one colour quad.
-		 * 
-		 * @param float x X position.
-		 * @param float y Y position.
-		 * @param float w Quad width.
-		 * @param float h Quad height.
-		 * @param unsigned int colour Colour of quad.
-		 */
-		void drawQuad(float x, float y, float w, float h, unsigned int colour);
-				
-		/**
-		 * Draw a simple one colour quad with rotation.
-		 * 
-		 * @param float x X position.
-		 * @param float y Y position.
-		 * @param float w Quad width.
-		 * @param float h Quad height.
-		 * @param unsigned int colour Colour of quad.
-		 * @param float rotate Rotation
-		 */
-		void drawQuad(float x, float y, float w, float h, unsigned int colour, float rotate);
-		
-		/**
-		 * Draw a quad. [The actual function]
-		 * 
-		 * @param float x X position.
-		 * @param float y Y position.
-		 * @param float w Quad width.
-		 * @param float h Quad height.
-		 * @param unsigned int colourTopLeft Colour of quad extending from top left.
-		 * @param unsigned int colourTopRight Colour of quad extending from top right.
-		 * @param unsigned int colourBottomLeft Colour of quad extending from bottom left.
-		 * @param unsigned int colourBottomRight Colour of quad extending from bottom right.
-		 * @param float rotate Rotation
-		 */
-		void drawQuad(float x, float y, float w, float h, unsigned int colourTopLeft, 
-		                unsigned int colourTopRight, unsigned int colourBottomLeft, unsigned int colourBottomRight, float rotate);
-			
-	}
+
+        /**
+         * Initiates the GU.
+         */
+        void initGu(void);
+
+        /**
+         * Sets up the projection matrix in a perspective view.
+         */
+        void setUpPerspectiveView(void);
+
+        /**
+         * Sets up the projection matrix in a orthographic view.
+         */
+        void setUpOrthoView(void);
+
+        /**
+         * Clears the screen.
+         * Colour and buffer.
+         */
+        void clearScreen(void);
+
+        /**
+         * Prepare the GU for rendering.
+         */
+        void beginFrame(void);
+
+        /**
+         * End rendering
+         */
+        void endFrame(void);
+
+        /**
+         * Perfoms a vertical sync and swaps the buffers.
+         */
+        void syncAndSwap(void);
+
+        /**
+         * Terminates the GU.
+         */
+        void shutdownGu(void);
+
+        /**
+         * Draw a simple one colour quad.
+         *
+         * @param float x X position.
+         * @param float y Y position.
+         * @param float w Quad width.
+         * @param float h Quad height.
+         * @param unsigned int colour Colour of quad.
+         */
+        void drawQuad(float x, float y, float w, float h, unsigned int colour);
+
+        /**
+         * Draw a simple one colour quad with rotation.
+         *
+         * @param float x X position.
+         * @param float y Y position.
+         * @param float w Quad width.
+         * @param float h Quad height.
+         * @param unsigned int colour Colour of quad.
+         * @param float rotate Rotation
+         */
+        void drawQuad(float x, float y, float w, float h, unsigned int colour, float rotate);
+
+        /**
+         * Draw a quad. [The actual function]
+         *
+         * @param float x X position.
+         * @param float y Y position.
+         * @param float w Quad width.
+         * @param float h Quad height.
+         * @param unsigned int colourTopLeft Colour of quad extending from top left.
+         * @param unsigned int colourTopRight Colour of quad extending from top right.
+         * @param unsigned int colourBottomLeft Colour of quad extending from bottom left.
+         * @param unsigned int colourBottomRight Colour of quad extending from bottom right.
+         * @param float rotate Rotation
+         */
+        void drawQuad(float x, float y, float w, float h, unsigned int colourTopLeft,
+                unsigned int colourTopRight, unsigned int colourBottomLeft, unsigned int colourBottomRight, float rotate);
+
+    }
 
 }
 

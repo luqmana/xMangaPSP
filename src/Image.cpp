@@ -33,10 +33,13 @@
 #include "xM/Gfx/Graphics.h"
 #include "xM/Gfx/Image.h"
 #include "xM/Util/Log.h"
+#include "xM/Gfx/PicoPNG.h"
 
 #include <stdio.h>
-#include <png.h>
+#include <string.h>
 #include <malloc.h>
+
+#include <pspiofilemgr.h>
 // END Includes
 
 // BEGIN Defines
@@ -70,160 +73,46 @@ namespace xM {
             if (__xM_DEBUG)
                 Util::logMsg("Image::loadFile — %s", file.c_str());
 
-            //this->reset();
+            this->reset();
 
-            // File pointer
-            FILE* fp;
+            SceUID fD = sceIoOpen(file.c_str(), PSP_O_RDONLY, 0777);
 
-            // Variables to read/parse png
-            unsigned char sig[8];
-            png_structp png_ptr;
-            png_infop info_ptr;
+            if (!fD) {
 
-            if ((fp = fopen(file.c_str(), "rb")) == NULL) {
-
-                if (__xM_DEBUG) Util::logMsg("Image::loadFile — Unable to get file handle. [%s]", file.c_str());
-                return false;
-
-            }
-
-            // Read in the sig
-            fread(sig, sizeof (*sig), sizeof (sig), fp);
-
-            if (!png_check_sig(sig, sizeof (*sig))) {
-
-                fclose(fp);
-
-                if (__xM_DEBUG) Util::logMsg("Image::loadFile — PNG sig does not validate. [%s]", file.c_str());
+                if (__xM_DEBUG)
+                    Util::logMsg("Image::loadFile — Unable to open image file. [%s]", file.c_str());
 
                 return false;
 
             }
 
-            if ((png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL)) == NULL) {
+            // Seek to end of file
+            long imageSize = sceIoLseek32(fD, 0, PSP_SEEK_END);
 
-                fclose(fp);
+            // Back to the beginning
+            sceIoLseek(fD, 0, 0);
 
-                if (__xM_DEBUG) Util::logMsg("Image::loadFile — Unable to create png_structp. [%s]", file.c_str());
+            unsigned char* buffer = (unsigned char*) malloc(imageSize);
 
-                return false;
+            if (buffer == NULL) {
 
-            }
-
-            if ((info_ptr = png_create_info_struct(png_ptr)) == NULL) {
-
-                png_destroy_read_struct(&png_ptr, NULL, NULL);
-                fclose(fp);
-
-                if (__xM_DEBUG) Util::logMsg("Image::loadFile — Unable to create png_infop. [%s]", file.c_str());
+                if (__xM_DEBUG)
+                    Util::logMsg("Image::loadFile — Unable to allocate memory.");
 
                 return false;
 
             }
 
-            // libpng-style error handling
-            if (setjmp(png_jmpbuf(png_ptr))) {
+            sceIoRead(fD, buffer, imageSize);
 
-                png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
-                fclose(fp);
+            decodePNG(this->pixels, this->width, this->height, (const unsigned char*)buffer, imageSize, true);
 
-                if (__xM_DEBUG) Util::logMsg("Image::loadFile — Some error occurred. [%s]", file.c_str());
+            // Well, no need for the buffer now
+            free(buffer);
 
-                return false;
-
-            }
-
-            // Pass the file pointer on to libpng
-            png_ptr->io_ptr = (png_voidp) fp;
-
-            // Tell it we did the header check so it should skip the first 8 bytes
-            png_set_sig_bytes(png_ptr, 8);
-
-            // Read in the info
-            png_read_info(png_ptr, info_ptr);
-
-            // Get the info
-            this->width = png_get_image_width(png_ptr, info_ptr);
-            this->height = png_get_image_height(png_ptr, info_ptr);
-            this->colourType = png_get_color_type(png_ptr, info_ptr);
-            this->bitDepth = png_get_bit_depth(png_ptr, info_ptr);
-            this->channels = png_get_channels(png_ptr, info_ptr);
-
-            // BEGIN normalization
-            // We want all our images to be RGBA
-
-            // Extract multiple pixels with bit depths of 1, 2, and 4
-            png_set_packing(png_ptr);
-
-            // Strip 16 bit/color files down to 8 bits/co
-            if (this->bitDepth == 16)
-                png_set_strip_16(png_ptr);
-
-            // Palette to RGB
-            if (this->colourType == PNG_COLOR_TYPE_PALETTE) {
-
-                png_set_palette_to_rgb(png_ptr);
-                this->channels = 3;
-
-            }
-
-            // Grayscale to RGB
-            if (this->colourType == PNG_COLOR_TYPE_GRAY || this->colourType == PNG_COLOR_TYPE_GRAY_ALPHA) {
-
-                png_set_gray_to_rgb(png_ptr);
-                this->channels = 3;
-
-            }
-            if (this->colourType == PNG_COLOR_TYPE_GRAY_ALPHA) {
-
-                png_set_gray_to_rgb(png_ptr);
-                this->channels = 4;
-
-            }
-
-            // tRNS chunk to alpha
-            if (png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS)) {
-
-                png_set_tRNS_to_alpha(png_ptr);
-                this->channels += 1;
-
-            }
-
-            // END Normalization
-
-            png_read_update_info(png_ptr, info_ptr);
-
-            // Allocate the image data buffers
-            //this->pixels = (unsigned char*) malloc(sizeof(png_bytep) * this->height);
-
-            png_bytep* rowPtrs = new png_bytep[this->height];
-
-            this->pixels = new char[this->width * this->height * this->bitDepth * this->channels / 8];
-
-            for (size_t i = 0; i < this->height; i++)
-                rowPtrs[i] = (png_bytep)this->pixels + i;
-
-            // Read the image now!
-            png_read_image(png_ptr, (png_bytep*)this->pixels);
-
-            // Cleanup
-            delete[] (png_bytep) rowPtrs;
-            png_read_end(png_ptr, info_ptr);
-            png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
-
-            /*this->width = 128;
-            this->height = 128;
-
-            this->pixels = (char*) malloc(this->width * this->height * 4);
-
-            for (unsigned int s = 0; s < this->width * this->height * 4; s++) {
-                unsigned int *p = (unsigned int*) this->pixels;
-             *p = 0xffff0000;
-            }*/
-
-            // Close the file
-            fclose(fp);
-
+            // Swizzle
+            this->swizzle();
+            
             return true;
 
         }
@@ -233,30 +122,28 @@ namespace xM {
          */
         void Image::reset() {
 
-            if (this->pixels != NULL)
-                delete[] this->pixels;
+            if (!this->pixels.empty())
+                this->pixels.clear();
 
             this->width = 0;
             this->height = 0;
-            this->bitDepth = 0;
-            this->colourType = 0;
-            this->channels = 0;
             this->swizzled = false;
-            this->pixels = NULL;
+            this->pixels.clear();
 
         }
 
         /**
          * Rearrange the pixels to optimize speed.
+         *
+         * @link http://wiki.ps2dev.org/psp:ge_faq
          */
         void Image::swizzle() {
 
             unsigned int i, j;
+            unsigned int rowblocks = (this->width * sizeof(u32) / 16);
+            long size = this->width * this->height * 8;
 
-            unsigned int rowblocks = (this->width * sizeof (u32) / 16);
-            long size = this->width * this->height * this->bitDepth;
-
-            unsigned char* out = (unsigned char*) malloc(size * sizeof (unsigned char));
+            unsigned char* out = (unsigned char*) malloc(size * sizeof(unsigned char));
 
             for (j = 0; j < this->height; ++j) {
 
@@ -267,20 +154,21 @@ namespace xM {
 
                     unsigned int x = (i - blockx * 16);
                     unsigned int y = (j - blocky * 8);
-                    unsigned int blockIndex = blockx + ((blocky) * rowblocks);
+                    unsigned int blockIndex = blockx + (blocky * rowblocks);
                     unsigned int blockAddress = blockIndex * 16 * 8;
 
-                    out[blockAddress + x + y * 16] = this->pixels[ i + j * this->width * sizeof (u32)];
+                    out[blockAddress + x + y * 16] = this->pixels[i + j * this->width * sizeof(u32)];
 
                 }
 
             }
 
             // Copy swizzled data into pixels
-            memcpy(this->pixels, out, size);
+            this->pixels.resize(size);
+            memcpy(&this->pixels[0], out, size);
 
             // Flip bool
-            this->swizzled = !this->swizzled;
+            this->swizzled = true;
 
             // Free temporary
             free(out);
@@ -295,7 +183,20 @@ namespace xM {
          */
         void Image::draw(float x, float y) {
 
-            this->draw(x, y, this->width, this->height, 0, 0);
+            this->draw(x, y, this->width, this->height, 0, 0, 0);
+
+        }
+
+        /**
+         * Render an image onto the screen and rotate it.
+         *
+         * @param float x X position to render to.
+         * @param float y Y position to render to.
+         * @param float rotate Rotation option!
+         */
+        void Image::draw(float x, float y, float rotate) {
+
+            this->draw(x, y, this->width, this->height, 0, 0, rotate);
 
         }
 
@@ -309,7 +210,7 @@ namespace xM {
          */
         void Image::draw(float x, float y, int rWidth, int rHeight) {
 
-            this->draw(x, y, rWidth, rHeight, 0, 0);
+            this->draw(x, y, rWidth, rHeight, 0, 0, 0);
 
         }
 
@@ -322,25 +223,51 @@ namespace xM {
          * @param int rHeight Height to render.
          * @param float xOffset Source x offset.
          * @param float yOffset Source y offset.
+         * @param float rotate Rotation
          */
-        void Image::draw(float x, float y, int rWidth, int rHeight, float xOffset, float yOffset) {
+        void Image::draw(float x, float y, int rWidth, int rHeight, float xOffset, float yOffset, float rotate) {
 
-            // ToDo: Render code.
-
+            // Enable 2D textures
             sceGuEnable(GU_TEXTURE_2D);
 
             sceGuTexMode(GU_PSM_8888, 0, 0, this->isSwizzled());
-            sceGuTexFunc(GU_TFX_BLEND, GU_TCC_RGB);
+            sceGuTexFunc(GU_TFX_REPLACE, GU_TCC_RGBA);
             sceGuTexFilter(GU_LINEAR, GU_LINEAR);
             //sceGuTexScale(1.0f, 1.0f);
             //sceGuTexOffset(0.0f, 0.0f);
 
             // Apply texture
-            sceGuTexImage(0, rWidth, rHeight, rWidth, this->pixels);
+            sceGuTexImage(0, rWidth, rHeight, rWidth, &this->pixels[0]);
 
             // Draw quad for it
-            drawQuad(x, y, rWidth, rHeight, GU_COLOR(0.0f, 0.0f, 0.0f, 1.0f));
+            drawQuad(x, y, rWidth, rHeight, GU_COLOR(1.0f, 1.0f, 1.0f, 1.0f), rotate);
+/*Vertex quad[4] = {
+                {0, 0, GU_COLOR(1.0f, 1.0f, 1.0f, 1.0f), -(rWidth / 2), -(rHeight / 2), 0.0f}, // Top-Left point
+                {1, 0, GU_COLOR(1.0f, 1.0f, 1.0f, 1.0f), (rWidth / 2), -(rHeight / 2), 0.0f}, // Top-Right point
+                {0, 1, GU_COLOR(1.0f, 1.0f, 1.0f, 1.0f), -(rWidth / 2), (rHeight / 2), 0.0f}, // Bottom-Left point
+                {1, 1, GU_COLOR(1.0f, 1.0f, 1.0f, 1.0f), (rWidth / 2), (rHeight / 2), 0.0f} // Bottom-Right point
+            };
 
+            sceGumMatrixMode(GU_MODEL);
+            sceGumLoadIdentity(); // Reset
+            {
+
+                ScePspFVector3 pos = {x + (rWidth / 2), y + (rHeight / 2), 0.0f};
+
+                // Move
+                sceGumTranslate(&pos);
+
+                // Rotate
+                sceGumRotateZ(rotate);
+
+            }
+
+            Vertex* finalQuad = (Vertex*) sceGuGetMemory(sizeof (Vertex) * 4);
+            memcpy(finalQuad, quad, sizeof (Vertex) * 4);
+
+            // Draw the quad
+            sceGumDrawArray(GU_TRIANGLE_STRIP, GU_TEXTURE_32BITF | GU_COLOR_8888 | GU_VERTEX_32BITF, 4, 0, finalQuad);*/
+            // Disable em again
             sceGuDisable(GU_TEXTURE_2D);
 
         }

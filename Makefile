@@ -25,7 +25,7 @@
  SRC_DIR = src
  
  # Targets
- TARGET 		= $(BUILD_DIR)/xMangaPSP
+ TARGET		= $(BUILD_DIR)/xMangaPSP
  EXTRA_TARGETS 	= $(BUILD_DIR)/EBOOT.PBP
  
  # Other files to be deleted when clean is called
@@ -35,7 +35,7 @@
  STATES = MenuState.cpp
  
  # Source files
- SRC  = xMangaPSP.cpp Callbacks.cpp Graphics.cpp Stats.cpp Timer.cpp StateManager.cpp Image.cpp Log.cpp
+ SRC   =  xMangaPSP.cpp Callbacks.cpp Graphics.cpp Stats.cpp Timer.cpp StateManager.cpp Image.cpp Log.cpp PicoPNG.cpp
  SRC  +=  $(STATES)
  
  # Object files
@@ -56,11 +56,11 @@
  INCDIR = $(SRC_DIR) $(SRC_DIR)/../include $(PSPDEV)/psp/include/
  
  # Library Directories
- LIBS = -lpng -lz -lpspgum -lpspgu -lm -lpsprtc -lpspsdk -lstdc++
+ LIBS = -lpspgum -lpspgu -lm -lpsprtc -lpspsdk -lstdc++
  
  # Compiler Flags
  CFLAGS = -Wall -falign-functions=64 $(COMPILER_DEFINES)
- CXXFLAGS = $(CFLAGS) -fno-exceptions -fno-rtti
+ CXXFLAGS = $(CFLAGS) -fno-rtti
  ASFLAGS =
 
  ifeq ($(DEBUG), 1)
@@ -86,15 +86,15 @@
  USE_USER_LIBS = 1
   
  # EBOOT.PBP Variables
- PSP_EBOOT 		= $(BUILD_DIR)/EBOOT.PBP
+ PSP_EBOOT 			= $(BUILD_DIR)/EBOOT.PBP
  PSP_EBOOT_TITLE 	= xMangaPSP v$(MAJOR_VERSION).$(MINOR_VERSION)$(EXTRA_VERSION)
- PSP_EBOOT_SFO 		= $(BUILD_DIR)/PARAM.SFO # A sort of description file, generated compile time
- PSP_EBOOT_ICON 	= NULL # Main Program Icon		144 x 80
- PSP_EBOOT_ICON1 	= NULL # Animated Program Icon		144 x 80
- PSP_EBOOT_UNKPNG 	= NULL # Overlay Image			310 x 180
- PSP_EBOOT_PIC1 	= NULL # Background			480 x 272
- PSP_EBOOT_SND0 	= NULL # Background music
- PSP_EBOOT_PSAR 	= NULL 
+ PSP_EBOOT_SFO 		= $(BUILD_DIR)/PARAM.SFO# A sort of description file, generated compile time
+ PSP_EBOOT_ICON 	= NULL# Main Program Icon		144 x 80
+ PSP_EBOOT_ICON1 	= NULL# Animated Program Icon	144 x 80
+ PSP_EBOOT_UNKPNG 	= NULL# Overlay Image			310 x 180
+ PSP_EBOOT_PIC1 	= NULL# Background				480 x 272
+ PSP_EBOOT_SND0 	= NULL# Background music
+ PSP_EBOOT_PSAR 	= NULL
   
  # Get the base makefile
  include $(PSPSDK)/lib/build.mak
