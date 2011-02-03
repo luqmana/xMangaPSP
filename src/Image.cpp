@@ -241,33 +241,8 @@ namespace xM {
 
             // Draw quad for it
             drawQuad(x, y, rWidth, rHeight, GU_COLOR(1.0f, 1.0f, 1.0f, 1.0f), rotate);
-/*Vertex quad[4] = {
-                {0, 0, GU_COLOR(1.0f, 1.0f, 1.0f, 1.0f), -(rWidth / 2), -(rHeight / 2), 0.0f}, // Top-Left point
-                {1, 0, GU_COLOR(1.0f, 1.0f, 1.0f, 1.0f), (rWidth / 2), -(rHeight / 2), 0.0f}, // Top-Right point
-                {0, 1, GU_COLOR(1.0f, 1.0f, 1.0f, 1.0f), -(rWidth / 2), (rHeight / 2), 0.0f}, // Bottom-Left point
-                {1, 1, GU_COLOR(1.0f, 1.0f, 1.0f, 1.0f), (rWidth / 2), (rHeight / 2), 0.0f} // Bottom-Right point
-            };
 
-            sceGumMatrixMode(GU_MODEL);
-            sceGumLoadIdentity(); // Reset
-            {
-
-                ScePspFVector3 pos = {x + (rWidth / 2), y + (rHeight / 2), 0.0f};
-
-                // Move
-                sceGumTranslate(&pos);
-
-                // Rotate
-                sceGumRotateZ(rotate);
-
-            }
-
-            Vertex* finalQuad = (Vertex*) sceGuGetMemory(sizeof (Vertex) * 4);
-            memcpy(finalQuad, quad, sizeof (Vertex) * 4);
-
-            // Draw the quad
-            sceGumDrawArray(GU_TRIANGLE_STRIP, GU_TEXTURE_32BITF | GU_COLOR_8888 | GU_VERTEX_32BITF, 4, 0, finalQuad);*/
-            // Disable em again
+            // Disable again
             sceGuDisable(GU_TEXTURE_2D);
 
         }
