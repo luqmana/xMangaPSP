@@ -58,9 +58,9 @@ PSP_MAIN_THREAD_ATTR(PSP_THREAD_ATTR_USER);
 
 /**
  * Set the PSP heap size.
- * Use only 10MB as heap
+ * Use roughly 15MB as heap
  */
-PSP_HEAP_SIZE_KB(10240);
+PSP_HEAP_SIZE_KB(15360);
 
 int main(int argc, char **argv) {
 

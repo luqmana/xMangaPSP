@@ -18,7 +18,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
- 
+
 /**
  * Various utilities.
  * Header file.
@@ -41,18 +41,54 @@
 
 namespace xM {
 
-	namespace Util {
-	
-		template <class T>
-		inline std::string toString(const T& t) {
-		
-			std::stringstream sS;
-			sS << t;
-			return sS.str();
-		
-		}
-			
-	}
+    namespace Util {
+
+        /**
+         * Calculates the next power of two for a given number.
+         *
+         * @param int j Number to 'convert'
+         *
+         * @return int The next power of 2.
+         */
+        inline int nextPow2(int j) {
+
+            int k = 1;
+
+            while (k < j)
+                k <<= 1;
+
+            return k;
+
+        }
+        
+        /**
+         * Calculates the next power of two for a given number.
+         * 
+         * @param unsigned int j Number to 'convert'
+         * 
+         * @return unsigned int The next power of 2.
+         */
+        inline unsigned int nextPow2(unsigned int j) {
+
+            unsigned int k = 1;
+
+            while (k < j)
+                k <<= 1;
+
+            return k;
+
+        }
+
+        template <class T>
+        inline std::string toString(const T& t) {
+
+            std::stringstream sS;
+            sS << t;
+            return sS.str();
+
+        }
+
+    }
 
 }
 

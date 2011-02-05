@@ -1,3 +1,6 @@
+#ifndef PicoPNG_H
+#define PicoPNG_H
+
 #include <vector>
 namespace xM {
     namespace Gfx {
@@ -22,7 +25,9 @@ namespace xM {
           works for trusted PNG files. Use LodePNG instead of picoPNG if you need this information.
         return: 0 if success, not 0 if some error occured.
          */
-        int decodePNG(std::vector<unsigned char>& out_image, unsigned long& image_width, unsigned long& image_height, const unsigned char* in_png, size_t in_size, bool convert_to_rgba32 = true);
+        int decodePNG(std::vector<unsigned char>& out_image, unsigned int& image_width, unsigned int& image_height, const unsigned char* in_png, size_t in_size, bool convert_to_rgba32 = true);
 
     }
 };
+
+#endif /* PicoPNG_H */

@@ -18,7 +18,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
- 
+
 /**
  * Base state class.
  * Header file.
@@ -39,50 +39,49 @@
 
 namespace xM {
 
-	namespace States {
-	
-		class Base {
-		
-		    public:
-		    
-		        /**
-		         * Start up code.
-		         */
-		        virtual void init(void) = 0;
-		        
-		        /**
-		         * Clean up code.
-		         */
-		        virtual void cleanUp(void) = 0;
-		        
-		        /**
-		         * Pause state.
-		         */
-		        virtual void pause(void) = 0;
-		        
-		        /**
-		         * Resume state.
-		         */
-		        virtual void resume(void) = 0;
-		        
-		        /**
-		         * Poll for input, read event state etc
-		         */
-		        virtual void handleEvents(void) = 0;
-		        
-		        /**
-		         * Now do something with the data we got from events and what not.
-		         */
-		        virtual void handleLogic(void) = 0;
-		        
-		        /**
-		         * Done with the logic? Draw what's needed then.
-		         */
-		        virtual void draw(void) = 0;
-		        		
-		};
-			
-	}
+    namespace States {
+
+        class Base {
+        public:
+
+            /**
+             * Start up code.
+             */
+            virtual void init(void) = 0;
+
+            /**
+             * Clean up code.
+             */
+            virtual void cleanUp(void) = 0;
+
+            /**
+             * Pause state.
+             */
+            virtual void pause(void) = 0;
+
+            /**
+             * Resume state.
+             */
+            virtual void resume(void) = 0;
+
+            /**
+             * Poll for input, read event state etc
+             */
+            virtual void handleEvents(void) = 0;
+
+            /**
+             * Now do something with the data we got from events and what not.
+             */
+            virtual void handleLogic(void) = 0;
+
+            /**
+             * Done with the logic? Draw what's needed then.
+             */
+            virtual void draw(void) = 0;
+
+        };
+
+    }
 
 }
 

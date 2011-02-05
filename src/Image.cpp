@@ -29,6 +29,9 @@
 #ifndef _Image_CPP
 #define _Image_CPP
 
+#include "xM/Util/Utils.h"
+
+
 // BEGIN Includes
 #include "xM/Gfx/Graphics.h"
 #include "xM/Gfx/Image.h"
@@ -77,7 +80,7 @@ namespace xM {
 
             SceUID fD = sceIoOpen(file.c_str(), PSP_O_RDONLY, 0777);
 
-            if (!fD) {
+            if (fD < 0) {
 
                 if (__xM_DEBUG)
                     Util::logMsg("Image::loadFile — Unable to open image file. [%s]", file.c_str());
@@ -88,6 +91,9 @@ namespace xM {
 
             // Seek to end of file
             long imageSize = sceIoLseek32(fD, 0, PSP_SEEK_END);
+
+            if (__xM_DEBUG)
+                Util::logMsg("Image size: %d", (int)imageSize);
 
             // Back to the beginning
             sceIoLseek(fD, 0, 0);
@@ -103,15 +109,17 @@ namespace xM {
 
             }
 
+            // Read in the png
             sceIoRead(fD, buffer, imageSize);
 
+            // Decode the png
             decodePNG(this->pixels, this->width, this->height, (const unsigned char*)buffer, imageSize, true);
+
+            this->p2Width = Util::nextPow2(this->width);
+            this->p2Height = Util::nextPow2(this->height);
 
             // Well, no need for the buffer now
             free(buffer);
-
-            // Swizzle
-            this->swizzle();
             
             return true;
 
@@ -183,7 +191,7 @@ namespace xM {
          */
         void Image::draw(float x, float y) {
 
-            this->draw(x, y, this->width, this->height, 0, 0, 0);
+            this->draw(x, y, this->width, this->height, this->p2Width, this->p2Height, 0, 0, 0);
 
         }
 
@@ -196,7 +204,7 @@ namespace xM {
          */
         void Image::draw(float x, float y, float rotate) {
 
-            this->draw(x, y, this->width, this->height, 0, 0, rotate);
+            this->draw(x, y, this->width, this->height, this->p2Width, this->p2Height, 0, 0, rotate);
 
         }
 
@@ -210,7 +218,7 @@ namespace xM {
          */
         void Image::draw(float x, float y, int rWidth, int rHeight) {
 
-            this->draw(x, y, rWidth, rHeight, 0, 0, 0);
+            this->draw(x, y, rWidth, rHeight, rWidth, rHeight, 0, 0, 0);
 
         }
 
@@ -219,13 +227,32 @@ namespace xM {
          *
          * @param float x X position to render to.
          * @param float y Y position to render to.
+         * @param int aWidth Actual width.
+         * @param int aHeight Actual height.
+         * @param int rWidth Width to render.
+         * @param int rHight Height to render.
+         */
+        void Image::draw(float x, float y, int aWidth, int aHeight, int rWidth, int rHeight) {
+
+            this->draw(x, y, aWidth, aHeight, rWidth, rHeight, 0, 0, 0);
+
+        }
+
+        /**
+         * Render part of an image onto the screen.
+         *
+         * @param float x X position to render to.
+         * @param float y Y position to render to.
+         * @param int aWidth Actual width.
+         * @param int aHeight Actual height.
          * @param int rWidth Width to render.
          * @param int rHeight Height to render.
          * @param float xOffset Source x offset.
          * @param float yOffset Source y offset.
          * @param float rotate Rotation
          */
-        void Image::draw(float x, float y, int rWidth, int rHeight, float xOffset, float yOffset, float rotate) {
+        void Image::draw(float x, float y, int aWidth, int aHeight,
+                int rWidth, int rHeight, float xOffset, float yOffset, float rotate) {
 
             // Enable 2D textures
             sceGuEnable(GU_TEXTURE_2D);
@@ -233,14 +260,16 @@ namespace xM {
             sceGuTexMode(GU_PSM_8888, 0, 0, this->isSwizzled());
             sceGuTexFunc(GU_TFX_REPLACE, GU_TCC_RGBA);
             sceGuTexFilter(GU_LINEAR, GU_LINEAR);
-            //sceGuTexScale(1.0f, 1.0f);
-            //sceGuTexOffset(0.0f, 0.0f);
+            sceGuTexScale(1.0f, 1.0f);
+            sceGuTexOffset(0.0f, 0.0f);
 
             // Apply texture
-            sceGuTexImage(0, rWidth, rHeight, rWidth, &this->pixels[0]);
+            sceGuTexImage(0, rWidth, rHeight, aWidth, &this->pixels[0]);
+
+            unsigned int colour = GU_COLOR(1.0f, 1.0f, 1.0f, 1.0f);
 
             // Draw quad for it
-            drawQuad(x, y, rWidth, rHeight, GU_COLOR(1.0f, 1.0f, 1.0f, 1.0f), rotate);
+            drawQuad(x, y, rWidth, rHeight, aWidth, aHeight, colour, colour, colour, colour, rotate);
 
             // Disable again
             sceGuDisable(GU_TEXTURE_2D);

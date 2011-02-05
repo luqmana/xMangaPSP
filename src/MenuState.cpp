@@ -48,7 +48,16 @@ namespace xM {
             rotate = 0.0f;
             timer.start();
 
-            testImg.loadFile("test.png");
+            // A Non-power-of-two image (<512x512)
+            testImg.loadFile("test2.png");
+            testImg.swizzle();
+
+            // A power-of-two image (<512x512)
+            testImg2.loadFile("test.png");
+            testImg2.swizzle();
+
+            // A non-power-of-two image (>512x512)
+            testImg3.loadFile("test3.png");
 
         }
 
@@ -102,7 +111,9 @@ namespace xM {
          */
         void Menu::draw(void) {
 
-            testImg.draw(120, 100);
+            testImg.draw(0, 0);
+            testImg2.draw(120, 100);
+            //testImg3.draw(0, 0); Not working yet
 
             // Draw the first quad rotating
             Gfx::drawQuad(240.0f - (100 / 2), 160.0f - (100 / 2), 100, 100, GU_COLOR(1.0f, 1.0f, 1.0f, 1.0f), GU_COLOR(1.0f, 0.0f, 0.0f, 0.75f),

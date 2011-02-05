@@ -18,7 +18,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
- 
+
 /**
  * Menu state class.
  * Header file.
@@ -42,58 +42,59 @@
 
 namespace xM {
 
-	namespace States {
-	
-		class Menu : public Base {
-		
-		    public:
-		    
-		        /**
-		         * Start up code.
-		         */
-		        void init(void);
-		        
-		        /**
-		         * Clean up code.
-		         */
-		        void cleanUp(void);
-		        
-		        /**
-		         * Pause state.
-		         */
-		        void pause(void);
-		        
-		        /**
-		         * Resume state.
-		         */
-		        void resume(void);
-		        
-		        /**
-		         * Poll for input, read event state etc
-		         */
-		        void handleEvents(void);
-		        
-		        /**
-		         * Now do something with the data we got from events and what not.
-		         */
-		        void handleLogic(void);
-		        
-		        /**
-		         * Done with the logic? Draw what's needed then.
-		         */
-		        void draw(void);
-		        
-            private:
-            	            
-	            xM::Util::Timer timer;
-	            
-	            float rotate;
-	            
-	            Gfx::Image testImg;
-		        		
-		};
-			
-	}
+    namespace States {
+
+        class Menu : public Base {
+        public:
+
+            /**
+             * Start up code.
+             */
+            void init(void);
+
+            /**
+             * Clean up code.
+             */
+            void cleanUp(void);
+
+            /**
+             * Pause state.
+             */
+            void pause(void);
+
+            /**
+             * Resume state.
+             */
+            void resume(void);
+
+            /**
+             * Poll for input, read event state etc
+             */
+            void handleEvents(void);
+
+            /**
+             * Now do something with the data we got from events and what not.
+             */
+            void handleLogic(void);
+
+            /**
+             * Done with the logic? Draw what's needed then.
+             */
+            void draw(void);
+
+        private:
+
+            xM::Util::Timer timer;
+
+            float rotate;
+
+            Gfx::Image testImg;
+            Gfx::Image testImg2;
+            Gfx::Image testImg3;
+
+        };
+
+    }
 
 }
 
