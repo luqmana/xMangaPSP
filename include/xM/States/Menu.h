@@ -91,6 +91,7 @@ namespace xM {
             Gfx::Image testImg;
             Gfx::Image testImg2;
             Gfx::Image testImg3;
+            Gfx::Image testImg4;
 
         };
 

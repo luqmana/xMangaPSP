@@ -29,18 +29,17 @@
 #ifndef _Image_CPP
 #define _Image_CPP
 
-#include "xM/Util/Utils.h"
-
-
 // BEGIN Includes
 #include "xM/Gfx/Graphics.h"
 #include "xM/Gfx/Image.h"
 #include "xM/Util/Log.h"
+#include "xM/Util/Utils.h"
 #include "xM/Gfx/PicoPNG.h"
 
 #include <stdio.h>
 #include <string.h>
 #include <malloc.h>
+#include <math.h>
 
 #include <pspiofilemgr.h>
 // END Includes
@@ -93,7 +92,7 @@ namespace xM {
             long imageSize = sceIoLseek32(fD, 0, PSP_SEEK_END);
 
             if (__xM_DEBUG)
-                Util::logMsg("Image size: %d", (int)imageSize);
+                Util::logMsg("Image size: %d", (int) imageSize);
 
             // Back to the beginning
             sceIoLseek(fD, 0, 0);
@@ -109,18 +108,104 @@ namespace xM {
 
             }
 
+            printf("Before read.\n");
+
             // Read in the png
             sceIoRead(fD, buffer, imageSize);
 
-            // Decode the png
-            decodePNG(this->pixels, this->width, this->height, (const unsigned char*)buffer, imageSize, true);
+            printf("Before decode.\n");
 
-            this->p2Width = Util::nextPow2(this->width);
-            this->p2Height = Util::nextPow2(this->height);
+            ImageSegment mainSegment;
+
+            // Decode the png
+            decodePNG(mainSegment.pixels, mainSegment.width, mainSegment.height, (const unsigned char*) buffer, imageSize, true);
+
+            mainSegment.p2Width = Util::nextPow2(mainSegment.width);
+            mainSegment.p2Height = Util::nextPow2(mainSegment.height);
+
+            this->width = mainSegment.width;
+            this->height = mainSegment.height;
+            this->p2Width = mainSegment.p2Width;
+            this->p2Height = mainSegment.p2Height;
 
             // Well, no need for the buffer now
             free(buffer);
-            
+
+            if (!(mainSegment.width > 512 || mainSegment.height > 512)) {
+
+                // No need to create more segments but just pretend there is only one segment
+
+                mainSegment.x = 0;
+                mainSegment.y = 0;
+
+                this->segments.push_back(mainSegment);
+
+            } else {
+
+                // Okay, we need to create segments since the image is too large
+
+                // First we figure out roughly how many segments of 512x512 we need
+                int wFit = ceil((float) mainSegment.width / 512);
+                int hFit = ceil((float) mainSegment.height / 512);
+
+                int i = 0;
+
+                for (i; i < hFit; ++i) {
+
+                    int k = 0;
+
+                    for (k; k < wFit; ++k) {
+
+                        ImageSegment segment;
+
+                        // Handle case for final segment which might not be 512px
+                        if (k == (wFit - 1))
+                            segment.width = mainSegment.width - (512 * (wFit - 1));
+                        else
+                            segment.width = 512;
+
+                        segment.p2Width = Util::nextPow2(segment.width);
+
+                        // Handle case for final segment which might not be 512px
+                        if (i == (hFit - 1))
+                            segment.height = mainSegment.height - (512 * (hFit - 1));
+                        else
+                            segment.height = 512;
+
+                        segment.p2Height = Util::nextPow2(segment.height);
+
+                        // Calculate coordinate of segment in terms of the whole image
+                        segment.x = 512 * k;
+                        segment.y = 512 * i;
+
+                        // Reserve enough size                        
+                        segment.pixels.resize(segment.width * segment.height * sizeof (uint32_t));
+
+                        unsigned int y = segment.y;
+
+                        for (y; y < (segment.height + segment.y); ++y) {
+
+                            //memcpy(&segment.pixels[y * segment.width * sizeof (uint32_t)], &mainSegment.pixels[y * mainSegment.width * sizeof (uint32_t)], segment.width * sizeof (uint32_t));
+
+                            unsigned int x = segment.x;
+
+                            for (x; x < (segment.width + segment.x); ++x) {
+
+                                memcpy(&segment.pixels[0] + ((y - segment.y) * segment.width * 4) + ((x - segment.x) * 4), &mainSegment.pixels[0] + ((y + segment.y) * mainSegment.width * 4) + ((x + segment.x) * 4), 4);
+
+                            }
+
+                        }
+
+                        this->segments.push_back(segment);
+
+                    }
+
+                }
+
+
+            }
+
             return true;
 
         }
@@ -130,13 +215,13 @@ namespace xM {
          */
         void Image::reset() {
 
-            if (!this->pixels.empty())
+            /*if (!this->pixels.empty())
                 this->pixels.clear();
 
             this->width = 0;
             this->height = 0;
             this->swizzled = false;
-            this->pixels.clear();
+            this->pixels.clear();*/
 
         }
 
@@ -147,39 +232,43 @@ namespace xM {
          */
         void Image::swizzle() {
 
-            unsigned int i, j;
-            unsigned int rowblocks = (this->width * sizeof(u32) / 16);
-            long size = this->width * this->height * 8;
+            for (unsigned int r = 0; r < this->segments.size(); ++r) {
 
-            unsigned char* out = (unsigned char*) malloc(size * sizeof(unsigned char));
+                unsigned int i, j;
+                unsigned int rowblocks = (this->segments[r].width * sizeof (u32) / 16);
+                long size = this->segments[r].width * this->segments[r].height * 8;
 
-            for (j = 0; j < this->height; ++j) {
+                unsigned char* out = (unsigned char*) malloc(size * sizeof (unsigned char));
 
-                for (i = 0; i < this->width * sizeof (u32); ++i) {
+                for (j = 0; j < this->segments[r].height; ++j) {
 
-                    unsigned int blockx = i / 16;
-                    unsigned int blocky = j / 8;
+                    for (i = 0; i < this->segments[r].width * sizeof (u32); ++i) {
 
-                    unsigned int x = (i - blockx * 16);
-                    unsigned int y = (j - blocky * 8);
-                    unsigned int blockIndex = blockx + (blocky * rowblocks);
-                    unsigned int blockAddress = blockIndex * 16 * 8;
+                        unsigned int blockx = i / 16;
+                        unsigned int blocky = j / 8;
 
-                    out[blockAddress + x + y * 16] = this->pixels[i + j * this->width * sizeof(u32)];
+                        unsigned int x = (i - blockx * 16);
+                        unsigned int y = (j - blocky * 8);
+                        unsigned int blockIndex = blockx + (blocky * rowblocks);
+                        unsigned int blockAddress = blockIndex * 16 * 8;
+
+                        out[blockAddress + x + y * 16] = this->segments[r].pixels[i + j * this->segments[r].width * sizeof (uint32_t)];
+
+                    }
 
                 }
 
-            }
+                // Copy swizzled data
+                this->segments[r].pixels.resize(size);
+                memcpy(&this->segments[r].pixels[0], out, size);
 
-            // Copy swizzled data into pixels
-            this->pixels.resize(size);
-            memcpy(&this->pixels[0], out, size);
+                // Free temporary
+                free(out);
+
+            }
 
             // Flip bool
             this->swizzled = true;
-
-            // Free temporary
-            free(out);
 
         }
 
@@ -264,7 +353,7 @@ namespace xM {
             sceGuTexOffset(0.0f, 0.0f);
 
             // Apply texture
-            sceGuTexImage(0, rWidth, rHeight, aWidth, &this->pixels[0]);
+            sceGuTexImage(0, rWidth, rHeight, aWidth, &this->segments[0].pixels[0]);
 
             unsigned int colour = GU_COLOR(1.0f, 1.0f, 1.0f, 1.0f);
 

@@ -40,12 +40,21 @@ namespace xM {
 
     namespace Gfx {
 
+        typedef struct {
+
+            int x, y;
+            unsigned int width, height;
+            unsigned int p2Width, p2Height;
+            std::vector<unsigned char> pixels;
+
+        } ImageSegment;
+
         class Image {
         private:
 
             unsigned int width, height;
             unsigned int p2Width, p2Height;
-            std::vector<unsigned char> pixels;
+            std::vector<ImageSegment> segments;
             bool swizzled;
 
         public:

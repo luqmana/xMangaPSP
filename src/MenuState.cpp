@@ -49,15 +49,18 @@ namespace xM {
             timer.start();
 
             // A Non-power-of-two image (<512x512)
-            testImg.loadFile("test2.png");
-            testImg.swizzle();
+            //testImg.loadFile("test2.png");
+            //testImg.swizzle();
 
             // A power-of-two image (<512x512)
-            testImg2.loadFile("test.png");
-            testImg2.swizzle();
+            //testImg2.loadFile("test.png");
+            //testImg2.swizzle();
 
             // A non-power-of-two image (>512x512)
-            testImg3.loadFile("test3.png");
+            //testImg3.loadFile("test3.png");
+
+            // A power-of-two image (>512x512)
+            testImg4.loadFile("test4.png");
 
         }
 
@@ -111,16 +114,17 @@ namespace xM {
          */
         void Menu::draw(void) {
 
-            testImg.draw(0, 0);
-            testImg2.draw(120, 100);
-            //testImg3.draw(0, 0); Not working yet
+            //testImg.draw(0, 0);
+            //testImg2.draw(120, 100);
+            //testImg3.draw(0, 0);
+            testImg4.draw(0, 0, 512, 512, 512, 512, 0, 0, 0);
 
             // Draw the first quad rotating
-            Gfx::drawQuad(240.0f - (100 / 2), 160.0f - (100 / 2), 100, 100, GU_COLOR(1.0f, 1.0f, 1.0f, 1.0f), GU_COLOR(1.0f, 0.0f, 0.0f, 0.75f),
-                    GU_COLOR(0.0f, 1.0f, 0.0f, 0.50f), GU_COLOR(0.0f, 0.0f, 1.0f, 0.25f), rotate);
+            //Gfx::drawQuad(240.0f - (100 / 2), 160.0f - (100 / 2), 100, 100, GU_COLOR(1.0f, 1.0f, 1.0f, 1.0f), GU_COLOR(1.0f, 0.0f, 0.0f, 0.75f),
+              //      GU_COLOR(0.0f, 1.0f, 0.0f, 0.50f), GU_COLOR(0.0f, 0.0f, 1.0f, 0.25f), rotate);
 
             // Draw the second quad rotating in the opposite direction 10 times as fast
-            Gfx::drawQuad(240.0f - (50 / 2), 160.0f - (50 / 2), 50.0f, 50.0f, GU_COLOR(0.0f, 0.0f, 0.0f, 0.1f), -rotate * 10.0f);
+            //Gfx::drawQuad(240.0f - (50 / 2), 160.0f - (50 / 2), 50.0f, 50.0f, GU_COLOR(0.0f, 0.0f, 0.0f, 0.1f), -rotate * 10.0f);
 
         }
 
