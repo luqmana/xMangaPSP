@@ -280,33 +280,11 @@ namespace xM {
         void drawQuad(float x, float y, float w, float h, unsigned int colourTopLeft,
                 unsigned int colourTopRight, unsigned int colourBottomLeft, unsigned int colourBottomRight, float rotate) {
 
-            drawQuad(x, y, w, h, w, h, colourTopLeft, colourTopRight, colourBottomLeft, colourBottomRight, rotate);
-            
-        }
-
-        /**
-         * Draw a quad. [The actual function]
-         *
-         * @param float x X position.
-         * @param float y Y position.
-         * @param float aW Actual width.
-         * @param float aH Actual height.
-         * @param float w Quad width.
-         * @param float h Quad height.
-         * @param unsigned int colourTopLeft Colour of quad extending from top left.
-         * @param unsigned int colourTopRight Colour of quad extending from top right.
-         * @param unsigned int colourBottomLeft Colour of quad extending from bottom left.
-         * @param unsigned int colourBottomRight Colour of quad extending from bottom right.
-         * @param float rotate Rotation
-         */
-        void drawQuad(float x, float y, float aW, float aH, float w, float h, unsigned int colourTopLeft,
-                unsigned int colourTopRight, unsigned int colourBottomLeft, unsigned int colourBottomRight, float rotate) {
-            
             Vertex quad[4] = {
                 {0, 0, colourTopLeft, -(w / 2), -(h / 2), 0.0f}, // Top-Left point
-                {(w / aW), 0, colourTopRight, (w / 2), -(h / 2), 0.0f}, // Top-Right point
-                {0, (h / aH), colourBottomLeft, -(w / 2), (h / 2), 0.0f}, // Bottom-Left point
-                {(w / aW), (h / aH), colourBottomRight, (w / 2), (h / 2), 0.0f} // Bottom-Right point
+                {1, 0, colourTopRight, (w / 2), -(h / 2), 0.0f}, // Top-Right point
+                {0, 1, colourBottomLeft, -(w / 2), (h / 2), 0.0f}, // Bottom-Left point
+                {1, 1, colourBottomRight, (w / 2), (h / 2), 0.0f} // Bottom-Right point
             };
 
             sceGumMatrixMode(GU_MODEL);
@@ -325,10 +303,10 @@ namespace xM {
 
             Vertex* finalQuad = (Vertex*) sceGuGetMemory(sizeof (Vertex) * 4);
             memcpy(finalQuad, quad, sizeof (Vertex) * 4);
-            
+
             // Draw the quad
             sceGumDrawArray(GU_TRIANGLE_STRIP, GU_TEXTURE_32BITF | GU_COLOR_8888 | GU_VERTEX_32BITF, 4, 0, finalQuad);
-
+            
         }
 
     }

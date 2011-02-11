@@ -55,8 +55,12 @@ namespace xM {
             float u, v;
             unsigned int colour;
             float x, y, z;
-
         } Vertex;
+
+        typedef struct {
+            float u, v;
+            float x, y, z;
+        } Vertex2;
 
         /**
          * Get a pointer to the frame buffer.
@@ -151,25 +155,7 @@ namespace xM {
          */
         void drawQuad(float x, float y, float w, float h, unsigned int colourTopLeft,
                 unsigned int colourTopRight, unsigned int colourBottomLeft, unsigned int colourBottomRight, float rotate);
-
-        /**
-         * Draw a quad. [The actual function]
-         *
-         * @param float x X position.
-         * @param float y Y position.
-         * @param float aW Actual width.
-         * @param float aH Actual height.
-         * @param float w Quad width.
-         * @param float h Quad height.
-         * @param unsigned int colourTopLeft Colour of quad extending from top left.
-         * @param unsigned int colourTopRight Colour of quad extending from top right.
-         * @param unsigned int colourBottomLeft Colour of quad extending from bottom left.
-         * @param unsigned int colourBottomRight Colour of quad extending from bottom right.
-         * @param float rotate Rotation
-         */
-        void drawQuad(float x, float y, float aW, float aH, float w, float h, unsigned int colourTopLeft,
-                unsigned int colourTopRight, unsigned int colourBottomLeft, unsigned int colourBottomRight, float rotate);
-
+        
     }
 
 }

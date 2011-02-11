@@ -41,7 +41,12 @@ namespace xM {
     namespace Gfx {
 
         typedef struct {
+            float x, y;
+            unsigned int width, height;
 
+        } ImageClip;
+
+        typedef struct {
             int x, y;
             unsigned int width, height;
             unsigned int p2Width, p2Height;
@@ -97,55 +102,9 @@ namespace xM {
              *
              * @param float x X position to render to.
              * @param float y Y position to render to.
+             * @param const ImageClip* clip Src blitting region.
              */
-            void draw(float x, float y);
-
-            /**
-             * Render an image onto the screen and rotate it!
-             *
-             * @param float x X position to render to.
-             * @param float y Y position to render to.
-             * @param float rotate Rotation!
-             */
-            void draw(float x, float y, float rotate);
-
-            /**
-             * Render part of an image onto the screen.
-             *
-             * @param float x X position to render to.
-             * @param float y Y position to render to.
-             * @param int rWidth Width to render.
-             * @param int rHeight Height to render.
-             */
-            void draw(float x, float y, int rWidth, int rHeight);
-
-            /**
-             * Render part of an image onto the screen.
-             *
-             * @param float x X position to render to.
-             * @param float y Y position to render to.
-             * @param int aWidth Actual width.
-             * @param int aHeight Actual height.
-             * @param int rWidth Width to render.
-             * @param int rHight Height to render.
-             */
-            void draw(float x, float y, int aWidth, int aHeight, int rWidth, int rHeight);
-
-            /**
-             * Render part of an image onto the screen.
-             *
-             * @param float x X position to render to.
-             * @param float y Y position to render to.
-             * @param int aWidth Actual width.
-             * @param int aHeight Actual height.
-             * @param int rWidth Width to render.
-             * @param int rHeight Height to render.
-             * @param float xOffset Source x offset.
-             * @param float yOffset Source y offset.
-             * @param float rotate Rotation!
-             */
-            void draw(float x, float y, int aWidth, int aHeight,
-                    int rWidth, int rHeight, float xOffset, float yOffset, float rotate);
+            void draw(float x, float y, const ImageClip* clip = NULL);
 
         };
 

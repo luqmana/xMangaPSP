@@ -108,17 +108,22 @@ namespace xM {
 
             }
 
-            printf("Before read.\n");
+            if (__xM_DEBUG)
+                printf("Before read.\n");
 
             // Read in the png
             sceIoRead(fD, buffer, imageSize);
 
-            printf("Before decode.\n");
+            if (__xM_DEBUG)
+                printf("Before decode.\n");
 
             ImageSegment mainSegment;
 
             // Decode the png
             decodePNG(mainSegment.pixels, mainSegment.width, mainSegment.height, (const unsigned char*) buffer, imageSize, true);
+
+            if (__xM_DEBUG)
+                printf("After decode.\n");
 
             mainSegment.p2Width = Util::nextPow2(mainSegment.width);
             mainSegment.p2Height = Util::nextPow2(mainSegment.height);
@@ -277,71 +282,32 @@ namespace xM {
          *
          * @param float x X position to render to.
          * @param float y Y position to render to.
+         * @param const ImageClip* clip Src blitting region.
          */
-        void Image::draw(float x, float y) {
+        void Image::draw(float x, float y, const ImageClip* clip) {
 
-            this->draw(x, y, this->width, this->height, this->p2Width, this->p2Height, 0, 0, 0);
+            unsigned int w, h;
+            int offsetX, offsetY;
 
-        }
+            if (clip != NULL) {
 
-        /**
-         * Render an image onto the screen and rotate it.
-         *
-         * @param float x X position to render to.
-         * @param float y Y position to render to.
-         * @param float rotate Rotation option!
-         */
-        void Image::draw(float x, float y, float rotate) {
+                w = clip->width;
+                h = clip->height;
 
-            this->draw(x, y, this->width, this->height, this->p2Width, this->p2Height, 0, 0, rotate);
+                offsetX = clip->x;
+                offsetY = clip->y;
 
-        }
+            } else {
 
-        /**
-         * Render part of an image onto the screen.
-         *
-         * @param float x X position to render to.
-         * @param float y Y position to render to.
-         * @param int rWidth Width to render.
-         * @param int rHight Height to render.
-         */
-        void Image::draw(float x, float y, int rWidth, int rHeight) {
+                w = this->segments[0].width;
+                h = this->segments[0].height;
 
-            this->draw(x, y, rWidth, rHeight, rWidth, rHeight, 0, 0, 0);
+                offsetX = 0;
+                offsetY = 0;
 
-        }
+            }
 
-        /**
-         * Render part of an image onto the screen.
-         *
-         * @param float x X position to render to.
-         * @param float y Y position to render to.
-         * @param int aWidth Actual width.
-         * @param int aHeight Actual height.
-         * @param int rWidth Width to render.
-         * @param int rHight Height to render.
-         */
-        void Image::draw(float x, float y, int aWidth, int aHeight, int rWidth, int rHeight) {
-
-            this->draw(x, y, aWidth, aHeight, rWidth, rHeight, 0, 0, 0);
-
-        }
-
-        /**
-         * Render part of an image onto the screen.
-         *
-         * @param float x X position to render to.
-         * @param float y Y position to render to.
-         * @param int aWidth Actual width.
-         * @param int aHeight Actual height.
-         * @param int rWidth Width to render.
-         * @param int rHeight Height to render.
-         * @param float xOffset Source x offset.
-         * @param float yOffset Source y offset.
-         * @param float rotate Rotation
-         */
-        void Image::draw(float x, float y, int aWidth, int aHeight,
-                int rWidth, int rHeight, float xOffset, float yOffset, float rotate) {
+            //printf("[%d] pos: (%f, %f) \noffset: (%d, %d)\ndimensions: (%d, %d)\n", this->segments.size(), x, y, offsetX, offsetY, w, h);
 
             // Enable 2D textures
             sceGuEnable(GU_TEXTURE_2D);
@@ -353,12 +319,27 @@ namespace xM {
             sceGuTexOffset(0.0f, 0.0f);
 
             // Apply texture
-            sceGuTexImage(0, rWidth, rHeight, aWidth, &this->segments[0].pixels[0]);
+            sceGuTexImage(0, this->segments[0].p2Width, this->segments[0].p2Height, this->segments[0].width, &this->segments[0].pixels[0]);
 
-            unsigned int colour = GU_COLOR(1.0f, 1.0f, 1.0f, 1.0f);
+            Vertex2 image[2] = {
+                { // Top-Left point
+                    (offsetX / (float)this->segments[0].p2Width), (offsetY / (float)this->segments[0].p2Height),
+                    x, y, 0.0f
+                },
+                { // Bottom-Right point
+                    ((offsetX + w) / (float)this->segments[0].p2Width), ((offsetY + h) / (float)this->segments[0].p2Height),
+                    x + w, y + h, 0.0f
+                }
+            };
 
-            // Draw quad for it
-            drawQuad(x, y, rWidth, rHeight, aWidth, aHeight, colour, colour, colour, colour, rotate);
+            sceGumMatrixMode(GU_MODEL);
+            sceGumLoadIdentity();
+
+            Vertex* finalImage = (Vertex*) sceGuGetMemory(sizeof(Vertex) * 2);
+            memcpy(finalImage, image, sizeof(Vertex) * 2);
+
+            // Draw the quad
+            sceGumDrawArray(GU_SPRITES, GU_TEXTURE_32BITF | GU_VERTEX_32BITF, 2, 0, finalImage);
 
             // Disable again
             sceGuDisable(GU_TEXTURE_2D);
