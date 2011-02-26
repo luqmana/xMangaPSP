@@ -31,7 +31,7 @@
 // BEGIN Includes
 #include "xM/States/Menu.h"
 // END Includes
-
+#include <string.h>
 // BEGIN Defines
 
 // END Defines
@@ -49,8 +49,8 @@ namespace xM {
             timer.start();
 
             // A Non-power-of-two image (<512x512)
-            testImg.loadFile("test2.png");
-            testImg.swizzle();
+            //testImg.loadFile("test2.png");
+            //testImg.swizzle();
 
             // A power-of-two image (<512x512)
             testImg2.loadFile("test.png");
@@ -63,7 +63,9 @@ namespace xM {
             // A power-of-two image (>512x512)
             //testImg4.loadFile("test4.png");
             //testImg4.swizzle();
-
+            
+            textFont.loadFont(Gfx::Font::LATIN_SANS_SERIF_REGULAR, 0.8f, Gfx::Colour::WHITE, 0, 0, 0);
+            
         }
 
         /**
@@ -118,18 +120,20 @@ namespace xM {
 
             Gfx::ImageClip clip = {32, 32, 64, 64};
 
-            testImg.draw(0, 0);
+            //testImg.draw(0, 0);
             testImg2.draw(120, 100, &clip);
             //testImg3.draw(0, 0);
             //testImg4.draw(0, 0);
 
             // Draw the first quad rotating
-            Gfx::drawQuad(240.0f - (100 / 2), 160.0f - (100 / 2), 100, 100, GU_COLOR(1.0f, 1.0f, 1.0f, 1.0f), GU_COLOR(1.0f, 0.0f, 0.0f, 0.75f),
+            Gfx::drawQuad(240.0f - (100 / 2), 160.0f - (100 / 2), 100, 100, Gfx::Colour::WHITE, GU_COLOR(1.0f, 0.0f, 0.0f, 0.75f),
                     GU_COLOR(0.0f, 1.0f, 0.0f, 0.50f), GU_COLOR(0.0f, 0.0f, 1.0f, 0.25f), rotate);
 
             // Draw the second quad rotating in the opposite direction 10 times as fast
             Gfx::drawQuad(240.0f - (50 / 2), 160.0f - (50 / 2), 50.0f, 50.0f, GU_COLOR(0.0f, 0.0f, 0.0f, 0.1f), -rotate * 10.0f);
-
+            
+            textFont.draw(180, 50, "Hello with intraFont!");
+            
         }
 
     }

@@ -33,8 +33,9 @@
 #include "xM/Stn/Callbacks.h"
 #include "xM/Gfx/Graphics.h"
 #include "xM/Util/Stats.h"
-
 #include "xM/States/Menu.h"
+
+#include <intraFont.h>
 // END Includes
 
 // Less typing
@@ -70,6 +71,9 @@ int main(int argc, char **argv) {
     // Init psp debug screen
     pspDebugScreenInit();
 
+    // Init intraFont font library
+    intraFontInit();
+    
     // Red text
     pspDebugScreenSetTextColor(0xFF0000FF);
 
@@ -96,7 +100,7 @@ int main(int argc, char **argv) {
 
         // Draw
         stateManager->draw();
-
+        
         // Show some stats
         Util::MEM();
         Util::FPS();
@@ -112,9 +116,12 @@ int main(int argc, char **argv) {
     // Delete pointer
     delete Engine::StateManager::sMInstance;
 
+    // intraFont. Down.
+    intraFontShutdown();
+
     // Shutdown the gu and graphics subsystem
     Gfx::shutdownGu();
-
+    
     // We never actually get here…
     sceKernelExitGame();
 

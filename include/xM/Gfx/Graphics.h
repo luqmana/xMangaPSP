@@ -47,6 +47,21 @@
 namespace xM {
 
     namespace Gfx {
+    
+        namespace Colour {
+        
+            enum Colours {
+            
+                WHITE       = 0xFFFFFFFF,
+                BLACK       = 0xFF000000,
+                RED         = 0xFF0000FF,
+                GREEN       = 0xFF00FF00,
+                BLUE        = 0xFFFF0000,
+                GRAY        = 0xFF7F7F7F
+            
+            };
+        
+        };
 
         /**
          * Convenience type definition to define a point/pixel.
@@ -80,6 +95,11 @@ namespace xM {
          * Initiates the GU.
          */
         void initGu(void);
+        
+        /**
+         * Setups the graphic render states.
+         */
+        void resetRenderStates(void);
 
         /**
          * Sets up the projection matrix in a perspective view.

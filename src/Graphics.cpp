@@ -98,31 +98,7 @@ namespace xM {
             sceGuDepthRange(65535, 0);
 
             // Set render states
-
-            // Don't render anything outside specified range
-            sceGuScissor(0, 0, SCR_WIDTH, SCR_HEIGHT);
-
-            // Enable that ^
-            sceGuEnable(GU_SCISSOR_TEST);
-
-            // Disable depth testing
-            sceGuDisable(GU_DEPTH_TEST);
-
-            // Front face is clockwise
-            sceGuFrontFace(GU_CW);
-
-            // Enable culling
-            //sceGuEnable(GU_CULL_FACE);
-
-            // Enable smooth shading
-            sceGuShadeModel(GU_SMOOTH);
-
-            // Clipping on
-            sceGuEnable(GU_CLIP_PLANES);
-
-            // Enable alpha blending
-            sceGuEnable(GU_BLEND);
-            sceGuBlendFunc(GU_ADD, GU_SRC_ALPHA, GU_ONE_MINUS_SRC_ALPHA, 0, 0);
+            resetRenderStates();            
 
             // Set clear colour as black
             sceGuClearColor(GU_COLOR(0.0f, 0.0f, 0.0f, 1.0f));
@@ -138,6 +114,43 @@ namespace xM {
 
 
         }
+        
+        /**
+         * Setups the graphic render states.
+         */
+        void resetRenderStates(void) {
+        	        
+	        // Don't render anything outside specified range
+	        sceGuScissor(0, 0, SCR_WIDTH, SCR_HEIGHT);
+
+            // Enable that ^
+            sceGuEnable(GU_SCISSOR_TEST);
+
+            // Disable depth testing
+            sceGuDisable(GU_DEPTH_TEST);
+
+            // Front face is clockwise
+            sceGuFrontFace(GU_CW);
+
+            // Enable culling
+            sceGuEnable(GU_CULL_FACE);
+
+            // Enable smooth shading
+            sceGuShadeModel(GU_SMOOTH);
+
+            // Clipping on
+            sceGuEnable(GU_CLIP_PLANES);
+
+            // Enable alpha blending
+            sceGuEnable(GU_BLEND);
+            sceGuBlendFunc(GU_ADD, GU_SRC_ALPHA, GU_ONE_MINUS_SRC_ALPHA, 0, 0);
+            
+            // Reset sceGuTex* states
+            sceGuTexMode(GU_PSM_8888, 0, 0, 0);
+	        sceGuTexFunc(GU_TFX_REPLACE, GU_TCC_RGBA);
+	        sceGuTexFilter(GU_LINEAR, GU_LINEAR);
+                    
+        }
 
         /**
          * Sets up the projection matrix in a perspective view.
@@ -151,6 +164,10 @@ namespace xM {
 
             sceGumMatrixMode(GU_VIEW);
             sceGumLoadIdentity(); // Reset
+            
+            // Reset
+            sceGumMatrixMode(GU_MODEL);
+		    sceGumLoadIdentity();
 
         }
 
@@ -166,6 +183,10 @@ namespace xM {
 
             sceGumMatrixMode(GU_VIEW);
             sceGumLoadIdentity(); // Reset
+            
+            // Reset
+            sceGumMatrixMode(GU_MODEL);
+		    sceGumLoadIdentity();
 
         }
 
@@ -179,7 +200,7 @@ namespace xM {
             sceGuClear(GU_COLOR_BUFFER_BIT | GU_DEPTH_BUFFER_BIT);
 
         }
-
+        
         /**
          * Prepare the GU for rendering.
          */
@@ -190,6 +211,8 @@ namespace xM {
 
             // Clear screen [colour and depth]
             clearScreen();
+            
+            resetRenderStates();
 
         }
 
@@ -305,7 +328,7 @@ namespace xM {
             memcpy(finalQuad, quad, sizeof (Vertex) * 4);
 
             // Draw the quad
-            sceGumDrawArray(GU_TRIANGLE_STRIP, GU_TEXTURE_32BITF | GU_COLOR_8888 | GU_VERTEX_32BITF, 4, 0, finalQuad);
+            sceGumDrawArray(GU_TRIANGLE_STRIP, GU_TEXTURE_32BITF | GU_COLOR_8888 | GU_VERTEX_32BITF | GU_TRANSFORM_3D, 4, 0, finalQuad);
             
         }
 

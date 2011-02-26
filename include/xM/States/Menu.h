@@ -33,6 +33,7 @@
 #include "xM/States/Base.h"
 #include "xM/Gfx/Graphics.h"
 #include "xM/Gfx/Image.h"
+#include "xM/Gfx/Text.h"
 #include "xM/Util/Timer.h"
 // END Includes
 
@@ -87,7 +88,9 @@ namespace xM {
             xM::Util::Timer timer;
 
             float rotate;
-
+            
+            Gfx::Text textFont;
+            
             Gfx::Image testImg;
             Gfx::Image testImg2;
             Gfx::Image testImg3;

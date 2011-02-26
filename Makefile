@@ -35,7 +35,7 @@
  STATES = MenuState.cpp
  
  # Source files
- SRC   =  xMangaPSP.cpp Callbacks.cpp Graphics.cpp Stats.cpp Timer.cpp StateManager.cpp Image.cpp Log.cpp PicoPNG.cpp
+ SRC   =  xMangaPSP.cpp Callbacks.cpp Graphics.cpp Stats.cpp Timer.cpp StateManager.cpp Image.cpp Log.cpp PicoPNG.cpp Text.cpp
  SRC  +=  $(STATES)
  
  # Object files
@@ -56,7 +56,7 @@
  INCDIR = $(SRC_DIR) $(SRC_DIR)/../include $(PSPDEV)/psp/include/
  
  # Library Directories
- LIBS = -lpspgum -lpspgu -lm -lpsprtc -lpspsdk -lstdc++
+ LIBS = -lintraFont -lpspgum -lpspgu -lm -lpsprtc -lpspsdk -lstdc++
  
  # Compiler Flags
  CFLAGS = -Wall -falign-functions=64 $(COMPILER_DEFINES)

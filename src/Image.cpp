@@ -190,8 +190,6 @@ namespace xM {
 
                         for (y; y < (segment.height + segment.y); ++y) {
 
-                            //memcpy(&segment.pixels[y * segment.width * sizeof (uint32_t)], &mainSegment.pixels[y * mainSegment.width * sizeof (uint32_t)], segment.width * sizeof (uint32_t));
-
                             unsigned int x = segment.x;
 
                             for (x; x < (segment.width + segment.x); ++x) {
@@ -335,8 +333,8 @@ namespace xM {
             sceGumMatrixMode(GU_MODEL);
             sceGumLoadIdentity();
 
-            Vertex* finalImage = (Vertex*) sceGuGetMemory(sizeof(Vertex) * 2);
-            memcpy(finalImage, image, sizeof(Vertex) * 2);
+            Vertex2* finalImage = (Vertex2*) sceGuGetMemory(sizeof(Vertex2) * 2);
+            memcpy(finalImage, image, sizeof(Vertex2) * 2);
 
             // Draw the quad
             sceGumDrawArray(GU_SPRITES, GU_TEXTURE_32BITF | GU_VERTEX_32BITF, 2, 0, finalImage);
