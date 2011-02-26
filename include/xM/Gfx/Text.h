@@ -126,6 +126,18 @@ namespace xM {
              * @param const char* text The text to draw.
              */
             void drawColumn(float x, float y, float width, const char* text);
+            
+            /**
+             * Enable utf8 encoding.
+             */
+            void setEncodingToUtf8();
+            
+            /**
+             * Returns a pointer to the intraFont object.
+             *
+             * @return intraFont* The pointer.
+             */
+            intraFont* getFont();
 
         };
 

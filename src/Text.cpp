@@ -107,7 +107,7 @@ namespace xM {
                 case Font::LATIN_SERIF_ITALIC_BOLD_SMALL:
                 
                     file << "flash0:/font/ltn" << font << ".pgf";
-                                    
+                                                        
                     break;
                                 
                 case Font::JAPANESE_SJIS:
@@ -150,7 +150,7 @@ namespace xM {
             
             // Load the font
             this->font = intraFontLoad(file.str().c_str(), loadOps);
-            
+                        
             if (!this->font) {
             
                 if (__xM_DEBUG)
@@ -202,6 +202,29 @@ namespace xM {
             
             // Because intraFont messes them up
             resetRenderStates();
+        
+        }
+        
+        /**
+         * Enable utf8 encoding.
+         */
+        void Text::setEncodingToUtf8() {
+        
+            if (this->font == NULL)
+                return;
+                
+            intraFontSetEncoding(this->font, INTRAFONT_STRING_UTF8);
+        
+        }
+        
+        /**
+         * Returns a pointer to the intraFont object.
+         *
+         * @return intraFont* The pointer.
+         */
+        intraFont* Text::getFont() {
+        
+            return this->font;
         
         }
 

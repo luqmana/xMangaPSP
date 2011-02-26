@@ -31,7 +31,7 @@
 // BEGIN Includes
 #include "xM/States/Menu.h"
 // END Includes
-#include <string.h>
+
 // BEGIN Defines
 
 // END Defines
@@ -65,6 +65,8 @@ namespace xM {
             //testImg4.swizzle();
             
             textFont.loadFont(Gfx::Font::LATIN_SANS_SERIF_REGULAR, 0.8f, Gfx::Colour::WHITE, 0, 0, 0);
+            
+            textFont.setEncodingToUtf8();
             
         }
 
@@ -132,7 +134,7 @@ namespace xM {
             // Draw the second quad rotating in the opposite direction 10 times as fast
             Gfx::drawQuad(240.0f - (50 / 2), 160.0f - (50 / 2), 50.0f, 50.0f, GU_COLOR(0.0f, 0.0f, 0.0f, 0.1f), -rotate * 10.0f);
             
-            textFont.draw(180, 50, "Hello with intraFont!");
+            textFont.draw(180, 50, "Hello with intraFont! åèíôüñ.");
             
         }
 
