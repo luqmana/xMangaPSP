@@ -32,6 +32,7 @@
 // BEGIN Includes
 #include <sstream>
 #include <string>
+#include <vector>
 // END Includes
 
 // BEGIN Defines
@@ -42,6 +43,15 @@
 namespace xM {
 
     namespace Util {
+    
+        /**
+         * Tokenize string.
+         * 
+         * @param const std::string& str The string to tokenize.
+         * @param std::vector<std::string>& tokens The vector to fill.
+         * @param const std::string& delimiters The delimiters.
+         */
+        void tokenize(const std::string& str, std::vector<std::string>& tokens, const std::string& delimiters);
 
         /**
          * Calculates the next power of two for a given number.

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<menu>
+
+	<item>
+	
+		<name>Manga</name>
+		<description>Read your favourite manga.</description>
+		<action>readManga</action>
+	
+	</item>
+	
+	<item>
+	
+		<name>Bookmarks</name>
+		<description>Pick up where you left off.</description>
+		<action>viewBookmarks</action>
+	
+	</item>
+	
+	<item>
+	
+		<name>Options</name>
+		<description>Change some aspects of how the program operates.</description>
+		<action>editOptions</action>
+		
+	</item>
+
+	<item>
+	
+		<name>Quit</name>
+		<description>Quit the application.</description>
+		<action>quit</action>
+	
+	</item>
+	
+</menu>
+

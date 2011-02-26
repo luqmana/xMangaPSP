@@ -35,6 +35,7 @@
 #include "xM/Gfx/Image.h"
 #include "xM/Gfx/Text.h"
 #include "xM/Util/Timer.h"
+#include "xM/Ui/XMLParser.h"
 // END Includes
 
 // BEGIN Defines
@@ -85,7 +86,7 @@ namespace xM {
 
         private:
 
-            xM::Util::Timer timer;
+            Util::Timer timer;
 
             float rotate;
             
@@ -95,6 +96,8 @@ namespace xM {
             Gfx::Image testImg2;
             Gfx::Image testImg3;
             Gfx::Image testImg4;
+            
+            Ui::XMLParser parser;
 
         };
 

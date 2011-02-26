@@ -33,6 +33,8 @@
 #include "xM/Gfx/Graphics.h"
 
 #include <intraFont.h>
+// END Includes
+
 // BEGIN Defines
 
 // END Defines
@@ -115,7 +117,7 @@ namespace xM {
              * @param float y Y position.
              * @param const char* text The text to draw.
              */
-            void draw(float x, float y, const char* text);
+            void draw(float x, float y, const char* text, ...);
             
             /**
              * Draw the text beginning at position (x, y) with line wrapping.
@@ -125,7 +127,7 @@ namespace xM {
              * @param float width Maximum width before automatic linebreak.
              * @param const char* text The text to draw.
              */
-            void drawColumn(float x, float y, float width, const char* text);
+            void drawColumn(float x, float y, float width, const char* text, ...);
             
             /**
              * Enable utf8 encoding.

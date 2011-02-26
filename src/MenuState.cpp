@@ -64,9 +64,11 @@ namespace xM {
             //testImg4.loadFile("test4.png");
             //testImg4.swizzle();
             
-            textFont.loadFont(Gfx::Font::LATIN_SANS_SERIF_REGULAR, 0.8f, Gfx::Colour::WHITE, 0, 0, 0);
+            textFont.loadFont(Gfx::Font::LATIN_SANS_SERIF_REGULAR_SMALL, 1.0f, Gfx::Colour::GREEN, Gfx::Colour::RED, 0, 0);
             
             textFont.setEncodingToUtf8();
+            
+            parser.loadFile("ui/home.xml");
             
         }
 
@@ -120,7 +122,9 @@ namespace xM {
          */
         void Menu::draw(void) {
 
-            Gfx::ImageClip clip = {32, 32, 64, 64};
+            parser.draw();
+
+            /*Gfx::ImageClip clip = {32, 32, 64, 64};
 
             //testImg.draw(0, 0);
             testImg2.draw(120, 100, &clip);
@@ -134,7 +138,7 @@ namespace xM {
             // Draw the second quad rotating in the opposite direction 10 times as fast
             Gfx::drawQuad(240.0f - (50 / 2), 160.0f - (50 / 2), 50.0f, 50.0f, GU_COLOR(0.0f, 0.0f, 0.0f, 0.1f), -rotate * 10.0f);
             
-            textFont.draw(180, 50, "Hello with intraFont! åèíôüñ.");
+            textFont.draw(180, 50, "Hello with intraFont! åèíôüñ.");*/
             
         }
 

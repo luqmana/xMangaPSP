@@ -33,6 +33,7 @@
 #include "xM/Util/Log.h"
 
 #include <sstream>
+#include <stdarg.h>
 // BEGIN Defines
 
 // END Defines
@@ -173,12 +174,27 @@ namespace xM {
          * @param float y Y position.
          * @param const char* text The text to draw.
          */
-        void Text::draw(float x, float y, const char* text) {
+        void Text::draw(float x, float y, const char* text, ...) {
         
             if (this->font == NULL)
                 return;
                 
-            intraFontPrint(this->font, x, y, text);
+            // Arguments
+            va_list options;
+
+            // Formatted string
+            char buffer[512];
+
+            // Initialize option list
+            va_start(options, text);
+
+            // Format text
+            vsnprintf(buffer, (size_t) sizeof (buffer), text, options);
+                
+            intraFontPrint(this->font, x, y, buffer);
+            
+            // Quit option list
+            va_end(options);
             
             // Because intraFont messes them up
             resetRenderStates();
@@ -193,13 +209,28 @@ namespace xM {
          * @param float width Maximum width before automatic linebreak.
          * @param const char* text The text to draw.
          */
-        void Text::drawColumn(float x, float y, float width, const char* text) {
+        void Text::drawColumn(float x, float y, float width, const char* text, ...) {
         
             if (this->font == NULL)
                 return;
                 
-            intraFontPrintColumn(this->font, x, y, width, text);
+            // Arguments
+            va_list options;
+
+            // Formatted string
+            char buffer[512];
+
+            // Initialize option list
+            va_start(options, text);
+
+            // Format text
+            vsnprintf(buffer, (size_t) sizeof (buffer), text, options);
+                
+            intraFontPrintColumn(this->font, x, y, width, buffer);
             
+            // Quit option list
+            va_end(options);
+                            
             // Because intraFont messes them up
             resetRenderStates();
         

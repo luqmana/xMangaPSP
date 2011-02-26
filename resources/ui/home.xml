@@ -1,6 +1,7 @@
-<?xml version="1.0" encoding="UTF-8" ?>
 <window name="Home" type="main">
-
-    <shape x="0" y="0" fill="0,0,0,158" width="480" height="27" />
-
+    
+    <quad x="200" y="35" colour="0,255,0,255" width="50" height="27" />
+    
+    <text x="180" y="27" font="{LATIN_SANS_SERIF_REGULAR_SMALL}" size="1.0" colour="255,255,255" shadowColour="0,255,0,127" value="From an XML template!" />
+    
 </window>
