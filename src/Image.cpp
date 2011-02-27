@@ -289,8 +289,8 @@ namespace xM {
 
             if (clip != NULL) {
 
-                w = clip->width;
-                h = clip->height;
+                w = (clip->width == 0) ? this->segments[0].width : 0;
+                h = (clip->height == 0) ? this->segments[0].height : 0;
 
                 offsetX = clip->x;
                 offsetY = clip->y;

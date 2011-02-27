@@ -103,7 +103,7 @@ namespace xM {
 
                 Element* uiElement = new Element;
                 uiElement->type = NOOP;
-                uiElement->x = uiElement->y = uiElement->colour = uiElement->shadowColour = uiElement->width = uiElement->height = 0;
+                uiElement->x = uiElement->y = uiElement->offsetX = uiElement->offsetY = uiElement->colour = uiElement->shadowColour = uiElement->width = uiElement->height = 0;
                 uiElement->text = "";
                 uiElement->size = 1.0;
 
@@ -167,7 +167,7 @@ namespace xM {
 
                     }
 
-                    //------TEXT
+                //------TEXT
                 } else if (strcmp(child->Value(), "text") == 0) {
 
                     uiElement->type = TEXT;
@@ -203,7 +203,7 @@ namespace xM {
                             r = Util::stringToInt(colourParts[0]);
                             g = Util::stringToInt(colourParts[1]);
                             b = Util::stringToInt(colourParts[2]);
-                            printf("R: %u G: %u B: %u", r, g, b);
+                            
                             uiElement->colour = GU_COLOR((float) r / 255, (float) g / 255, (float) b / 255, 1.0f);
 
                         } else if (colourParts.size() == 4) {
@@ -466,6 +466,37 @@ namespace xM {
                     
                     }
 
+                //------IMAGE
+                } else if (strcmp(child->Value(), "image") == 0) {
+                
+                    uiElement->type = IMAGE;
+                    
+                    if (child->QueryDoubleAttribute("width", &uiElement->width) != TIXML_SUCCESS) {
+                        uiElement->width = 0;
+                    }
+                    if (child->QueryDoubleAttribute("height", &uiElement->height) != TIXML_SUCCESS) {
+                        uiElement->height = 0;
+                    }                    
+                    if (child->QueryDoubleAttribute("offsetX", &uiElement->offsetX) != TIXML_SUCCESS) {
+                        uiElement->offsetX = 0;
+                    }
+                    if (child->QueryDoubleAttribute("offsetY", &uiElement->offsetY) != TIXML_SUCCESS) {
+                        uiElement->offsetY = 0;
+                    }
+                    
+                    if (child->Attribute("src") == NULL) {
+                        continue;
+                    } else {
+                    
+                        std::string src = child->Attribute("src");
+                        
+                        uiElement->image.loadFile(src);
+                        
+                        if (strcmp(child->Attribute("swizzle"), "false") != 0)
+                            uiElement->image.swizzle();
+                                                
+                    }
+
                 } else {
 
                     continue;
@@ -501,11 +532,19 @@ namespace xM {
 
                     case TEXT:
 
-                        this->uiElements[i]->font.draw(e->x, e->y, e->text.c_str());
+                        e->font.draw(e->x, e->y, e->text.c_str());
 
                         break;
 
                     case IMAGE:
+                                        
+                        Gfx::ImageClip clip;
+                        clip.x = e->offsetX;
+                        clip.y = e->offsetY;
+                        clip.width = e->width;
+                        clip.height = e->height;
+                    
+                        e->image.draw(e->x, e->y, &clip);
 
                         break;
 

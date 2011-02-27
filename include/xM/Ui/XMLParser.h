@@ -31,6 +31,7 @@
 
 // BEGIN Includes
 #include "xM/Gfx/Graphics.h"
+#include "xM/Gfx/Image.h"
 #include "xM/Gfx/Text.h"
 
 #include <tinyxml.h>
@@ -58,12 +59,13 @@ namespace xM {
         typedef struct {
         
             ElementType type;
-            double x, y;
+            double x, y, offsetX, offsetY;
             unsigned int colour, shadowColour;
             double width, height;
             std::string text;
             double size;
             Gfx::Text font;
+            Gfx::Image image;
                     
         } Element;
 
