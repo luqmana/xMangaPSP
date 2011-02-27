@@ -98,7 +98,7 @@ namespace xM {
             sceGuDepthRange(65535, 0);
 
             // Set render states
-            resetRenderStates();            
+            resetRenderStates();
 
             // Set clear colour as black
             sceGuClearColor(GU_COLOR(0.0f, 0.0f, 0.0f, 1.0f));
@@ -114,14 +114,14 @@ namespace xM {
 
 
         }
-        
+
         /**
          * Setups the graphic render states.
          */
         void resetRenderStates(void) {
-        	        
-	        // Don't render anything outside specified range
-	        sceGuScissor(0, 0, SCR_WIDTH, SCR_HEIGHT);
+
+            // Don't render anything outside specified range
+            sceGuScissor(0, 0, SCR_WIDTH, SCR_HEIGHT);
 
             // Enable that ^
             sceGuEnable(GU_SCISSOR_TEST);
@@ -144,12 +144,15 @@ namespace xM {
             // Enable alpha blending
             sceGuEnable(GU_BLEND);
             sceGuBlendFunc(GU_ADD, GU_SRC_ALPHA, GU_ONE_MINUS_SRC_ALPHA, 0, 0);
-            
+
+            // Disable textures
+            sceGuDisable(GU_TEXTURE_2D);
+
             // Reset sceGuTex* states
             sceGuTexMode(GU_PSM_8888, 0, 0, 0);
-	        sceGuTexFunc(GU_TFX_REPLACE, GU_TCC_RGBA);
-	        sceGuTexFilter(GU_LINEAR, GU_LINEAR);
-                    
+            sceGuTexFunc(GU_TFX_REPLACE, GU_TCC_RGBA);
+            sceGuTexFilter(GU_LINEAR, GU_LINEAR);
+
         }
 
         /**
@@ -164,10 +167,10 @@ namespace xM {
 
             sceGumMatrixMode(GU_VIEW);
             sceGumLoadIdentity(); // Reset
-            
+
             // Reset
             sceGumMatrixMode(GU_MODEL);
-		    sceGumLoadIdentity();
+            sceGumLoadIdentity();
 
         }
 
@@ -183,10 +186,10 @@ namespace xM {
 
             sceGumMatrixMode(GU_VIEW);
             sceGumLoadIdentity(); // Reset
-            
+
             // Reset
             sceGumMatrixMode(GU_MODEL);
-		    sceGumLoadIdentity();
+            sceGumLoadIdentity();
 
         }
 
@@ -200,7 +203,7 @@ namespace xM {
             sceGuClear(GU_COLOR_BUFFER_BIT | GU_DEPTH_BUFFER_BIT);
 
         }
-        
+
         /**
          * Prepare the GU for rendering.
          */
@@ -211,7 +214,7 @@ namespace xM {
 
             // Clear screen [colour and depth]
             clearScreen();
-            
+
             resetRenderStates();
 
         }
@@ -282,7 +285,7 @@ namespace xM {
          * @param float rotate Rotation
          */
         void drawQuad(float x, float y, float w, float h, unsigned int colour, float rotate) {
-
+            
             drawQuad(x, y, w, h, colour, colour, colour, colour, rotate);
 
         }
@@ -329,7 +332,7 @@ namespace xM {
 
             // Draw the quad
             sceGumDrawArray(GU_TRIANGLE_STRIP, GU_TEXTURE_32BITF | GU_COLOR_8888 | GU_VERTEX_32BITF | GU_TRANSFORM_3D, 4, 0, finalQuad);
-            
+
         }
 
     }

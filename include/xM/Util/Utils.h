@@ -97,6 +97,15 @@ namespace xM {
             return sS.str();
 
         }
+        
+        inline int stringToInt(const std::string& str) {
+
+            std::stringstream buffer(str);
+            int out;
+            buffer >> out;
+            return out;
+
+        }
 
     }
 

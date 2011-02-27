@@ -122,8 +122,6 @@ namespace xM {
          */
         void Menu::draw(void) {
 
-            parser.draw();
-
             /*Gfx::ImageClip clip = {32, 32, 64, 64};
 
             //testImg.draw(0, 0);
@@ -139,6 +137,8 @@ namespace xM {
             Gfx::drawQuad(240.0f - (50 / 2), 160.0f - (50 / 2), 50.0f, 50.0f, GU_COLOR(0.0f, 0.0f, 0.0f, 0.1f), -rotate * 10.0f);
             
             textFont.draw(180, 50, "Hello with intraFont! åèíôüñ.");*/
+            
+            parser.draw();
             
         }
 
