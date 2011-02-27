@@ -72,6 +72,10 @@ namespace xM {
         
             if (this->font != NULL)
                 intraFontUnload(this->font);
+                
+            // Unlaoad alt fonts
+            for (unsigned int i = 0; i < this->altFonts.size(); ++i)
+                intraFontUnload(this->altFonts[i]);
         
         }
         
@@ -164,7 +168,109 @@ namespace xM {
             }
             
             intraFontSetStyle(this->font, size, colour, shadowColour, styleOps);
+            intraFontSetEncoding(this->font, INTRAFONT_STRING_UTF8);
                     
+        }
+        
+        /**
+         * Loads an alternate font.
+         * Can be called multiple times.
+         *
+         * @param Fonts font Font to load.
+         */
+        void Text::loadAltFont(Font::Fonts font, float size, unsigned int colour, unsigned int shadowColour, unsigned int loadOps, unsigned int styleOps) {
+        
+            std::stringstream file;
+            
+            intraFont* altFont;
+               
+            switch (font) {
+            
+                case Font::LATIN_SANS_SERIF_REGULAR:
+                case Font::LATIN_SERIF_REGULAR:
+                case Font::LATIN_SANS_SERIF_ITALIC:
+                case Font::LATIN_SERIF_ITALIC:
+                case Font::LATIN_SANS_SERIF_BOLD:
+                case Font::LATIN_SERIF_BOLD:
+                case Font::LATIN_SANS_SERIF_ITALIC_BOLD:
+                case Font::LATIN_SERIF_ITALIC_BOLD:
+                case Font::LATIN_SANS_SERIF_REGULAR_SMALL:
+                case Font::LATIN_SERIF_REGULAR_SMALL:
+                case Font::LATIN_SANS_SERIF_ITALIC_SMALL:
+                case Font::LATIN_SERIF_ITALIC_SMALL:
+                case Font::LATIN_SANS_SERIF_BOLD_SMALL:
+                case Font::LATIN_SERIF_BOLD_SMALL:
+                case Font::LATIN_SANS_SERIF_ITALIC_BOLD_SMALL:
+                case Font::LATIN_SERIF_ITALIC_BOLD_SMALL:
+                
+                    file << "flash0:/font/ltn" << font << ".pgf";
+                                                        
+                    break;
+                                
+                case Font::JAPANESE_SJIS:
+                
+                    file << "flash0:/font/jpn0.pgf";
+                    
+                    loadOps |= INTRAFONT_STRING_SJIS;
+                    
+                    break;
+                    
+                case Font::JAPANESE_UTF8:
+                
+                    file << "flash0:/font/jpn0.pgf";
+                    
+                    loadOps |= INTRAFONT_STRING_UTF8;
+                
+                    break;
+                    
+                case Font::KOREAN_UTF8:
+                
+                    file << "flash0:/font/kr0.pgf";
+                    
+                    loadOps |= INTRAFONT_STRING_UTF8;
+                
+                    break;
+            
+                case Font::SYMBOLS: // May not be available on all systems
+                
+                    file << "flash0:/font/arib.pgf";
+                
+                    break;
+            
+                case Font::CHINESE:
+                
+                    file << "flash0:/font/gb3s1518.pgf";
+                
+                    break;
+            
+            }
+            
+            // Load the font
+            altFont = intraFontLoad(file.str().c_str(), loadOps);
+                        
+            if (!altFont) {
+            
+                if (__xM_DEBUG)
+                    Util::logMsg("Text::loadAltFont — Unable to load font.");
+                    
+                altFont = NULL;
+            
+                return;
+                
+            }
+            
+            intraFontSetStyle(altFont, size, colour, shadowColour, styleOps);
+            intraFontSetEncoding(altFont, INTRAFONT_STRING_UTF8);
+            
+            if (this->altFonts.size() > 0)
+                intraFontSetAltFont(this->altFonts.back(), altFont);
+            else
+                intraFontSetAltFont(this->font, altFont);
+                
+            this->altFonts.push_back(altFont);
+            
+            
+        
         }
         
         /**
@@ -233,18 +339,6 @@ namespace xM {
                             
             // Because intraFont messes them up
             resetRenderStates();
-        
-        }
-        
-        /**
-         * Enable utf8 encoding.
-         */
-        void Text::setEncodingToUtf8() {
-        
-            if (this->font == NULL)
-                return;
-                
-            intraFontSetEncoding(this->font, INTRAFONT_STRING_UTF8);
         
         }
         

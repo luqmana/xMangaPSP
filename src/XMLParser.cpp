@@ -32,6 +32,8 @@
 #include "xM/Ui/XMLParser.h"
 #include "xM/Util/Log.h"
 #include "xM/Util/Utils.h"
+
+#include <algorithm>
 // END Includes
 
 // BEGIN Defines
@@ -57,6 +59,12 @@ namespace xM {
         XMLParser::~XMLParser() {
 
             delete this->uiXMLFile;
+            
+            for (unsigned int i = 0; i < this->uiElements.size(); ++i) {
+            
+                delete this->uiElements[i];
+            
+            }
 
         }
 
@@ -253,7 +261,7 @@ namespace xM {
                         }
 
                     }
-
+                    
                     if (child->Attribute("font") == NULL) {
                         continue;
                     } else {
@@ -349,7 +357,113 @@ namespace xM {
                             // @TODO: Attempt to load via path
 
                         }
+                        
+                    }
+                    
+                    if (child->Attribute("altFonts") != NULL) {
+                    
+                        std::string otherFonts = child->Attribute("altFonts");
+                        std::vector<std::string> altFonts;
+                        
+                        Util::tokenize(otherFonts, altFonts, ",");
+                        
+                        for (unsigned int i = 0; i < altFonts.size(); ++i) {
+                        
+                            std::string altFont = altFonts[i];
+                            std::remove(altFont.begin(), altFont.end(), ' ');
+                                            
+                            if (altFont == "{LATIN_SANS_SERIF_REGULAR}") {
 
+                                uiElement->font.loadAltFont(Gfx::Font::LATIN_SANS_SERIF_REGULAR, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, 0);
+
+                            } else if (altFont == "{LATIN_SERIF_REGULAR}") {
+
+                                uiElement->font.loadAltFont(Gfx::Font::LATIN_SERIF_REGULAR, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, 0);
+
+                            } else if (altFont == "{LATIN_SANS_SERIF_ITALIC}") {
+
+                                uiElement->font.loadAltFont(Gfx::Font::LATIN_SANS_SERIF_ITALIC, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, 0);
+
+                            } else if (altFont == "{LATIN_SERIF_ITALIC}") {
+
+                                uiElement->font.loadAltFont(Gfx::Font::LATIN_SERIF_ITALIC, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, 0);
+
+                            } else if (altFont == "{LATIN_SANS_SERIF_BOLD}") {
+
+                                uiElement->font.loadAltFont(Gfx::Font::LATIN_SANS_SERIF_BOLD, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, 0);
+
+                            } else if (altFont == "{LATIN_SERIF_BOLD}") {
+
+                                uiElement->font.loadAltFont(Gfx::Font::LATIN_SERIF_BOLD, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, 0);
+
+                            } else if (altFont == "{LATIN_SANS_SERIF_ITALIC_BOLD}") {
+
+                                uiElement->font.loadAltFont(Gfx::Font::LATIN_SANS_SERIF_ITALIC_BOLD, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, 0);
+
+                            } else if (altFont == "{LATIN_SERIF_ITALIC_BOLD}") {
+
+                                uiElement->font.loadAltFont(Gfx::Font::LATIN_SERIF_ITALIC_BOLD, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, 0);
+
+                            } else if (altFont == "{LATIN_SANS_SERIF_REGULAR_SMALL}") {
+
+                                uiElement->font.loadAltFont(Gfx::Font::LATIN_SANS_SERIF_REGULAR_SMALL, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, 0);
+
+                            } else if (altFont == "{LATIN_SERIF_REGULAR_SMALL}") {
+
+                                uiElement->font.loadAltFont(Gfx::Font::LATIN_SERIF_REGULAR_SMALL, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, 0);
+
+                            } else if (altFont == "{LATIN_SANS_SERIF_ITALIC_SMALL}") {
+
+                                uiElement->font.loadAltFont(Gfx::Font::LATIN_SANS_SERIF_ITALIC_SMALL, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, 0);
+
+                            } else if (altFont == "{LATIN_SERIF_ITALIC_SMALL}") {
+
+                                uiElement->font.loadAltFont(Gfx::Font::LATIN_SERIF_ITALIC_SMALL, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, 0);
+
+                            } else if (altFont == "{LATIN_SANS_SERIF_BOLD_SMALL}") {
+
+                                uiElement->font.loadAltFont(Gfx::Font::LATIN_SANS_SERIF_BOLD_SMALL, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, 0);
+
+                            } else if (altFont == "{LATIN_SERIF_BOLD_SMALL}") {
+
+                                uiElement->font.loadAltFont(Gfx::Font::LATIN_SERIF_BOLD_SMALL, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, 0);
+
+                            } else if (altFont == "{LATIN_SANS_SERIF_ITALIC_BOLD_SMALL}") {
+
+                                uiElement->font.loadAltFont(Gfx::Font::LATIN_SANS_SERIF_ITALIC_BOLD_SMALL, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, 0);
+
+                            } else if (altFont == "{LATIN_SERIF_ITALIC_BOLD_SMALL}") {
+
+                                uiElement->font.loadAltFont(Gfx::Font::LATIN_SERIF_ITALIC_BOLD_SMALL, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, 0);
+
+                            } else if (altFont == "{JAPANESE_SJIS}") {
+
+                                uiElement->font.loadAltFont(Gfx::Font::JAPANESE_SJIS, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, 0);
+
+                            } else if (altFont == "{JAPANESE_UTF8}") {
+
+                                uiElement->font.loadAltFont(Gfx::Font::JAPANESE_UTF8, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, 0);
+
+                            } else if (altFont == "{KOREAN_UTF8}") {
+
+                                uiElement->font.loadAltFont(Gfx::Font::KOREAN_UTF8, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, 0);
+
+                            } else if (altFont == "{SYMBOLS}") {
+
+                                uiElement->font.loadAltFont(Gfx::Font::SYMBOLS, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, 0);
+
+                            } else if (altFont == "{CHINESE}") {
+
+                                uiElement->font.loadAltFont(Gfx::Font::CHINESE, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, 0);
+
+                            } else {
+
+                                // @TODO: Attempt to load via path
+
+                            }
+                                                    
+                        }
+                    
                     }
 
                 } else {
@@ -387,7 +501,7 @@ namespace xM {
 
                     case TEXT:
 
-                        this->uiElements[i]->font.draw(this->uiElements[i]->x, this->uiElements[i]->y, this->uiElements[i]->text.c_str());
+                        this->uiElements[i]->font.draw(e->x, e->y, e->text.c_str());
 
                         break;
 

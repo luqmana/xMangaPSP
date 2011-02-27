@@ -53,8 +53,8 @@ namespace xM {
             //testImg.swizzle();
 
             // A power-of-two image (<512x512)
-            testImg2.loadFile("test.png");
-            testImg2.swizzle();
+            //testImg2.loadFile("test.png");
+            //testImg2.swizzle();
 
             // A non-power-of-two image (>512x512)
             //testImg3.loadFile("test3.png");
@@ -64,10 +64,8 @@ namespace xM {
             //testImg4.loadFile("test4.png");
             //testImg4.swizzle();
             
-            textFont.loadFont(Gfx::Font::LATIN_SANS_SERIF_REGULAR_SMALL, 1.0f, Gfx::Colour::GREEN, Gfx::Colour::RED, 0, 0);
-            
-            textFont.setEncodingToUtf8();
-            
+            //textFont.loadFont(Gfx::Font::LATIN_SANS_SERIF_REGULAR_SMALL, 1.0f, Gfx::Colour::GREEN, Gfx::Colour::RED, 0, 0);
+                        
             parser.loadFile("ui/home.xml");
             
         }

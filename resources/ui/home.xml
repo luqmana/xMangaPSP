@@ -1,7 +1,10 @@
 <window name="Home" type="main">
     
-    <quad x="100" y="35" colour="0,255,0,255" width="50" height="27" />
+    <quad x="100" y="35" colour="255,0,0" width="50" height="27" />
+    <quad x="150" y="35" colour="0,255,0" width="50" height="27" />
+    <quad x="200" y="35" colour="0,0,255" width="50" height="27" />
     
-    <text x="180" y="127" font="{LATIN_SANS_SERIF_REGULAR_SMALL}" size="1.0" colour="255,255,255" shadowColour="0,255,0,127" value="From an XML template!" />
+    <text x="180" y="127" font="{LATIN_SANS_SERIF_REGULAR_SMALL}" size="0.8" colour="255,255,255" shadowColour="0,255,0,127" value="From an XML template!" />
+    <text x="0" y="258" font="{LATIN_SERIF_ITALIC_BOLD}" altFonts="{JAPANESE_UTF8},{KOREAN_UTF8}" size="1.0" colour="255,0,0" shadowColour="0,0,255,127" value="More text here. åèíôüñ わたしわ 한국어 or 조선말" />
     
 </window>

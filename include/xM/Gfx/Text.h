@@ -33,6 +33,7 @@
 #include "xM/Gfx/Graphics.h"
 
 #include <intraFont.h>
+#include <vector>
 // END Includes
 
 // BEGIN Defines
@@ -81,6 +82,7 @@ namespace xM {
         private:
 
             intraFont* font;
+            std::vector<intraFont*> altFonts;
 
         public:
 
@@ -108,7 +110,15 @@ namespace xM {
              *
              * @param Fonts font Font to load.
              */
-            void loadFont(Font::Fonts font, float size, unsigned int colour, unsigned int shadowColour, unsigned int loadOps, unsigned int styleOps);
+            void loadFont(Font::Fonts font, float size, unsigned int colour, unsigned int shadowColour, unsigned int loadOps = 0, unsigned int styleOps = 0);
+            
+            /**
+             * Loads an alternate font.
+             * Can be called multiple times.
+             *
+             * @param Fonts font Font to load.
+             */
+            void loadAltFont(Font::Fonts font, float size, unsigned int colour, unsigned int shadowColour, unsigned int loadOps = 0, unsigned int styleOps = 0);
             
             /**
              * Draw the text beginning at position (x, y).
@@ -128,12 +138,7 @@ namespace xM {
              * @param const char* text The text to draw.
              */
             void drawColumn(float x, float y, float width, const char* text, ...);
-            
-            /**
-             * Enable utf8 encoding.
-             */
-            void setEncodingToUtf8();
-            
+                        
             /**
              * Returns a pointer to the intraFont object.
              *
