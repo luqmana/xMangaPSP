@@ -21,7 +21,6 @@
 
 /**
  * The state manager.
- * Header file.
  * 
  * @package xMangaPSP
  */
@@ -32,10 +31,6 @@
 // BEGIN Includes
 #include "xM/Engine/StateManager.h"
 // END Includes
-
-// BEGIN Defines
-
-// END Defines
 
 namespace xM {
 

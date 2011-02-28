@@ -44,10 +44,6 @@
 #include <pspiofilemgr.h>
 // END Includes
 
-// BEGIN Defines
-
-// END Defines
-
 namespace xM {
 
     namespace Gfx {
@@ -155,11 +151,11 @@ namespace xM {
 
                 int i = 0;
 
-                for (i; i < hFit; ++i) {
+                do {
 
                     int k = 0;
 
-                    for (k; k < wFit; ++k) {
+                    do {
 
                         ImageSegment segment;
 
@@ -188,23 +184,31 @@ namespace xM {
 
                         unsigned int y = segment.y;
 
-                        for (y; y < (segment.height + segment.y); ++y) {
+                        do {
 
                             unsigned int x = segment.x;
 
-                            for (x; x < (segment.width + segment.x); ++x) {
+                            do {
 
                                 memcpy(&segment.pixels[0] + ((y - segment.y) * segment.width * 4) + ((x - segment.x) * 4), &mainSegment.pixels[0] + ((y + segment.y) * mainSegment.width * 4) + ((x + segment.x) * 4), 4);
 
-                            }
+                                ++x;
 
-                        }
+                            } while (x < (segment.width + segment.x));
+                            
+                            ++y;
+
+                        } while (y < (segment.height + segment.y));
 
                         this->segments.push_back(segment);
 
-                    }
+                        ++k;
 
-                }
+                    } while (k < wFit);
+
+                    ++i;
+
+                } while (i < hFit);
 
 
             }

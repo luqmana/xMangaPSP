@@ -36,10 +36,6 @@
 #include <algorithm>
 // END Includes
 
-// BEGIN Defines
-
-// END Defines
-
 namespace xM {
 
     namespace Ui {
@@ -49,7 +45,7 @@ namespace xM {
          */
         XMLParser::XMLParser() {
 
-            this->uiXMLFile = new TiXmlDocument();
+            this->uiXMLFile = NULL;
 
         }
 
@@ -65,6 +61,8 @@ namespace xM {
                 delete this->uiElements[i];
             
             }
+            
+            this->uiElements.clear();
 
         }
 
@@ -74,6 +72,22 @@ namespace xM {
          * @param const std::string& file The file to parse.
          */
         void XMLParser::loadFile(const std::string& xFile) {
+        
+            if (this->uiXMLFile != NULL) {
+            
+                delete this->uiXMLFile;
+                
+                for (unsigned int i = 0; i < this->uiElements.size(); ++i) {
+                
+                    delete this->uiElements[i];
+                
+                }
+                
+                this->uiElements.clear();
+            
+            }
+            
+            this->uiXMLFile = new TiXmlDocument();
 
             this->file = xFile;
 
@@ -98,8 +112,15 @@ namespace xM {
             }
 
             // Loop over children
-            TiXmlElement* child;
-            for (child = TiXmlHandle(root).FirstChild().ToElement(); child; child = child->NextSiblingElement()) {
+            //TiXmlElement* child;
+            TiXmlNode* childNode;
+            //for (child = TiXmlHandle(root).FirstChild().ToElement(); child; child = child->NextSiblingElement()) {
+            for (childNode = TiXmlHandle(root).FirstChild().ToNode(); childNode; childNode = childNode->NextSibling()) {
+            
+                if (childNode->Type() != TiXmlNode::ELEMENT)
+                    continue;
+                    
+                TiXmlElement* child = childNode->ToElement();
 
                 Element* uiElement = new Element;
                 uiElement->type = NOOP;

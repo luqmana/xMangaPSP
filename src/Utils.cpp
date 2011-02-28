@@ -32,10 +32,6 @@
 #include "xM/Util/Utils.h"
 // END Includes
 
-// BEGIN Defines
-
-// END Defines
-
 namespace xM {
 
     namespace Util {

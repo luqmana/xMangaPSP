@@ -43,10 +43,6 @@
 #include <stdarg.h>
 // END Includes
 
-// BEGIN Defines
-
-// END Defines
-
 namespace xM {
 
     namespace Util {

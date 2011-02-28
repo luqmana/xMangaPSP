@@ -30,11 +30,9 @@
 
 // BEGIN Includes
 #include "xM/States/Menu.h"
+#include "xM/Engine/InputManager.h"
+#include "xM/Util/Log.h"
 // END Includes
-
-// BEGIN Defines
-
-// END Defines
 
 namespace xM {
 
@@ -102,7 +100,15 @@ namespace xM {
          */
         void Menu::handleEvents(void) {
 
+            Engine::InputManager* iM = Engine::InputManager::getInstance();
 
+            if (__xM_DEBUG && iM->pressed(PSP_CTRL_LTRIGGER)) {
+            
+                Util::logMsg("Reloading XML ui file.");
+            
+                parser.loadFile("ui/home.xml");    
+            
+            }                
 
         }
 

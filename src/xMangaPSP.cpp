@@ -30,6 +30,7 @@
 
 // BEGIN Includes
 #include "xM/Engine/StateManager.h"
+#include "xM/Engine/InputManager.h"
 #include "xM/Stn/Callbacks.h"
 #include "xM/Gfx/Graphics.h"
 #include "xM/Util/Stats.h"
@@ -76,6 +77,10 @@ int main(int argc, char **argv) {
     
     // Red text
     pspDebugScreenSetTextColor(0xFF0000FF);
+    
+    // Initiate the InputManager
+    Engine::InputManager* inputManager = Engine::InputManager::getInstance();
+    inputManager->init();
 
     // Initiate the StateManager and set the initial state
     Engine::StateManager* stateManager = Engine::StateManager::getInstance();
@@ -91,6 +96,9 @@ int main(int argc, char **argv) {
 
         // Begin frame
         Gfx::beginFrame();
+        
+        // Read in input
+        inputManager->readInput();
 
         // Handle user/system input/events
         stateManager->handleEvents();
@@ -113,8 +121,11 @@ int main(int argc, char **argv) {
     // Let the states clean up
     stateManager->cleanUp();
 
-    // Delete pointer
+    // Delete pointer to singleton StateManager
     delete Engine::StateManager::sMInstance;
+    
+    // Delete pointer to singleton InputManager
+    delete Engine::InputManager::iMInstance;
 
     // intraFont. Down.
     intraFontShutdown();

@@ -34,9 +34,7 @@
 
 #include <sstream>
 #include <stdarg.h>
-// BEGIN Defines
-
-// END Defines
+// END Includes
 
 namespace xM {
 
@@ -73,7 +71,7 @@ namespace xM {
             if (this->font != NULL)
                 intraFontUnload(this->font);
                 
-            // Unlaoad alt fonts
+            // Unload alt fonts
             for (unsigned int i = 0; i < this->altFonts.size(); ++i)
                 intraFontUnload(this->altFonts[i]);
         
@@ -89,6 +87,10 @@ namespace xM {
         
             if (this->font != NULL)
                 intraFontUnload(this->font);
+                
+            // Unload alt fonts
+            for (unsigned int i = 0; i < this->altFonts.size(); ++i)
+                intraFontUnload(this->altFonts[i]);
                 
             std::stringstream file; 
                
