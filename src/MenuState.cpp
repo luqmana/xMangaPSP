@@ -145,6 +145,18 @@ namespace xM {
             parser.draw();
             
         }
+        
+        /**
+         * A callback function definition to handle custom elements in an XML UI file.
+         * 
+         * @param XMLParser* parser Pointer to the current XML parser.
+         * @param Element* customElement The custom element to be rendered.
+         */
+        void Menu::renderElement(Ui::XMLParser* parser, Ui::Element* customElement) {
+        
+            
+        
+        }
 
     }
 

@@ -34,6 +34,7 @@
 #include "xM/Gfx/Graphics.h"
 #include "xM/Gfx/Image.h"
 #include "xM/Gfx/Text.h"
+#include "xM/Ui/CustomElementHandler.h"
 #include "xM/Util/Timer.h"
 #include "xM/Ui/XMLParser.h"
 // END Includes
@@ -46,7 +47,7 @@ namespace xM {
 
     namespace States {
 
-        class Menu : public Base {
+        class Menu : public Base, Ui::CustomElementHandler {
         public:
 
             /**
@@ -83,6 +84,14 @@ namespace xM {
              * Done with the logic? Draw what's needed then.
              */
             void draw(void);
+            
+            /**
+             * A callback function definition to handle custom elements in an XML UI file.
+             * 
+             * @param XMLParser* parser Pointer to the current XML parser.
+             * @param Element* customElement The custom element to be rendered.
+             */
+            void renderElement(Ui::XMLParser* parser, Ui::Element* customElement);
 
         private:
 

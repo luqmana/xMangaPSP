@@ -112,9 +112,7 @@ namespace xM {
             }
 
             // Loop over children
-            //TiXmlElement* child;
             TiXmlNode* childNode;
-            //for (child = TiXmlHandle(root).FirstChild().ToElement(); child; child = child->NextSiblingElement()) {
             for (childNode = TiXmlHandle(root).FirstChild().ToNode(); childNode; childNode = childNode->NextSibling()) {
             
                 if (childNode->Type() != TiXmlNode::ELEMENT)

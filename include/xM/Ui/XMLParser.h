@@ -37,6 +37,7 @@
 #include <tinyxml.h>
 #include <string>
 #include <vector>
+#include <map>
 // END Includes
 
 // BEGIN Defines
@@ -52,11 +53,12 @@ namespace xM {
             NOOP,
             QUAD,
             TEXT,
-            IMAGE
+            IMAGE,
+            CUSTOM
         
         };
     
-        typedef struct {
+        typedef struct Element {
         
             ElementType type;
             double x, y, offsetX, offsetY;
@@ -66,6 +68,7 @@ namespace xM {
             double size;
             Gfx::Text font;
             Gfx::Image image;
+            std::vector<struct Element*> children;
                     
         } Element;
 
@@ -75,6 +78,7 @@ namespace xM {
             TiXmlDocument* uiXMLFile;
             std::string file;
             std::vector<Element*> uiElements;
+            //std::map<std::string, 
         
         public:
             
