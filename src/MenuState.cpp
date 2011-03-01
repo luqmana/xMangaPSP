@@ -65,6 +65,7 @@ namespace xM {
             //textFont.loadFont(Gfx::Font::LATIN_SANS_SERIF_REGULAR_SMALL, 1.0f, Gfx::Colour::GREEN, Gfx::Colour::RED, 0, 0);
                         
             parser.loadFile("ui/home.xml");
+            parser.registerCustomElementHandler("menuList", this);
             
         }
 

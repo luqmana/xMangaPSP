@@ -34,6 +34,7 @@
 #include "xM/Gfx/Graphics.h"
 #include "xM/Gfx/Image.h"
 #include "xM/Gfx/Text.h"
+#include "xM/Ui/Element.h"
 #include "xM/Ui/CustomElementHandler.h"
 #include "xM/Util/Timer.h"
 #include "xM/Ui/XMLParser.h"
@@ -47,7 +48,7 @@ namespace xM {
 
     namespace States {
 
-        class Menu : public Base, Ui::CustomElementHandler {
+        class Menu : public Base, public Ui::CustomElementHandler {
         public:
 
             /**
@@ -91,7 +92,7 @@ namespace xM {
              * @param XMLParser* parser Pointer to the current XML parser.
              * @param Element* customElement The custom element to be rendered.
              */
-            void renderElement(Ui::XMLParser* parser, Ui::Element* customElement);
+            virtual void renderElement(Ui::XMLParser* parser, Ui::Element* customElement);
 
         private:
 

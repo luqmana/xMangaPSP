@@ -63,6 +63,7 @@ namespace xM {
             }
             
             this->uiElements.clear();
+            this->customElementHandlers.clear();
 
         }
 
@@ -84,6 +85,7 @@ namespace xM {
                 }
                 
                 this->uiElements.clear();
+                this->customElementHandlers.clear();
             
             }
             
@@ -575,6 +577,18 @@ namespace xM {
 
             }
 
+        }
+        
+        /**
+         * Register a custom element handler.
+         * 
+         * @param const std::string& element The custom element.
+         * @param CustomElementHandler* handler Pointer to the handling class.
+         */
+        void XMLParser::registerCustomElementHandler(const std::string& element, CustomElementHandler* handler) {
+        
+            this->customElementHandlers.insert(std::pair<std::string, CustomElementHandler*>(element, handler));
+        
         }
 
     }

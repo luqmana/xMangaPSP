@@ -33,6 +33,8 @@
 #include "xM/Gfx/Graphics.h"
 #include "xM/Gfx/Image.h"
 #include "xM/Gfx/Text.h"
+#include "xM/Ui/Element.h"
+#include "xM/Ui/CustomElementHandler.h"
 
 #include <tinyxml.h>
 #include <string>
@@ -48,37 +50,13 @@ namespace xM {
 
     namespace Ui {
     
-        enum ElementType {
-        
-            NOOP,
-            QUAD,
-            TEXT,
-            IMAGE,
-            CUSTOM
-        
-        };
-    
-        typedef struct Element {
-        
-            ElementType type;
-            double x, y, offsetX, offsetY;
-            unsigned int colour, shadowColour;
-            double width, height;
-            std::string text;
-            double size;
-            Gfx::Text font;
-            Gfx::Image image;
-            std::vector<struct Element*> children;
-                    
-        } Element;
-
         class XMLParser {
         private:
         
             TiXmlDocument* uiXMLFile;
             std::string file;
             std::vector<Element*> uiElements;
-            //std::map<std::string, 
+            std::map<std::string, CustomElementHandler*> customElementHandlers;
         
         public:
             
@@ -103,6 +81,14 @@ namespace xM {
              * Draws the UI described by the XML file.
              */
             void draw();
+            
+            /**
+             * Register a custom element handler.
+             * 
+             * @param const std::string& element The custom element.
+             * @param CustomElementHandler* handler Pointer to the handling class.
+             */
+            void registerCustomElementHandler(const std::string& element, CustomElementHandler* handler);
                     
         };
         

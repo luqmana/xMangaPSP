@@ -20,17 +20,21 @@
  */
 
 /**
- * Abstract class to be inherited by classes wishing to handle a custom element in an XML UI file.
+ * Type definition for an XML ui element.
  * Header file.
  * 
  * @package xMangaPSP
  */
 
-#ifndef _CustomElementHandler_H
-#define _CustomElementHandler_H
+#ifndef _Element_H
+#define _Element_H
 
 // BEGIN Includes
-#include "xM/Ui/Element.h"
+#include "xM/Gfx/Image.h"
+#include "xM/Gfx/Text.h"
+
+#include <string>
+#include <vector>
 // END Includes
 
 // BEGIN Defines
@@ -41,24 +45,32 @@ namespace xM {
 
     namespace Ui {
     
-        // Forward declaration of XMLParser
-        class XMLParser;
-    
-        class CustomElementHandler {        
-        public:
-            
-            /**
-             * A callback function definition to handle custom elements in an XML UI file.
-             * 
-             * @param XMLParser* parser Pointer to the current XML parser.
-             * @param Element* customElement The custom element to be rendered.
-             */
-            virtual void renderElement(XMLParser* parser, Element* customElement) = 0;
-                    
+        enum ElementType {
+        
+            NOOP,
+            QUAD,
+            TEXT,
+            IMAGE,
+            CUSTOM
+        
         };
-                
+    
+        typedef struct Element {
+        
+            ElementType type;
+            double x, y, offsetX, offsetY;
+            unsigned int colour, shadowColour;
+            double width, height;
+            std::string text;
+            double size;
+            Gfx::Text font;
+            Gfx::Image image;
+            std::vector<struct Element*> children;
+                    
+        } Element;
+        
     }
 
 }
 
-#endif /* _CustomElementHandler_H */
+#endif /* _Element_H */
