@@ -66,7 +66,7 @@ namespace xM {
                         
             parser.loadFile("ui/home.xml");
             parser.registerCustomElementHandler("menuList", this);
-            
+                        
         }
 
         /**

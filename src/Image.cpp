@@ -293,8 +293,8 @@ namespace xM {
 
             if (clip != NULL) {
 
-                w = (clip->width == 0) ? this->segments[0].width : 0;
-                h = (clip->height == 0) ? this->segments[0].height : 0;
+                w = (clip->width == 0) ? this->segments[0].width : clip->width;
+                h = (clip->height == 0) ? this->segments[0].height : clip->height;
 
                 offsetX = clip->x;
                 offsetY = clip->y;
@@ -308,8 +308,6 @@ namespace xM {
                 offsetY = 0;
 
             }
-
-            //printf("[%d] pos: (%f, %f) \noffset: (%d, %d)\ndimensions: (%d, %d)\n", this->segments.size(), x, y, offsetX, offsetY, w, h);
 
             // Enable 2D textures
             sceGuEnable(GU_TEXTURE_2D);
