@@ -70,8 +70,8 @@ namespace xM {
             
             Engine::FileManager* fM = Engine::FileManager::getInstance();
             
-            readData = fM->readFromPSAR("psartester.txt");
-            otherReadData = fM->readFromPSAR("otherpsartester.txt");
+            readData = fM->readFromPSAR("res/psartester.txt");
+            otherReadData = fM->readFromPSAR("res/otherpsartester.txt");
                         
         }
 

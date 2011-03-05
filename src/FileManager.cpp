@@ -35,6 +35,7 @@
 #include <pspiofilemgr.h>
 
 #include <sstream>
+#include <string.h>
 
 #include <cstdlib>
 
@@ -73,12 +74,13 @@ namespace xM {
             // in this case name should always be EBOOT.PBP…
             SceUID fD = sceIoOpen(name, PSP_O_RDONLY, 0777);
             
-            if (!fD) {
+            if (fD < 0) {
             
-                if (__xM_DEBUG)
-                    Util::logMsg("FileManager::readFromPSAR - Unable to open EBOOT.");
+                // Compare name to make sure to ignore magic attempts by zziplib
+                if (__xM_DEBUG && (strstr(name, "EBOOT.PBP/") == NULL))
+                    Util::logMsg("FileManager::readFromPSAR - Unable to open EBOOT [%s].", name);
                     
-                return fD;
+                return -1;
             
             }
             
@@ -192,7 +194,7 @@ namespace xM {
             std::stringstream path;
             path << "EBOOT.PBP" << "/" << file;
         
-            ZZIP_FILE *fP = zzip_open_ext_io(path.str().c_str(), O_RDONLY | O_BINARY, ZZIP_PREFERZIP | ZZIP_CASELESS, ext, &psarZipHandlers);
+            ZZIP_FILE *fP = zzip_open_ext_io(path.str().c_str(), O_RDONLY | O_BINARY, ZZIP_ONLYZIP, ext, &psarZipHandlers);
             
             // Temporary buffer
             char *buffer;

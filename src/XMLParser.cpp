@@ -168,7 +168,6 @@ namespace xM {
                             g = Util::stringToInt(colourParts[1]);
                             b = Util::stringToInt(colourParts[2]);
 
-                            //uiElement->colour = GU_COLOR((float) r / 255, (float) g / 255, (float) b / 255, 1.0f);
                             uiElement->colour = GU_RGBA(r, g, b, 255);
 
                         } else if (colourParts.size() == 4) {
@@ -179,7 +178,6 @@ namespace xM {
                             b = Util::stringToInt(colourParts[2]);
                             a = Util::stringToInt(colourParts[3]);
 
-                            //uiElement->colour = GU_COLOR((float) r / 255, (float) g / 255, (float) b / 255, (float) a / 255);
                             uiElement->colour = GU_RGBA(r, g, b, a);
                             
                         } else {
