@@ -99,6 +99,11 @@ namespace xM {
 
             // Set render states
             resetRenderStates();
+            
+            // Reset sceGuTex* states
+            sceGuTexMode(GU_PSM_8888, 0, 0, 0);
+            sceGuTexFunc(GU_TFX_REPLACE, GU_TCC_RGBA);
+            sceGuTexFilter(GU_LINEAR, GU_LINEAR);
 
             // Set clear colour as black
             sceGuClearColor(GU_COLOR(0.0f, 0.0f, 0.0f, 1.0f));
@@ -147,11 +152,6 @@ namespace xM {
 
             // Disable textures
             sceGuDisable(GU_TEXTURE_2D);
-
-            // Reset sceGuTex* states
-            sceGuTexMode(GU_PSM_8888, 0, 0, 0);
-            sceGuTexFunc(GU_TFX_REPLACE, GU_TCC_RGBA);
-            sceGuTexFilter(GU_LINEAR, GU_LINEAR);
 
         }
 

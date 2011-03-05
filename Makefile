@@ -24,6 +24,7 @@
  BUILD_DIR = build
  SRC_DIR = src
  EXT_SRC_DIR = ext/src
+ RES_DIR = resources
  
  # Targets
  TARGET		= $(BUILD_DIR)/xMangaPSP
@@ -36,7 +37,7 @@
  STATES = MenuState.cpp
  
  # Source files
- SRC   =  xMangaPSP.cpp Callbacks.cpp Graphics.cpp Stats.cpp Utils.cpp Timer.cpp InputManager.cpp StateManager.cpp Image.cpp Log.cpp PicoPNG.cpp Text.cpp XMLParser.cpp
+ SRC   =  xMangaPSP.cpp Callbacks.cpp Graphics.cpp Stats.cpp Utils.cpp Timer.cpp FileManager.cpp InputManager.cpp StateManager.cpp Image.cpp Log.cpp PicoPNG.cpp Text.cpp XMLParser.cpp
  SRC  +=  $(STATES)
  
  # External Libs Source Files
@@ -63,17 +64,18 @@
  INCDIR = $(SRC_DIR) $(SRC_DIR)/../include $(EXT_SRC_DIR) $(EXT_SRC_DIR)/../include $(PSPDEV)/psp/include/
  
  # Library Directories
- LIBS = -lintraFont -lpspgum -lpspgu -lm -lpsprtc -lpspsdk -lstdc++
+ LIBS = -lzzip -lz -lintraFont -lpspgum -lpspgu -lm -lpsprtc -lpspsdk -lstdc++
  
  # Compiler Flags
- CFLAGS = -Wall -falign-functions=64 $(COMPILER_DEFINES)
+ CFLAGS = -Wall $(COMPILER_DEFINES) -falign-functions=64
  CXXFLAGS = $(CFLAGS) -fno-rtti
  ASFLAGS =
 
+ # Enable the debug options
  ifeq ($(DEBUG), 1)
  CFLAGS += -g
  else
- CFLAGS += -O3 -G4
+ CFLAGS += -O3 -G4 -ffast-math
  endif
  
  # Linker Flags
@@ -104,15 +106,15 @@
  PSP_EBOOT_UNKPNG 	= NULL# Overlay Image			310 x 180
  PSP_EBOOT_PIC1 	= NULL# Background				480 x 272
  PSP_EBOOT_SND0 	= NULL# Background music
- PSP_EBOOT_PSAR 	= NULL# A data file. Store whatever in here.
+ PSP_EBOOT_PSAR 	= $(RES_DIR)/psar.zip# A data file. Store whatever in here.
   
  # Get the base makefile
  include $(PSPSDK)/lib/build.mak
- 
+
  # Rule to keep src dir clean while building
  $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
-	
+
  # Rule to build bundled TinyXML
  $(BUILD_DIR)/%.o: $(EXT_SRC_DIR)/tinyxml/%.cpp
 	$(CXX) $(CXXFLAGS) -c -o $@ $<

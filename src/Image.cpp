@@ -109,6 +109,9 @@ namespace xM {
 
             // Read in the png
             sceIoRead(fD, buffer, imageSize);
+            
+            // Close
+            sceIoClose(fD);
 
             if (__xM_DEBUG)
                 printf("Before decode.\n");

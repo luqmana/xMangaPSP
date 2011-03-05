@@ -29,8 +29,9 @@
 #define _xMangaPSP_CPP
 
 // BEGIN Includes
-#include "xM/Engine/StateManager.h"
+#include "xM/Engine/FileManager.h"
 #include "xM/Engine/InputManager.h"
+#include "xM/Engine/StateManager.h"
 #include "xM/Stn/Callbacks.h"
 #include "xM/Gfx/Graphics.h"
 #include "xM/Util/Stats.h"
@@ -78,10 +79,14 @@ int main(int argc, char **argv) {
     // Red text
     pspDebugScreenSetTextColor(0xFF0000FF);
     
+    // Initiate the FileManager
+    Engine::FileManager* fileManager = Engine::FileManager::getInstance();
+    fileManager->init();
+    
     // Initiate the InputManager
     Engine::InputManager* inputManager = Engine::InputManager::getInstance();
     inputManager->init();
-
+    
     // Initiate the StateManager and set the initial state
     Engine::StateManager* stateManager = Engine::StateManager::getInstance();
     stateManager->changeState(new States::Menu());
@@ -123,9 +128,12 @@ int main(int argc, char **argv) {
 
     // Delete pointer to singleton StateManager
     delete Engine::StateManager::sMInstance;
-    
+        
     // Delete pointer to singleton InputManager
     delete Engine::InputManager::iMInstance;
+    
+    // Delete pointer to singleton FileManager
+    delete Engine::FileManager::fMInstance;
 
     // intraFont. Down.
     intraFontShutdown();
