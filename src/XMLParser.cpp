@@ -58,6 +58,12 @@ namespace xM {
             
             for (unsigned int i = 0; i < this->uiElements.size(); ++i) {
             
+                for (unsigned int j = 0; j < this->uiElements[i]->children.size(); ++j) {
+            
+                    delete this->uiElements[i]->children[j];
+            
+                }
+            
                 delete this->uiElements[i];
             
             }
@@ -80,12 +86,17 @@ namespace xM {
                 
                 for (unsigned int i = 0; i < this->uiElements.size(); ++i) {
                 
+                    for (unsigned int j = 0; j < this->uiElements[i]->children.size(); ++j) {
+            
+                        delete this->uiElements[i]->children[j];
+            
+                    }
+                
                     delete this->uiElements[i];
                 
                 }
                 
                 this->uiElements.clear();
-                this->customElementHandlers.clear();
             
             }
             
@@ -124,16 +135,17 @@ namespace xM {
 
                 Element* uiElement = new Element;
                 uiElement->type = NOOP;
+                uiElement->name = child->Value();
                 uiElement->x = uiElement->y = uiElement->offsetX = uiElement->offsetY = uiElement->colour = uiElement->shadowColour = uiElement->width = uiElement->height = 0;
                 uiElement->text = "";
                 uiElement->size = 1.0;
 
-                // Some common attributes that must be included for all elements
+                // Some common attributes
                 if (child->QueryDoubleAttribute("x", &uiElement->x) != TIXML_SUCCESS) {
-                    continue;
+                    uiElement->x = 0;
                 }
                 if (child->QueryDoubleAttribute("y", &uiElement->y) != TIXML_SUCCESS) {
-                    continue;
+                    uiElement->y = 0;
                 }
 
                 // Specific elements
@@ -518,9 +530,35 @@ namespace xM {
                                                 
                     }
 
+                //------CUSTOM [possibly]
                 } else {
+                                
+                    std::map<std::string, CustomElementHandler*>::const_iterator customElementHandler = this->customElementHandlers.find(child->Value());
 
-                    continue;
+                    if (customElementHandler != this->customElementHandlers.end()) {
+                    
+                        uiElement->type = CUSTOM;
+                        
+                        // Collect the attributes for the custom element to pass on to the handler
+                        std::map<std::string, std::string> attributes;
+                        
+                        TiXmlAttribute* attr = child->FirstAttribute();
+                        
+                        while (attr != NULL) {
+                        
+                            attributes.insert(std::pair<std::string, std::string>(attr->Name(), attr->Value()));
+                            
+                            attr = attr->Next();
+                        
+                        }
+                        
+                        uiElement->attributes = attributes;
+                                                
+                        // Call the back
+                        customElementHandler->second->initElement(this, uiElement);
+                    
+                    } else
+                        continue;
 
                 }
 
@@ -568,6 +606,13 @@ namespace xM {
                         e->image.draw(e->x, e->y, &clip);
 
                         break;
+                        
+                    case CUSTOM:
+                    
+                        // Let the callback render
+                        this->customElementHandlers[e->name]->renderElement(this, e);
+                    
+                        break;
 
                     case NOOP:
                     default:
@@ -587,7 +632,25 @@ namespace xM {
          */
         void XMLParser::registerCustomElementHandler(const std::string& element, CustomElementHandler* handler) {
         
-            this->customElementHandlers.insert(std::pair<std::string, CustomElementHandler*>(element, handler));
+            if (this->customElementHandlers.find(element) != this->customElementHandlers.end()) {
+              
+                if (__xM_DEBUG)
+                    Util::logMsg("XMLParser::registerCustomElementHandler — Custom element handler already registered for element '%s'.", element.c_str());
+                
+            } else
+                this->customElementHandlers.insert(std::pair<std::string, CustomElementHandler*>(element, handler));
+        
+        }
+        
+        /**
+         * Deregister a custom element handler.
+         * 
+         * @param const std::string& element The custom element.
+         */
+        void XMLParser::deRegisterCustomElementHandler(const std::string& element) {
+        
+            if (this->customElementHandlers.find(element) != this->customElementHandlers.end())
+                this->customElementHandlers.erase(element);
         
         }
 

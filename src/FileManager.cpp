@@ -68,9 +68,7 @@ namespace xM {
         static zzip_plugin_io_handlers psarZipHandlers = { };
     
         static int psarZipOpen(zzip_char_t* name, int flags, ...) {
-        
-            printf("psarZipOpen name: %s flags: %d\n", name, flags);
-        
+                
             // in this case name should always be EBOOT.PBP…
             SceUID fD = sceIoOpen(name, PSP_O_RDONLY, 0777);
             
@@ -89,9 +87,7 @@ namespace xM {
                         
             // Read in offset
             sceIoRead(fD, &psarOffset, sizeof(unsigned int));
-            
-            printf("Offset: %d (0x%x)\n", psarOffset, psarOffset);
-            
+                        
             // Now seek to PSAR offset
             sceIoLseek(fD, psarOffset, PSP_SEEK_SET);
             
@@ -100,25 +96,19 @@ namespace xM {
         }
         
         static int psarZipClose(int fD) {
-        
-            printf("psarZipClose fD: %d\n", fD);
-        
+                
             return sceIoClose(fD);
         
         }
         
         static zzip_ssize_t psarZipRead(int fD, void* buf, zzip_size_t len) {
-        
-            printf("psarZipRead fD: %d len: %d (0x%x)\n", fD, len, len);
-        
+                
             return sceIoRead(fD, buf, len);
         
         }
         
         static zzip_off_t psarZipSeek(int fD, zzip_off_t offset, int whence) {
-        
-            printf("psarZipSeek fD: %d offset: %d (0x%x) coffset: %d (0x%x) whence: %d\n", fD, offset, offset, psarOffset + offset, psarOffset + offset, whence);
-        
+                
             if (whence == PSP_SEEK_SET)
                 return sceIoLseek(fD, (psarOffset + offset), PSP_SEEK_SET) - psarOffset;
             else if (whence == PSP_SEEK_CUR)
@@ -139,10 +129,14 @@ namespace xM {
             // Calculate PSAR section size
             long totalSize = sceIoLseek32(fD, 0, PSP_SEEK_END);
             long size = totalSize - psarOffset;
-            
-            printf("psarZipFilesize fD: %d [%d (0x%x)]\n", fD, size, size);
-        
+                    
             return size;
+        
+        }
+        
+        static zzip_ssize_t psarZipWrite(int fD, _zzip_const void* buf, zzip_size_t len) {
+        
+            return sceIoWrite(fD, buf, len);
         
         }
 
@@ -174,6 +168,7 @@ namespace xM {
             psarZipHandlers.fd.read = &psarZipRead;
             psarZipHandlers.fd.seeks = &psarZipSeek;
             psarZipHandlers.fd.filesize = &psarZipFilesize;
+            psarZipHandlers.fd.write = &psarZipWrite;
         
         }
 
@@ -206,8 +201,6 @@ namespace xM {
             // Get position [so since we're at the end means filesize]
             long filesize = zzip_tell(fP);
             
-            printf("The filesize is: %d (0x%x)\n", filesize, filesize);
-	
             // Go back to start of the file
             zzip_rewind(fP);
 	

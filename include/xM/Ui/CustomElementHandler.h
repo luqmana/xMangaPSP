@@ -46,9 +46,17 @@ namespace xM {
     
         class CustomElementHandler {        
         public:
+        
+            /**
+             * A callback function definition to handle the setup of a custom element read from XML UI file.
+             * 
+             * @param XMLParser* parser Pointer to the current XML parser.
+             * @param Element* customElement The custom element to be setup.
+             */
+            virtual void initElement(XMLParser* parser, Element* customElement) = 0;
             
             /**
-             * A callback function definition to handle custom elements in an XML UI file.
+             * A callback function definition to handle rendering custom elements in an XML UI file.
              * 
              * @param XMLParser* parser Pointer to the current XML parser.
              * @param Element* customElement The custom element to be rendered.

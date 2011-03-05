@@ -35,6 +35,7 @@
 
 #include <string>
 #include <vector>
+#include <map>
 // END Includes
 
 // BEGIN Defines
@@ -58,6 +59,7 @@ namespace xM {
         typedef struct Element {
         
             ElementType type;
+            std::string name;
             double x, y, offsetX, offsetY;
             unsigned int colour, shadowColour;
             double width, height;
@@ -65,6 +67,9 @@ namespace xM {
             double size;
             Gfx::Text font;
             Gfx::Image image;
+            
+            // Only used by custom elements
+            std::map<std::string, std::string> attributes;
             std::vector<struct Element*> children;
                     
         } Element;

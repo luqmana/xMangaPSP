@@ -65,13 +65,9 @@ namespace xM {
             
             textFont.loadFont(Gfx::Font::LATIN_SANS_SERIF_REGULAR_SMALL, 1.0f, Gfx::Colour::GREEN, Gfx::Colour::RED, 0, 0);
                         
+            // Register before loading the file
+            parser.registerCustomElementHandler("psarText", this);
             parser.loadFile("ui/home.xml");
-            parser.registerCustomElementHandler("menuList", this);
-            
-            Engine::FileManager* fM = Engine::FileManager::getInstance();
-            
-            readData = fM->readFromPSAR("res/psartester.txt");
-            otherReadData = fM->readFromPSAR("res/otherpsartester.txt");
                         
         }
 
@@ -80,7 +76,7 @@ namespace xM {
          */
         void Menu::cleanUp(void) {
 
-
+            parser.deRegisterCustomElementHandler("psarText");
 
         }
 
@@ -132,26 +128,23 @@ namespace xM {
          * Done with the logic? Draw what's needed then.
          */
         void Menu::draw(void) {
-
-            /*Gfx::ImageClip clip = {32, 32, 64, 64};
-
-            //testImg.draw(0, 0);
-            testImg2.draw(120, 100, &clip);
-            //testImg3.draw(0, 0);
-            //testImg4.draw(0, 0);
-
-            // Draw the first quad rotating
-            Gfx::drawQuad(240.0f - (100 / 2), 160.0f - (100 / 2), 100, 100, Gfx::Colour::WHITE, GU_COLOR(1.0f, 0.0f, 0.0f, 0.75f),
-                    GU_COLOR(0.0f, 1.0f, 0.0f, 0.50f), GU_COLOR(0.0f, 0.0f, 1.0f, 0.25f), rotate);
-
-            // Draw the second quad rotating in the opposite direction 10 times as fast
-            Gfx::drawQuad(240.0f - (50 / 2), 160.0f - (50 / 2), 50.0f, 50.0f, GU_COLOR(0.0f, 0.0f, 0.0f, 0.1f), -rotate * 10.0f);*/
-            
-            textFont.draw(180, 50, readData.c_str());
-            textFont.draw(180, 75, otherReadData.c_str());
             
             parser.draw();
             
+        }
+        
+        /**
+         * A callback function definition to handle the setup of a custom element read from XML UI file.
+         * 
+         * @param XMLParser* parser Pointer to the current XML parser.
+         * @param Element* customElement The custom element to be setup.
+         */
+        void Menu::initElement(Ui::XMLParser* parser, Ui::Element* customElement) {
+        
+            Engine::FileManager* fM = Engine::FileManager::getInstance();
+        
+            customElement->text = fM->readFromPSAR(customElement->attributes["psarFile"]);
+                    
         }
         
         /**
@@ -161,8 +154,8 @@ namespace xM {
          * @param Element* customElement The custom element to be rendered.
          */
         void Menu::renderElement(Ui::XMLParser* parser, Ui::Element* customElement) {
-        
-            
+                
+            textFont.draw(customElement->x, customElement->y, customElement->text.c_str());
         
         }
 

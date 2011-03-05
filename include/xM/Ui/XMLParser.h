@@ -89,6 +89,13 @@ namespace xM {
              * @param CustomElementHandler* handler Pointer to the handling class.
              */
             void registerCustomElementHandler(const std::string& element, CustomElementHandler* handler);
+            
+            /**
+             * Deregister a custom element handler.
+             * 
+             * @param const std::string& element The custom element.
+             */
+            void deRegisterCustomElementHandler(const std::string& element);
                     
         };
         
