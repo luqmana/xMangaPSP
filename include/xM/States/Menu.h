@@ -115,6 +115,8 @@ namespace xM {
             Gfx::Image testImg3;
             Gfx::Image testImg4;
             
+            int dialog;
+            
             Ui::XMLParser parser;
             
             std::string readData;

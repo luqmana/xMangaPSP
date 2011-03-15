@@ -79,7 +79,6 @@ namespace xM {
             // A sort of reset
             sceKernelDcacheWritebackAll();
 
-            //displayList = memalign(16, 1600);
             frameBuffer0 = 0;
 
             // No suprise what this does
@@ -229,9 +228,6 @@ namespace xM {
             // Wait for the currently executing display list
             sceGuSync(GU_SYNC_FINISH, GU_SYNC_WHAT_DONE);
 
-            // Vsync and swap buffers
-            syncAndSwap();
-
         }
 
         /**
@@ -253,9 +249,6 @@ namespace xM {
         void shutdownGu(void) {
 
             sceGuTerm();
-
-            free(displayList);
-            free(frameBuffer0);
 
         }
 

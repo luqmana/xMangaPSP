@@ -29,15 +29,23 @@
 #define _xMangaPSP_CPP
 
 // BEGIN Includes
+#include "xM/Engine/App.h"
 #include "xM/Engine/FileManager.h"
 #include "xM/Engine/InputManager.h"
 #include "xM/Engine/StateManager.h"
 #include "xM/Stn/Callbacks.h"
 #include "xM/Gfx/Graphics.h"
+#include "xM/Ui/Dialogs.h"
 #include "xM/Util/Stats.h"
+#include "xM/Util/Log.h"
 #include "xM/States/Menu.h"
 
 #include <intraFont.h>
+
+#include <pspnet.h>
+#include <pspnet_apctl.h>
+#include <pspnet_inet.h>
+#include <psputility.h>
 // END Includes
 
 // Less typing
@@ -65,6 +73,8 @@ PSP_MAIN_THREAD_ATTR(PSP_THREAD_ATTR_USER);
  */
 PSP_HEAP_SIZE_KB(15360);
 
+bool Engine::running = true;
+
 int main(int argc, char **argv) {
 
     // Setup various callbacks for the PSP
@@ -72,7 +82,17 @@ int main(int argc, char **argv) {
 
     // Init psp debug screen
     pspDebugScreenInit();
+    
+    //t
+    sceUtilityLoadNetModule(PSP_NET_MODULE_COMMON);
+sceUtilityLoadNetModule(PSP_NET_MODULE_INET);
 
+// I have no clue what these numbers mean. :)
+sceNetInit(128 * 1024, 42, 4 * 1024, 42, 4 * 1024);
+sceNetInetInit();
+sceNetApctlInit(0x8000, 48);
+    //t
+    	
     // Init intraFont font library
     intraFontInit();
     
@@ -96,52 +116,73 @@ int main(int argc, char **argv) {
 
     // Setup ortho view
     Gfx::setUpOrthoView();
-
-    while (true) {
+            
+    while (Engine::isRunning()) {
 
         // Begin frame
         Gfx::beginFrame();
         
-        // Read in input
-        inputManager->readInput();
+        // Read input unless dialog active
+        if (!Ui::Dialog::isDialogActive())
+            inputManager->readInput();
 
-        // Handle user/system input/events
-        stateManager->handleEvents();
-
-        // Handle logic and update accordingly
-        stateManager->handleLogic();
-
+        // Handle events unless dialog active
+        if (!Ui::Dialog::isDialogActive())
+            stateManager->handleEvents();
+        
+        // Handle logic and update unless dialog active    
+        if (!Ui::Dialog::isDialogActive())
+            stateManager->handleLogic();
+                        
         // Draw
         stateManager->draw();
         
         // Show some stats
         Util::MEM();
         Util::FPS();
-
+        
         // End frame
         Gfx::endFrame();
 
-    }
+        // Draw any active dialogs
+        if (Ui::Dialog::isDialogActive())
+            Ui::Dialog::renderDialogs();
+        
+        // V-Sync and swap buffers
+        Gfx::syncAndSwap();
 
+    }
+    
+    Util::logMsg("abortDialogs");
+    // Close any outstanding dialogs
+    Ui::Dialog::abortDialogs();
+    
+    Util::logMsg("cleanUp");
     // Let the states clean up
     stateManager->cleanUp();
 
+    Util::logMsg("delete sMInstance");
     // Delete pointer to singleton StateManager
     delete Engine::StateManager::sMInstance;
         
+    Util::logMsg("delete iMInstance");
     // Delete pointer to singleton InputManager
     delete Engine::InputManager::iMInstance;
     
+    Util::logMsg("delete fMInstance");
     // Delete pointer to singleton FileManager
     delete Engine::FileManager::fMInstance;
 
+    Util::logMsg("intraFontShutdown");
     // intraFont. Down.
     intraFontShutdown();
 
+    Util::logMsg("shutdownGu");
     // Shutdown the gu and graphics subsystem
     Gfx::shutdownGu();
     
-    // We never actually get here…
+    Util::logMsg("sceKernelExitGame");
+    // Exit
     sceKernelExitGame();
 
     return 0;

@@ -30,11 +30,43 @@
 
 // BEGIN Includes
 #include "xM/Util/Utils.h"
+
+#include <psputility_sysparam.h>
 // END Includes
 
 namespace xM {
 
     namespace Util {
+    
+        /**
+         * Get the system language.
+         * 
+         * @return int Number specifying the language.
+         */
+        int getSystemLanguage() {
+        
+            int sL;
+            
+            sceUtilityGetSystemParamInt(PSP_SYSTEMPARAM_ID_INT_LANGUAGE, &sL);
+            
+            return sL;
+        
+        }
+        
+        /**
+         * Whether the X/O buttons are swapped.
+         *
+         * @return int
+         */
+        int areButtonsSwapped() {
+        
+            int bS;
+            
+            sceUtilityGetSystemParamInt(PSP_SYSTEMPARAM_ID_INT_UNKNOWN, &bS);
+            
+            return bS;
+        
+        }
     
         /**
          * Tokenize string.

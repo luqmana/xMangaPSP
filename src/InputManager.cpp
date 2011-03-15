@@ -58,7 +58,7 @@ namespace xM {
          */
         void InputManager::init(void) {
 
-            sceCtrlSetSamplingCycle(5);
+            sceCtrlSetSamplingCycle(0);
             sceCtrlSetSamplingMode(PSP_CTRL_MODE_ANALOG);
 
         }
@@ -68,7 +68,8 @@ namespace xM {
          */
         void InputManager::readInput(void) {
         
-           sceCtrlPeekBufferPositive(&this->pad, 1); 
+           sceCtrlPeekBufferPositive(&this->pad, 1);
+           //sceCtrlReadBufferPositive(&this->pad, 1);  
         
         }
         

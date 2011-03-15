@@ -45,6 +45,20 @@ namespace xM {
     namespace Util {
     
         /**
+         * Get the system language.
+         * 
+         * @return int Number specifying the language.
+         */
+        int getSystemLanguage();
+        
+        /**
+         * Whether the X/O buttons are swapped.
+         *
+         * @return int
+         */
+        int areButtonsSwapped();
+    
+        /**
          * Tokenize string.
          * 
          * @param const std::string& str The string to tokenize.

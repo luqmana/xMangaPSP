@@ -32,6 +32,7 @@
 #include "xM/States/Menu.h"
 #include "xM/Engine/FileManager.h"
 #include "xM/Engine/InputManager.h"
+#include "xM/Ui/Dialogs.h"
 #include "xM/Util/Log.h"
 // END Includes
 
@@ -68,7 +69,10 @@ namespace xM {
             // Register before loading the file
             parser.registerCustomElementHandler("psarText", this);
             parser.loadFile("ui/home.xml");
-                        
+            
+            // Which dialog
+            dialog = 0;
+                                    
         }
 
         /**
@@ -111,16 +115,64 @@ namespace xM {
             
                 parser.loadFile("ui/home.xml");    
             
-            }                
-
+            } else if (iM->pressed(PSP_CTRL_TRIANGLE)) {
+            
+                Ui::Dialog::msg("Hello!");
+                
+                dialog = 1;
+            
+            } else if (iM->pressed(PSP_CTRL_SQUARE)) {
+            
+                Ui::Dialog::msg("Do I work?", true);
+                
+                dialog = 2;
+            
+            } else if (iM->pressed(PSP_CTRL_CIRCLE)) {
+            
+                Ui::Dialog::net();
+            
+            }
+            
         }
 
         /**
          * Now do something with the data we got from events and what not.
          */
         void Menu::handleLogic(void) {
-
+        
             rotate -= (1.0f * timer.getDeltaTicks(true));
+            
+            if (dialog == 1 && Ui::Dialog::getMsgDialogResult() == Ui::Dialog::RESPONSE_BACK) {
+
+                Ui::Dialog::msg("I knew you'd press 'Back'");
+                
+                dialog = 0;
+            
+            } else if (dialog == 2) {
+            
+                if (Ui::Dialog::getMsgDialogResult() == Ui::Dialog::RESPONSE_YES) {
+                
+                    Ui::Dialog::msg("Smart you are.");
+                    dialog = 0;
+                    
+                } else if (Ui::Dialog::getMsgDialogResult() == Ui::Dialog::RESPONSE_NO) {
+                
+                    Ui::Dialog::msg("o.O\nChallenged are you?");
+                    dialog = 0;
+                
+                } else if (Ui::Dialog::getMsgDialogResult() == Ui::Dialog::RESPONSE_BACK) {
+                
+                    Ui::Dialog::msg("Don't avoid the question!\nDo I work?", true);
+                    
+                    dialog = 2;
+                
+                }
+            
+            } else {
+            
+                dialog = 0;
+                
+            }
 
         }
 

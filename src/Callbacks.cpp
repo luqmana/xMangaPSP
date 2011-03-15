@@ -29,6 +29,7 @@
 #define _Callbacks_CPP
 
 // BEGIN Includes
+#include "xM/Engine/App.h"
 #include "xM/Stn/Callbacks.h"
 // END Includes
 
@@ -54,8 +55,7 @@ namespace xM {
          */
         int exitCallback(int arg1, int arg2, void *common) {
 
-            // Exit the game
-            sceKernelExitGame();
+            Engine::running = false;
 
             return 0;
 
