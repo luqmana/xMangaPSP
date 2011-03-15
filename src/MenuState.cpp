@@ -68,7 +68,7 @@ namespace xM {
                         
             // Register before loading the file
             parser.registerCustomElementHandler("psarText", this);
-            parser.loadFile("ui/home.xml");
+            parser.parseFile("ui/menu.xml");
             
             // Which dialog
             dialog = 0;
@@ -108,12 +108,18 @@ namespace xM {
         void Menu::handleEvents(void) {
 
             Engine::InputManager* iM = Engine::InputManager::getInstance();
+            
+            if (iM->pressed(PSP_CTRL_DOWN))
+                Util::logMsg("Down pressed.");
+                
+            if (iM->pressed(PSP_CTRL_CROSS))
+                Util::logMsg("× pressed.");
 
             if (__xM_DEBUG && iM->pressed(PSP_CTRL_LTRIGGER)) {
             
                 Util::logMsg("Reloading XML ui file.");
             
-                parser.loadFile("ui/home.xml");    
+                parser.parseFile("ui/menu.xml");    
             
             } else if (iM->pressed(PSP_CTRL_TRIANGLE)) {
             

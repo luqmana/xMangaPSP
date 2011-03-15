@@ -30,6 +30,8 @@
 #define _InputManager_H
 
 // BEGIN Includes
+#include "xM/Util/Timer.h"
+
 #include <cstdlib>
 #include <pspctrl.h>
 // END Includes
@@ -55,7 +57,13 @@ namespace xM {
                  * Holds the button input.
                  */
                 SceCtrlData pad;
-                                            		
+                
+                Util::Timer repeatTimer;
+                bool repeat;
+                unsigned int buttons;
+                unsigned int lastButtons;
+                unsigned int repeatButtons;
+                                                            		
 		    public:
 		    
 		        /**

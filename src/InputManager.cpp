@@ -58,8 +58,9 @@ namespace xM {
          */
         void InputManager::init(void) {
 
-            sceCtrlSetSamplingCycle(0);
+            sceCtrlSetSamplingCycle(1);
             sceCtrlSetSamplingMode(PSP_CTRL_MODE_ANALOG);
+            repeat = false;
 
         }
         
@@ -68,8 +69,58 @@ namespace xM {
          */
         void InputManager::readInput(void) {
         
-           sceCtrlPeekBufferPositive(&this->pad, 1);
-           //sceCtrlReadBufferPositive(&this->pad, 1);  
+            sceCtrlPeekBufferPositive(&this->pad, 1);
+            
+            if (this->repeat) {
+            
+                if (this->pad.Buttons != this->repeatButtons) {
+                
+                    this->repeat = false;
+                    this->repeatButtons = 0;
+                    this->buttons = this->lastButtons = this->pad.Buttons;
+                    this->repeatTimer.start();
+                
+                } else {
+                
+                    if (this->repeatTimer.getDeltaTicks(false) > 0.1) {
+                    
+                        this->buttons = this->lastButtons = this->pad.Buttons;
+                        this->repeatTimer.start();
+                    
+                    } else {
+                    
+                        this->lastButtons = this->pad.Buttons;
+                        this->buttons = 0;
+                    
+                    }
+                
+                }
+            
+            } else {
+                        
+                if (this->lastButtons == this->pad.Buttons) {
+                                                        
+                    if (this->repeatTimer.getDeltaTicks(false) > 0.35) {
+                    
+                        this->repeatButtons = this->pad.Buttons;
+                        this->repeat = true;
+                        this->repeatTimer.start();
+                    
+                    } else {
+                
+                        this->lastButtons = this->pad.Buttons;
+                        this->buttons = 0;
+                        
+                    }
+                                        
+                } else {
+                
+                    this->buttons = this->lastButtons = this->pad.Buttons;
+                    this->repeatTimer.start();
+                    
+                }
+            
+            }
         
         }
         
@@ -80,7 +131,7 @@ namespace xM {
          */
         bool InputManager::pressed(PspCtrlButtons button) {
         
-            return (this->pad.Buttons != 0) && (this->pad.Buttons & button);
+            return (this->buttons != 0) && (this->buttons & button);
         
         }
 

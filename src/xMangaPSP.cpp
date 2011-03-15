@@ -33,19 +33,15 @@
 #include "xM/Engine/FileManager.h"
 #include "xM/Engine/InputManager.h"
 #include "xM/Engine/StateManager.h"
-#include "xM/Stn/Callbacks.h"
 #include "xM/Gfx/Graphics.h"
+#include "xM/Net/Net.h"
+#include "xM/States/Menu.h"
+#include "xM/Stn/Callbacks.h"
 #include "xM/Ui/Dialogs.h"
 #include "xM/Util/Stats.h"
 #include "xM/Util/Log.h"
-#include "xM/States/Menu.h"
 
 #include <intraFont.h>
-
-#include <pspnet.h>
-#include <pspnet_apctl.h>
-#include <pspnet_inet.h>
-#include <psputility.h>
 // END Includes
 
 // Less typing
@@ -82,22 +78,15 @@ int main(int argc, char **argv) {
 
     // Init psp debug screen
     pspDebugScreenInit();
-    
-    //t
-    sceUtilityLoadNetModule(PSP_NET_MODULE_COMMON);
-sceUtilityLoadNetModule(PSP_NET_MODULE_INET);
-
-// I have no clue what these numbers mean. :)
-sceNetInit(128 * 1024, 42, 4 * 1024, 42, 4 * 1024);
-sceNetInetInit();
-sceNetApctlInit(0x8000, 48);
-    //t
-    	
+        	
     // Init intraFont font library
     intraFontInit();
     
     // Red text
     pspDebugScreenSetTextColor(0xFF0000FF);
+    
+    // Initiate network support
+    Net::init();
     
     // Initiate the FileManager
     Engine::FileManager* fileManager = Engine::FileManager::getInstance();
@@ -153,35 +142,30 @@ sceNetApctlInit(0x8000, 48);
 
     }
     
-    Util::logMsg("abortDialogs");
     // Close any outstanding dialogs
     Ui::Dialog::abortDialogs();
     
-    Util::logMsg("cleanUp");
     // Let the states clean up
     stateManager->cleanUp();
 
-    Util::logMsg("delete sMInstance");
     // Delete pointer to singleton StateManager
     delete Engine::StateManager::sMInstance;
         
-    Util::logMsg("delete iMInstance");
     // Delete pointer to singleton InputManager
     delete Engine::InputManager::iMInstance;
     
-    Util::logMsg("delete fMInstance");
     // Delete pointer to singleton FileManager
     delete Engine::FileManager::fMInstance;
+    
+    // Shutdown network stuff
+    Net::shutdown();
 
-    Util::logMsg("intraFontShutdown");
     // intraFont. Down.
     intraFontShutdown();
-
-    Util::logMsg("shutdownGu");
+    
     // Shutdown the gu and graphics subsystem
     Gfx::shutdownGu();
     
-    Util::logMsg("sceKernelExitGame");
     // Exit
     sceKernelExitGame();
 

@@ -78,7 +78,7 @@ namespace xM {
          * 
          * @param const std::string& file The file to parse.
          */
-        void XMLParser::loadFile(const std::string& xFile) {
+        void XMLParser::parseFile(const std::string& xFile) {
         
             if (this->uiXMLFile != NULL) {
             
@@ -107,7 +107,7 @@ namespace xM {
             if (!this->uiXMLFile->LoadFile(file.c_str(), TIXML_ENCODING_UTF8)) {
 
                 if (__xM_DEBUG)
-                    Util::logMsg("XMLParser::loadFile — Unable to load UI XML file [%s][%s].", file.c_str(), uiXMLFile->ErrorDesc());
+                    Util::logMsg("XMLParser::parseFile — Unable to load UI XML file [%s][%s].", file.c_str(), uiXMLFile->ErrorDesc());
 
                 return;
 
@@ -118,7 +118,7 @@ namespace xM {
             if (root == NULL) {
 
                 if (__xM_DEBUG)
-                    Util::logMsg("XMLParser::draw — Unable to load UI XML root node [%s].", file.c_str());
+                    Util::logMsg("XMLParser::parseFile — Unable to load UI XML root node [%s].", file.c_str());
 
                 return;
 
@@ -532,7 +532,8 @@ namespace xM {
 
                 //------CUSTOM [possibly]
                 } else {
-                                
+                        
+                    // Try to find a handler        
                     std::map<std::string, CustomElementHandler*>::const_iterator customElementHandler = this->customElementHandlers.find(child->Value());
 
                     if (customElementHandler != this->customElementHandlers.end()) {

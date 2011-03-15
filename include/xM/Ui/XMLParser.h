@@ -75,7 +75,7 @@ namespace xM {
              * 
              * @param const std::string& file The file to parse.
              */
-            void loadFile(const std::string& xFile);
+            void parseFile(const std::string& xFile);
             
             /**
              * Draws the UI described by the XML file.

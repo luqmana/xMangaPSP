@@ -37,7 +37,7 @@
  STATES = MenuState.cpp
  
  # Source files
- SRC   =  xMangaPSP.cpp Callbacks.cpp Graphics.cpp Dialogs.cpp Stats.cpp Utils.cpp Timer.cpp FileManager.cpp InputManager.cpp StateManager.cpp Image.cpp Log.cpp PicoPNG.cpp Text.cpp XMLParser.cpp
+ SRC   =  xMangaPSP.cpp Callbacks.cpp Graphics.cpp Dialogs.cpp Stats.cpp Utils.cpp Timer.cpp FileManager.cpp InputManager.cpp StateManager.cpp Image.cpp Log.cpp PicoPNG.cpp Text.cpp XMLParser.cpp Net.cpp
  SRC  +=  $(STATES)
  
  # External Libs Source Files
