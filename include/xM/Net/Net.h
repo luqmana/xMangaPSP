@@ -43,6 +43,14 @@ namespace xM {
 		void init();
 		
 		/**
+		 * Checks whether PSP is connected to AP.
+		 * From Criptych @ ps2dev forums.
+		 * 
+		 * @return bool Connection state.
+		 */
+		bool isConnected();
+		
+		/**
 		 * Shutdown the network modules.
 		 */
 		void shutdown();

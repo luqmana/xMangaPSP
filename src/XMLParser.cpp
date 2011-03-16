@@ -72,6 +72,549 @@ namespace xM {
             this->customElementHandlers.clear();
 
         }
+        
+        /**
+         * Parse a single XML element.
+         * 
+         * @param TiXmlElement* xmlElement Element to parse.
+         */
+        Element* XMLParser::parseElement(TiXmlElement* xmlElement) {
+        
+            TiXmlNode* xmlNode = (TiXmlNode*)xmlElement;
+        
+            Element* uiElement = new Element;
+            
+            uiElement->type = NOOP;
+            uiElement->name = xmlElement->Value();
+            uiElement->x = uiElement->y = uiElement->offsetX = uiElement->offsetY = uiElement->colour = uiElement->shadowColour = uiElement->width = uiElement->height = uiElement->paddingLeft = uiElement->paddingRight = 0;
+            uiElement->text = "";
+            uiElement->size = 1.0;
+
+            // Collect all the attributes
+            std::map<std::string, std::string> attributes;
+            
+            TiXmlAttribute* attr = xmlElement->FirstAttribute();
+            
+            while (attr != NULL) {
+            
+                attributes.insert(std::pair<std::string, std::string>(attr->Name(), attr->Value()));
+                
+                attr = attr->Next();
+            
+            }
+            
+            uiElement->attributes = attributes;
+
+            // Some common attributes
+            if (xmlElement->QueryDoubleAttribute("x", &uiElement->x) != TIXML_SUCCESS) {
+                uiElement->x = 0;
+            }
+            if (xmlElement->QueryDoubleAttribute("y", &uiElement->y) != TIXML_SUCCESS) {
+                uiElement->y = 0;
+            }
+            if (xmlElement->QueryDoubleAttribute("offsetX", &uiElement->offsetX) != TIXML_SUCCESS) {
+                uiElement->offsetX = 0;
+            }
+            if (xmlElement->QueryDoubleAttribute("offsetY", &uiElement->offsetY) != TIXML_SUCCESS) {
+                uiElement->offsetY = 0;
+            }
+            if (xmlElement->QueryDoubleAttribute("paddingLeft", &uiElement->paddingLeft) != TIXML_SUCCESS) {
+                uiElement->paddingLeft = 0;
+            }
+            if (xmlElement->QueryDoubleAttribute("paddingRight", &uiElement->paddingRight) != TIXML_SUCCESS) {
+                uiElement->paddingRight = 0;
+            }
+
+            // Specific elements
+
+            //------QUAD
+            if (strcmp(xmlElement->Value(), "quad") == 0) {
+
+                uiElement->type = QUAD;
+
+                if (xmlElement->QueryDoubleAttribute("width", &uiElement->width) != TIXML_SUCCESS) {
+                    
+                    delete uiElement;
+                    return NULL;
+                    
+                }
+                if (xmlElement->QueryDoubleAttribute("height", &uiElement->height) != TIXML_SUCCESS) {
+                    
+                    delete uiElement;
+                    return NULL;
+                    
+                }
+
+                if (xmlElement->Attribute("colour") == NULL) {
+                    uiElement->colour = 0;
+                } else {
+
+                    std::string tempColour = xmlElement->Attribute("colour");
+
+                    std::vector<std::string> colourParts;
+
+                    // Split string to RGBA parts
+                    Util::tokenize(tempColour, colourParts, ",");
+
+                    if (colourParts.size() == 1) {
+                    
+                        if (colourParts[0] == "red")
+                            uiElement->colour = Gfx::Colour::RED;
+                        else if (colourParts[0] == "green")
+                            uiElement->colour = Gfx::Colour::GREEN;
+                        else if (colourParts[0] == "blue")
+                            uiElement->colour = Gfx::Colour::BLUE;
+                        else if (colourParts[0] == "black")
+                            uiElement->colour = Gfx::Colour::BLACK;
+                        else if (colourParts[0] == "white")
+                            uiElement->colour = Gfx::Colour::WHITE;
+                        else if (colourParts[0] == "gray")
+                            uiElement->colour = Gfx::Colour::GRAY;
+
+                    } else if (colourParts.size() == 3) {
+
+                        unsigned int r, g, b;
+                        r = Util::stringToInt(colourParts[0]);
+                        g = Util::stringToInt(colourParts[1]);
+                        b = Util::stringToInt(colourParts[2]);
+
+                        uiElement->colour = GU_RGBA(r, g, b, 255);
+
+                    } else if (colourParts.size() == 4) {
+
+                        unsigned int r, g, b, a;
+                        r = Util::stringToInt(colourParts[0]);
+                        g = Util::stringToInt(colourParts[1]);
+                        b = Util::stringToInt(colourParts[2]);
+                        a = Util::stringToInt(colourParts[3]);
+
+                        uiElement->colour = GU_RGBA(r, g, b, a);
+                        
+                    } else {
+
+                        uiElement->colour = 0;
+
+                    }
+
+                }
+
+            //------TEXT
+            } else if (strcmp(xmlElement->Value(), "text") == 0) {
+
+                uiElement->type = TEXT;
+
+                if (xmlElement->Attribute("value") == NULL) {
+                    
+                    delete uiElement;
+                    return NULL;
+                    
+                } else {
+                    uiElement->text = xmlElement->Attribute("value");
+                }
+
+                if (xmlElement->QueryDoubleAttribute("width", &uiElement->width) != TIXML_SUCCESS) {
+                    uiElement->width = 0;
+                }
+
+                if (xmlElement->QueryDoubleAttribute("size", &uiElement->size) != TIXML_SUCCESS) {
+                    uiElement->size = 0;
+                }
+                
+                if (xmlElement->Attribute("colour") == NULL) {
+                    uiElement->colour = 0;
+                } else {
+
+                    std::string tempColour = xmlElement->Attribute("colour");
+
+                    std::vector<std::string> colourParts;
+
+                    // Split string to RGBA parts
+                    Util::tokenize(tempColour, colourParts, ",");
+
+                    if (colourParts.size() == 1) {
+                    
+                        if (colourParts[0] == "red")
+                            uiElement->colour = Gfx::Colour::RED;
+                        else if (colourParts[0] == "green")
+                            uiElement->colour = Gfx::Colour::GREEN;
+                        else if (colourParts[0] == "blue")
+                            uiElement->colour = Gfx::Colour::BLUE;
+                        else if (colourParts[0] == "black")
+                            uiElement->colour = Gfx::Colour::BLACK;
+                        else if (colourParts[0] == "white")
+                            uiElement->colour = Gfx::Colour::WHITE;
+                        else if (colourParts[0] == "gray")
+                            uiElement->colour = Gfx::Colour::GRAY;
+
+                    } else if (colourParts.size() == 3) {
+
+                        unsigned int r, g, b;
+                        r = Util::stringToInt(colourParts[0]);
+                        g = Util::stringToInt(colourParts[1]);
+                        b = Util::stringToInt(colourParts[2]);
+                        
+                        uiElement->colour = GU_RGBA(r, g, b, 255);
+
+                    } else if (colourParts.size() == 4) {
+
+                        unsigned int r, g, b, a;
+                        r = Util::stringToInt(colourParts[0]);
+                        g = Util::stringToInt(colourParts[1]);
+                        b = Util::stringToInt(colourParts[2]);
+                        a = Util::stringToInt(colourParts[3]);
+
+                        uiElement->colour = GU_RGBA(r, g, b, a);
+
+                    } else {
+
+                        uiElement->colour = 0;
+
+                    }
+
+                }
+
+                if (xmlElement->Attribute("shadowColour") == NULL) {
+                    uiElement->shadowColour = 0;
+                } else {
+
+                    std::string tempColour = xmlElement->Attribute("shadowColour");
+
+                    std::vector<std::string> colourParts;
+
+                    // Split string to RGBA parts
+                    Util::tokenize(tempColour, colourParts, ",");
+
+                    if (colourParts.size() == 1) {
+                    
+                        if (colourParts[0] == "red")
+                            uiElement->shadowColour = Gfx::Colour::RED;
+                        else if (colourParts[0] == "green")
+                            uiElement->shadowColour = Gfx::Colour::GREEN;
+                        else if (colourParts[0] == "blue")
+                            uiElement->shadowColour = Gfx::Colour::BLUE;
+                        else if (colourParts[0] == "black")
+                            uiElement->shadowColour = Gfx::Colour::BLACK;
+                        else if (colourParts[0] == "white")
+                            uiElement->shadowColour = Gfx::Colour::WHITE;
+                        else if (colourParts[0] == "gray")
+                            uiElement->shadowColour = Gfx::Colour::GRAY;
+
+                    } else if (colourParts.size() == 3) {
+
+                        unsigned int r, g, b;
+                        r = Util::stringToInt(colourParts[0]);
+                        g = Util::stringToInt(colourParts[1]);
+                        b = Util::stringToInt(colourParts[2]);
+
+                        uiElement->shadowColour = GU_RGBA(r, g, b, 255);
+
+                    } else if (colourParts.size() == 4) {
+
+                        unsigned int r, g, b, a;
+                        r = Util::stringToInt(colourParts[0]);
+                        g = Util::stringToInt(colourParts[1]);
+                        b = Util::stringToInt(colourParts[2]);
+                        a = Util::stringToInt(colourParts[3]);
+
+                        uiElement->shadowColour = GU_RGBA(r, g, b, a);
+
+                    } else {
+
+                        uiElement->shadowColour = 0;
+
+                    }
+
+                }
+                
+                unsigned int fontStyleOps = 0;
+                
+                if (xmlElement->Attribute("align") == NULL) {
+                    fontStyleOps |= INTRAFONT_ALIGN_LEFT;
+                } else {
+                
+                    std::string align = xmlElement->Attribute("align");
+                    
+                    if (align == "left")
+                        fontStyleOps |= INTRAFONT_ALIGN_LEFT;
+                    else if (align == "right")
+                        fontStyleOps |= INTRAFONT_ALIGN_RIGHT;
+                    else if (align == "center")
+                        fontStyleOps |= INTRAFONT_ALIGN_CENTER;
+                    else if (align == "full")
+                        fontStyleOps |= INTRAFONT_ALIGN_FULL;
+                
+                }
+                
+                if (xmlElement->Attribute("font") == NULL) {
+                    
+                    delete uiElement;
+                    return NULL;
+                    
+                } else {
+
+                    std::string font = xmlElement->Attribute("font");
+
+                    if (font == "{LATIN_SANS_SERIF_REGULAR}") {
+
+                        uiElement->font.loadFont(Gfx::Font::LATIN_SANS_SERIF_REGULAR, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps);
+
+                    } else if (font == "{LATIN_SERIF_REGULAR}") {
+
+                        uiElement->font.loadFont(Gfx::Font::LATIN_SERIF_REGULAR, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps);
+
+                    } else if (font == "{LATIN_SANS_SERIF_ITALIC}") {
+
+                        uiElement->font.loadFont(Gfx::Font::LATIN_SANS_SERIF_ITALIC, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps);
+
+                    } else if (font == "{LATIN_SERIF_ITALIC}") {
+
+                        uiElement->font.loadFont(Gfx::Font::LATIN_SERIF_ITALIC, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps);
+
+                    } else if (font == "{LATIN_SANS_SERIF_BOLD}") {
+
+                        uiElement->font.loadFont(Gfx::Font::LATIN_SANS_SERIF_BOLD, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps);
+
+                    } else if (font == "{LATIN_SERIF_BOLD}") {
+
+                        uiElement->font.loadFont(Gfx::Font::LATIN_SERIF_BOLD, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps);
+
+                    } else if (font == "{LATIN_SANS_SERIF_ITALIC_BOLD}") {
+
+                        uiElement->font.loadFont(Gfx::Font::LATIN_SANS_SERIF_ITALIC_BOLD, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps);
+
+                    } else if (font == "{LATIN_SERIF_ITALIC_BOLD}") {
+
+                        uiElement->font.loadFont(Gfx::Font::LATIN_SERIF_ITALIC_BOLD, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps);
+
+                    } else if (font == "{LATIN_SANS_SERIF_REGULAR_SMALL}") {
+
+                        uiElement->font.loadFont(Gfx::Font::LATIN_SANS_SERIF_REGULAR_SMALL, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps);
+
+                    } else if (font == "{LATIN_SERIF_REGULAR_SMALL}") {
+
+                        uiElement->font.loadFont(Gfx::Font::LATIN_SERIF_REGULAR_SMALL, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps);
+
+                    } else if (font == "{LATIN_SANS_SERIF_ITALIC_SMALL}") {
+
+                        uiElement->font.loadFont(Gfx::Font::LATIN_SANS_SERIF_ITALIC_SMALL, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps);
+
+                    } else if (font == "{LATIN_SERIF_ITALIC_SMALL}") {
+
+                        uiElement->font.loadFont(Gfx::Font::LATIN_SERIF_ITALIC_SMALL, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps);
+
+                    } else if (font == "{LATIN_SANS_SERIF_BOLD_SMALL}") {
+
+                        uiElement->font.loadFont(Gfx::Font::LATIN_SANS_SERIF_BOLD_SMALL, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps);
+
+                    } else if (font == "{LATIN_SERIF_BOLD_SMALL}") {
+
+                        uiElement->font.loadFont(Gfx::Font::LATIN_SERIF_BOLD_SMALL, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps);
+
+                    } else if (font == "{LATIN_SANS_SERIF_ITALIC_BOLD_SMALL}") {
+
+                        uiElement->font.loadFont(Gfx::Font::LATIN_SANS_SERIF_ITALIC_BOLD_SMALL, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps);
+
+                    } else if (font == "{LATIN_SERIF_ITALIC_BOLD_SMALL}") {
+
+                        uiElement->font.loadFont(Gfx::Font::LATIN_SERIF_ITALIC_BOLD_SMALL, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps);
+
+                    } else if (font == "{JAPANESE_SJIS}") {
+
+                        uiElement->font.loadFont(Gfx::Font::JAPANESE_SJIS, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps);
+
+                    } else if (font == "{JAPANESE_UTF8}") {
+
+                        uiElement->font.loadFont(Gfx::Font::JAPANESE_UTF8, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps);
+
+                    } else if (font == "{KOREAN_UTF8}") {
+
+                        uiElement->font.loadFont(Gfx::Font::KOREAN_UTF8, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps);
+
+                    } else if (font == "{SYMBOLS}") {
+
+                        uiElement->font.loadFont(Gfx::Font::SYMBOLS, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps);
+
+                    } else if (font == "{CHINESE}") {
+
+                        uiElement->font.loadFont(Gfx::Font::CHINESE, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps);
+
+                    } else {
+
+                        // @TODO: Attempt to load via path
+
+                    }
+                    
+                }
+                
+                if (xmlElement->Attribute("altFonts") != NULL) {
+                
+                    std::string otherFonts = xmlElement->Attribute("altFonts");
+                    std::vector<std::string> altFonts;
+                    
+                    Util::tokenize(otherFonts, altFonts, ",");
+                    
+                    for (unsigned int i = 0; i < altFonts.size(); ++i) {
+                    
+                        std::string altFont = altFonts[i];
+                        std::remove(altFont.begin(), altFont.end(), ' ');
+                                        
+                        if (altFont == "{LATIN_SANS_SERIF_REGULAR}") {
+
+                            uiElement->font.loadAltFont(Gfx::Font::LATIN_SANS_SERIF_REGULAR, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps);
+
+                        } else if (altFont == "{LATIN_SERIF_REGULAR}") {
+
+                            uiElement->font.loadAltFont(Gfx::Font::LATIN_SERIF_REGULAR, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps);
+
+                        } else if (altFont == "{LATIN_SANS_SERIF_ITALIC}") {
+
+                            uiElement->font.loadAltFont(Gfx::Font::LATIN_SANS_SERIF_ITALIC, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps);
+
+                        } else if (altFont == "{LATIN_SERIF_ITALIC}") {
+
+                            uiElement->font.loadAltFont(Gfx::Font::LATIN_SERIF_ITALIC, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps);
+
+                        } else if (altFont == "{LATIN_SANS_SERIF_BOLD}") {
+
+                            uiElement->font.loadAltFont(Gfx::Font::LATIN_SANS_SERIF_BOLD, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps);
+
+                        } else if (altFont == "{LATIN_SERIF_BOLD}") {
+
+                            uiElement->font.loadAltFont(Gfx::Font::LATIN_SERIF_BOLD, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps);
+
+                        } else if (altFont == "{LATIN_SANS_SERIF_ITALIC_BOLD}") {
+
+                            uiElement->font.loadAltFont(Gfx::Font::LATIN_SANS_SERIF_ITALIC_BOLD, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps);
+
+                        } else if (altFont == "{LATIN_SERIF_ITALIC_BOLD}") {
+
+                            uiElement->font.loadAltFont(Gfx::Font::LATIN_SERIF_ITALIC_BOLD, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps);
+
+                        } else if (altFont == "{LATIN_SANS_SERIF_REGULAR_SMALL}") {
+
+                            uiElement->font.loadAltFont(Gfx::Font::LATIN_SANS_SERIF_REGULAR_SMALL, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps);
+
+                        } else if (altFont == "{LATIN_SERIF_REGULAR_SMALL}") {
+
+                            uiElement->font.loadAltFont(Gfx::Font::LATIN_SERIF_REGULAR_SMALL, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps);
+
+                        } else if (altFont == "{LATIN_SANS_SERIF_ITALIC_SMALL}") {
+
+                            uiElement->font.loadAltFont(Gfx::Font::LATIN_SANS_SERIF_ITALIC_SMALL, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps);
+
+                        } else if (altFont == "{LATIN_SERIF_ITALIC_SMALL}") {
+
+                            uiElement->font.loadAltFont(Gfx::Font::LATIN_SERIF_ITALIC_SMALL, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps);
+
+                        } else if (altFont == "{LATIN_SANS_SERIF_BOLD_SMALL}") {
+
+                            uiElement->font.loadAltFont(Gfx::Font::LATIN_SANS_SERIF_BOLD_SMALL, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps);
+
+                        } else if (altFont == "{LATIN_SERIF_BOLD_SMALL}") {
+
+                            uiElement->font.loadAltFont(Gfx::Font::LATIN_SERIF_BOLD_SMALL, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps);
+
+                        } else if (altFont == "{LATIN_SANS_SERIF_ITALIC_BOLD_SMALL}") {
+
+                            uiElement->font.loadAltFont(Gfx::Font::LATIN_SANS_SERIF_ITALIC_BOLD_SMALL, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps);
+
+                        } else if (altFont == "{LATIN_SERIF_ITALIC_BOLD_SMALL}") {
+
+                            uiElement->font.loadAltFont(Gfx::Font::LATIN_SERIF_ITALIC_BOLD_SMALL, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps);
+
+                        } else if (altFont == "{JAPANESE_SJIS}") {
+
+                            uiElement->font.loadAltFont(Gfx::Font::JAPANESE_SJIS, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps);
+
+                        } else if (altFont == "{JAPANESE_UTF8}") {
+
+                            uiElement->font.loadAltFont(Gfx::Font::JAPANESE_UTF8, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps);
+
+                        } else if (altFont == "{KOREAN_UTF8}") {
+
+                            uiElement->font.loadAltFont(Gfx::Font::KOREAN_UTF8, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps);
+
+                        } else if (altFont == "{SYMBOLS}") {
+
+                            uiElement->font.loadAltFont(Gfx::Font::SYMBOLS, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps);
+
+                        } else if (altFont == "{CHINESE}") {
+
+                            uiElement->font.loadAltFont(Gfx::Font::CHINESE, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps);
+
+                        } else {
+
+                            // @TODO: Attempt to load via path
+
+                        }
+                                                
+                    }
+                
+                }
+                
+            //------IMAGE
+            } else if (strcmp(xmlElement->Value(), "image") == 0) {
+            
+                uiElement->type = IMAGE;
+                
+                if (xmlElement->QueryDoubleAttribute("width", &uiElement->width) != TIXML_SUCCESS) {
+                    uiElement->width = 0;
+                }
+                if (xmlElement->QueryDoubleAttribute("height", &uiElement->height) != TIXML_SUCCESS) {
+                    uiElement->height = 0;
+                }                    
+                
+                if (xmlElement->Attribute("src") == NULL) {
+                    
+                    delete uiElement;
+                    return NULL;
+                    
+                } else {
+                
+                    std::string src = xmlElement->Attribute("src");
+                    
+                    uiElement->image.loadFile(src);
+                    
+                    if (strcmp(xmlElement->Attribute("swizzle"), "false") != 0)
+                        uiElement->image.swizzle();
+                                            
+                }
+
+            //------CUSTOM [possibly]
+            } else {
+                    
+                // Try to find a handler        
+                std::map<std::string, CustomElementHandler*>::const_iterator customElementHandler = this->customElementHandlers.find(xmlElement->Value());
+
+                if (customElementHandler != this->customElementHandlers.end()) {
+                
+                    uiElement->type = CUSTOM;
+                                        
+                    // Collect all child elements
+                    TiXmlNode* innerChild = xmlNode->FirstChild();    
+                    while (innerChild != NULL) {
+                    
+                        uiElement->children.push_back(this->parseElement(innerChild->ToElement()));
+                    
+                        innerChild = innerChild->NextSibling();    
+                            
+                    }
+                                                                    
+                    // Call the back
+                    customElementHandler->second->initElement(this, uiElement);
+                
+                } else {
+                    
+                    delete uiElement;
+                    return NULL;
+                    
+                }
+
+            } 
+            
+            return uiElement;
+        
+        }
 
         /**
          * Loads an XML ui file to parse.
@@ -126,451 +669,70 @@ namespace xM {
 
             // Loop over children
             TiXmlNode* childNode;
+            
             for (childNode = TiXmlHandle(root).FirstChild().ToNode(); childNode; childNode = childNode->NextSibling()) {
             
                 if (childNode->Type() != TiXmlNode::ELEMENT)
                     continue;
                     
                 TiXmlElement* child = childNode->ToElement();
-
-                Element* uiElement = new Element;
-                uiElement->type = NOOP;
-                uiElement->name = child->Value();
-                uiElement->x = uiElement->y = uiElement->offsetX = uiElement->offsetY = uiElement->colour = uiElement->shadowColour = uiElement->width = uiElement->height = 0;
-                uiElement->text = "";
-                uiElement->size = 1.0;
-
-                // Some common attributes
-                if (child->QueryDoubleAttribute("x", &uiElement->x) != TIXML_SUCCESS) {
-                    uiElement->x = 0;
-                }
-                if (child->QueryDoubleAttribute("y", &uiElement->y) != TIXML_SUCCESS) {
-                    uiElement->y = 0;
-                }
-
-                // Specific elements
-
-                //------QUAD
-                if (strcmp(child->Value(), "quad") == 0) {
-
-                    uiElement->type = QUAD;
-
-                    if (child->QueryDoubleAttribute("width", &uiElement->width) != TIXML_SUCCESS) {
-                        continue;
-                    }
-                    if (child->QueryDoubleAttribute("height", &uiElement->height) != TIXML_SUCCESS) {
-                        continue;
-                    }
-
-                    if (child->Attribute("colour") == NULL) {
-                        uiElement->colour = 0;
-                    } else {
-
-                        std::string tempColour = child->Attribute("colour");
-
-                        std::vector<std::string> colourParts;
-
-                        // Split string to RGBA parts
-                        Util::tokenize(tempColour, colourParts, ",");
-
-                        if (colourParts.size() == 3) {
-
-                            unsigned int r, g, b;
-                            r = Util::stringToInt(colourParts[0]);
-                            g = Util::stringToInt(colourParts[1]);
-                            b = Util::stringToInt(colourParts[2]);
-
-                            uiElement->colour = GU_RGBA(r, g, b, 255);
-
-                        } else if (colourParts.size() == 4) {
-
-                            unsigned int r, g, b, a;
-                            r = Util::stringToInt(colourParts[0]);
-                            g = Util::stringToInt(colourParts[1]);
-                            b = Util::stringToInt(colourParts[2]);
-                            a = Util::stringToInt(colourParts[3]);
-
-                            uiElement->colour = GU_RGBA(r, g, b, a);
-                            
-                        } else {
-
-                            uiElement->colour = 0;
-
-                        }
-
-                    }
-
-                //------TEXT
-                } else if (strcmp(child->Value(), "text") == 0) {
-
-                    uiElement->type = TEXT;
-
-                    if (child->Attribute("value") == NULL) {
-                        continue;
-                    } else {
-                        uiElement->text = child->Attribute("value");
-                    }
-
-                    if (child->QueryDoubleAttribute("width", &uiElement->width) != TIXML_SUCCESS) {
-                        uiElement->width = 0;
-                    }
-
-                    if (child->QueryDoubleAttribute("size", &uiElement->size) != TIXML_SUCCESS) {
-                        uiElement->size = 0;
-                    }
-
-                    if (child->Attribute("colour") == NULL) {
-                        uiElement->colour = 0;
-                    } else {
-
-                        std::string tempColour = child->Attribute("colour");
-
-                        std::vector<std::string> colourParts;
-
-                        // Split string to RGBA parts
-                        Util::tokenize(tempColour, colourParts, ",");
-
-                        if (colourParts.size() == 3) {
-
-                            unsigned int r, g, b;
-                            r = Util::stringToInt(colourParts[0]);
-                            g = Util::stringToInt(colourParts[1]);
-                            b = Util::stringToInt(colourParts[2]);
-                            
-                            uiElement->colour = GU_RGBA(r, g, b, 255);
-
-                        } else if (colourParts.size() == 4) {
-
-                            unsigned int r, g, b, a;
-                            r = Util::stringToInt(colourParts[0]);
-                            g = Util::stringToInt(colourParts[1]);
-                            b = Util::stringToInt(colourParts[2]);
-                            a = Util::stringToInt(colourParts[3]);
-
-                            uiElement->colour = GU_RGBA(r, g, b, a);
-
-                        } else {
-
-                            uiElement->colour = 0;
-
-                        }
-
-                    }
-
-                    if (child->Attribute("shadowColour") == NULL) {
-                        uiElement->shadowColour = 0;
-                    } else {
-
-                        std::string tempColour = child->Attribute("shadowColour");
-
-                        std::vector<std::string> colourParts;
-
-                        // Split string to RGBA parts
-                        Util::tokenize(tempColour, colourParts, ",");
-
-                        if (colourParts.size() == 3) {
-
-                            unsigned int r, g, b;
-                            r = Util::stringToInt(colourParts[0]);
-                            g = Util::stringToInt(colourParts[1]);
-                            b = Util::stringToInt(colourParts[2]);
-
-                            uiElement->shadowColour = GU_RGBA(r, g, b, 255);
-
-                        } else if (colourParts.size() == 4) {
-
-                            unsigned int r, g, b, a;
-                            r = Util::stringToInt(colourParts[0]);
-                            g = Util::stringToInt(colourParts[1]);
-                            b = Util::stringToInt(colourParts[2]);
-                            a = Util::stringToInt(colourParts[3]);
-
-                            uiElement->shadowColour = GU_RGBA(r, g, b, a);
-
-                        } else {
-
-                            uiElement->shadowColour = 0;
-
-                        }
-
-                    }
-                    
-                    if (child->Attribute("font") == NULL) {
-                        continue;
-                    } else {
-
-                        std::string font = child->Attribute("font");
-
-                        if (font == "{LATIN_SANS_SERIF_REGULAR}") {
-
-                            uiElement->font.loadFont(Gfx::Font::LATIN_SANS_SERIF_REGULAR, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, 0);
-
-                        } else if (font == "{LATIN_SERIF_REGULAR}") {
-
-                            uiElement->font.loadFont(Gfx::Font::LATIN_SERIF_REGULAR, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, 0);
-
-                        } else if (font == "{LATIN_SANS_SERIF_ITALIC}") {
-
-                            uiElement->font.loadFont(Gfx::Font::LATIN_SANS_SERIF_ITALIC, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, 0);
-
-                        } else if (font == "{LATIN_SERIF_ITALIC}") {
-
-                            uiElement->font.loadFont(Gfx::Font::LATIN_SERIF_ITALIC, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, 0);
-
-                        } else if (font == "{LATIN_SANS_SERIF_BOLD}") {
-
-                            uiElement->font.loadFont(Gfx::Font::LATIN_SANS_SERIF_BOLD, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, 0);
-
-                        } else if (font == "{LATIN_SERIF_BOLD}") {
-
-                            uiElement->font.loadFont(Gfx::Font::LATIN_SERIF_BOLD, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, 0);
-
-                        } else if (font == "{LATIN_SANS_SERIF_ITALIC_BOLD}") {
-
-                            uiElement->font.loadFont(Gfx::Font::LATIN_SANS_SERIF_ITALIC_BOLD, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, 0);
-
-                        } else if (font == "{LATIN_SERIF_ITALIC_BOLD}") {
-
-                            uiElement->font.loadFont(Gfx::Font::LATIN_SERIF_ITALIC_BOLD, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, 0);
-
-                        } else if (font == "{LATIN_SANS_SERIF_REGULAR_SMALL}") {
-
-                            uiElement->font.loadFont(Gfx::Font::LATIN_SANS_SERIF_REGULAR_SMALL, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, 0);
-
-                        } else if (font == "{LATIN_SERIF_REGULAR_SMALL}") {
-
-                            uiElement->font.loadFont(Gfx::Font::LATIN_SERIF_REGULAR_SMALL, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, 0);
-
-                        } else if (font == "{LATIN_SANS_SERIF_ITALIC_SMALL}") {
-
-                            uiElement->font.loadFont(Gfx::Font::LATIN_SANS_SERIF_ITALIC_SMALL, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, 0);
-
-                        } else if (font == "{LATIN_SERIF_ITALIC_SMALL}") {
-
-                            uiElement->font.loadFont(Gfx::Font::LATIN_SERIF_ITALIC_SMALL, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, 0);
-
-                        } else if (font == "{LATIN_SANS_SERIF_BOLD_SMALL}") {
-
-                            uiElement->font.loadFont(Gfx::Font::LATIN_SANS_SERIF_BOLD_SMALL, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, 0);
-
-                        } else if (font == "{LATIN_SERIF_BOLD_SMALL}") {
-
-                            uiElement->font.loadFont(Gfx::Font::LATIN_SERIF_BOLD_SMALL, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, 0);
-
-                        } else if (font == "{LATIN_SANS_SERIF_ITALIC_BOLD_SMALL}") {
-
-                            uiElement->font.loadFont(Gfx::Font::LATIN_SANS_SERIF_ITALIC_BOLD_SMALL, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, 0);
-
-                        } else if (font == "{LATIN_SERIF_ITALIC_BOLD_SMALL}") {
-
-                            uiElement->font.loadFont(Gfx::Font::LATIN_SERIF_ITALIC_BOLD_SMALL, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, 0);
-
-                        } else if (font == "{JAPANESE_SJIS}") {
-
-                            uiElement->font.loadFont(Gfx::Font::JAPANESE_SJIS, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, 0);
-
-                        } else if (font == "{JAPANESE_UTF8}") {
-
-                            uiElement->font.loadFont(Gfx::Font::JAPANESE_UTF8, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, 0);
-
-                        } else if (font == "{KOREAN_UTF8}") {
-
-                            uiElement->font.loadFont(Gfx::Font::KOREAN_UTF8, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, 0);
-
-                        } else if (font == "{SYMBOLS}") {
-
-                            uiElement->font.loadFont(Gfx::Font::SYMBOLS, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, 0);
-
-                        } else if (font == "{CHINESE}") {
-
-                            uiElement->font.loadFont(Gfx::Font::CHINESE, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, 0);
-
-                        } else {
-
-                            // @TODO: Attempt to load via path
-
-                        }
-                        
-                    }
-                    
-                    if (child->Attribute("altFonts") != NULL) {
-                    
-                        std::string otherFonts = child->Attribute("altFonts");
-                        std::vector<std::string> altFonts;
-                        
-                        Util::tokenize(otherFonts, altFonts, ",");
-                        
-                        for (unsigned int i = 0; i < altFonts.size(); ++i) {
-                        
-                            std::string altFont = altFonts[i];
-                            std::remove(altFont.begin(), altFont.end(), ' ');
-                                            
-                            if (altFont == "{LATIN_SANS_SERIF_REGULAR}") {
-
-                                uiElement->font.loadAltFont(Gfx::Font::LATIN_SANS_SERIF_REGULAR, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, 0);
-
-                            } else if (altFont == "{LATIN_SERIF_REGULAR}") {
-
-                                uiElement->font.loadAltFont(Gfx::Font::LATIN_SERIF_REGULAR, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, 0);
-
-                            } else if (altFont == "{LATIN_SANS_SERIF_ITALIC}") {
-
-                                uiElement->font.loadAltFont(Gfx::Font::LATIN_SANS_SERIF_ITALIC, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, 0);
-
-                            } else if (altFont == "{LATIN_SERIF_ITALIC}") {
-
-                                uiElement->font.loadAltFont(Gfx::Font::LATIN_SERIF_ITALIC, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, 0);
-
-                            } else if (altFont == "{LATIN_SANS_SERIF_BOLD}") {
-
-                                uiElement->font.loadAltFont(Gfx::Font::LATIN_SANS_SERIF_BOLD, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, 0);
-
-                            } else if (altFont == "{LATIN_SERIF_BOLD}") {
-
-                                uiElement->font.loadAltFont(Gfx::Font::LATIN_SERIF_BOLD, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, 0);
-
-                            } else if (altFont == "{LATIN_SANS_SERIF_ITALIC_BOLD}") {
-
-                                uiElement->font.loadAltFont(Gfx::Font::LATIN_SANS_SERIF_ITALIC_BOLD, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, 0);
-
-                            } else if (altFont == "{LATIN_SERIF_ITALIC_BOLD}") {
-
-                                uiElement->font.loadAltFont(Gfx::Font::LATIN_SERIF_ITALIC_BOLD, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, 0);
-
-                            } else if (altFont == "{LATIN_SANS_SERIF_REGULAR_SMALL}") {
-
-                                uiElement->font.loadAltFont(Gfx::Font::LATIN_SANS_SERIF_REGULAR_SMALL, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, 0);
-
-                            } else if (altFont == "{LATIN_SERIF_REGULAR_SMALL}") {
-
-                                uiElement->font.loadAltFont(Gfx::Font::LATIN_SERIF_REGULAR_SMALL, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, 0);
-
-                            } else if (altFont == "{LATIN_SANS_SERIF_ITALIC_SMALL}") {
-
-                                uiElement->font.loadAltFont(Gfx::Font::LATIN_SANS_SERIF_ITALIC_SMALL, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, 0);
-
-                            } else if (altFont == "{LATIN_SERIF_ITALIC_SMALL}") {
-
-                                uiElement->font.loadAltFont(Gfx::Font::LATIN_SERIF_ITALIC_SMALL, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, 0);
-
-                            } else if (altFont == "{LATIN_SANS_SERIF_BOLD_SMALL}") {
-
-                                uiElement->font.loadAltFont(Gfx::Font::LATIN_SANS_SERIF_BOLD_SMALL, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, 0);
-
-                            } else if (altFont == "{LATIN_SERIF_BOLD_SMALL}") {
-
-                                uiElement->font.loadAltFont(Gfx::Font::LATIN_SERIF_BOLD_SMALL, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, 0);
-
-                            } else if (altFont == "{LATIN_SANS_SERIF_ITALIC_BOLD_SMALL}") {
-
-                                uiElement->font.loadAltFont(Gfx::Font::LATIN_SANS_SERIF_ITALIC_BOLD_SMALL, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, 0);
-
-                            } else if (altFont == "{LATIN_SERIF_ITALIC_BOLD_SMALL}") {
-
-                                uiElement->font.loadAltFont(Gfx::Font::LATIN_SERIF_ITALIC_BOLD_SMALL, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, 0);
-
-                            } else if (altFont == "{JAPANESE_SJIS}") {
-
-                                uiElement->font.loadAltFont(Gfx::Font::JAPANESE_SJIS, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, 0);
-
-                            } else if (altFont == "{JAPANESE_UTF8}") {
-
-                                uiElement->font.loadAltFont(Gfx::Font::JAPANESE_UTF8, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, 0);
-
-                            } else if (altFont == "{KOREAN_UTF8}") {
-
-                                uiElement->font.loadAltFont(Gfx::Font::KOREAN_UTF8, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, 0);
-
-                            } else if (altFont == "{SYMBOLS}") {
-
-                                uiElement->font.loadAltFont(Gfx::Font::SYMBOLS, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, 0);
-
-                            } else if (altFont == "{CHINESE}") {
-
-                                uiElement->font.loadAltFont(Gfx::Font::CHINESE, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, 0);
-
-                            } else {
-
-                                // @TODO: Attempt to load via path
-
-                            }
-                                                    
-                        }
-                    
-                    }
-
-                //------IMAGE
-                } else if (strcmp(child->Value(), "image") == 0) {
                 
-                    uiElement->type = IMAGE;
-                    
-                    if (child->QueryDoubleAttribute("width", &uiElement->width) != TIXML_SUCCESS) {
-                        uiElement->width = 0;
-                    }
-                    if (child->QueryDoubleAttribute("height", &uiElement->height) != TIXML_SUCCESS) {
-                        uiElement->height = 0;
-                    }                    
-                    if (child->QueryDoubleAttribute("offsetX", &uiElement->offsetX) != TIXML_SUCCESS) {
-                        uiElement->offsetX = 0;
-                    }
-                    if (child->QueryDoubleAttribute("offsetY", &uiElement->offsetY) != TIXML_SUCCESS) {
-                        uiElement->offsetY = 0;
-                    }
-                    
-                    if (child->Attribute("src") == NULL) {
-                        continue;
-                    } else {
-                    
-                        std::string src = child->Attribute("src");
-                        
-                        uiElement->image.loadFile(src);
-                        
-                        if (strcmp(child->Attribute("swizzle"), "false") != 0)
-                            uiElement->image.swizzle();
-                                                
-                    }
+                // Parse the element
+                Element* e = this->parseElement(child);
 
-                //------CUSTOM [possibly]
-                } else {
-                        
-                    // Try to find a handler        
-                    std::map<std::string, CustomElementHandler*>::const_iterator customElementHandler = this->customElementHandlers.find(child->Value());
-
-                    if (customElementHandler != this->customElementHandlers.end()) {
-                    
-                        uiElement->type = CUSTOM;
-                        
-                        // Collect the attributes for the custom element to pass on to the handler
-                        std::map<std::string, std::string> attributes;
-                        
-                        TiXmlAttribute* attr = child->FirstAttribute();
-                        
-                        while (attr != NULL) {
-                        
-                            attributes.insert(std::pair<std::string, std::string>(attr->Name(), attr->Value()));
-                            
-                            attr = attr->Next();
-                        
-                        }
-                        
-                        uiElement->attributes = attributes;
-                                                
-                        // Call the back
-                        customElementHandler->second->initElement(this, uiElement);
-                    
-                    } else
-                        continue;
-
-                }
-
-                if (uiElement->type == NOOP)
-                    continue;
-
-                // Add
-                this->uiElements.push_back(uiElement);
+                if (e != NULL && e->type != NOOP)
+                    this->uiElements.push_back(e);
 
             }
 
+        }
+        
+        /**
+         * Render a specific element.
+         * 
+         * @param Element* e Element to render.
+         */
+        void XMLParser::renderElement(Element* e) {
+        
+            switch (e->type) {
+
+                case QUAD:
+
+                    Gfx::drawQuad(e->x, e->y, e->width, e->height, e->colour, 0);
+
+                    break;
+
+                case TEXT:
+
+                    e->font.draw(e->x + e->paddingLeft, e->y, e->text.c_str());
+
+                    break;
+
+                case IMAGE:
+                                    
+                    Gfx::ImageClip clip;
+                    clip.x = e->offsetX;
+                    clip.y = e->offsetY;
+                    clip.width = e->width;
+                    clip.height = e->height;
+                
+                    e->image.draw(e->x, e->y, &clip);
+
+                    break;
+                    
+                case CUSTOM:
+                
+                    // Let the callback render
+                    this->customElementHandlers[e->name]->renderElement(this, e);
+                
+                    break;
+
+                case NOOP:
+                default:
+                    break;
+
+            }
+        
         }
 
         /**
@@ -580,46 +742,7 @@ namespace xM {
 
             for (unsigned int i = 0; i < this->uiElements.size(); ++i) {
 
-                Element* e = this->uiElements[i];
-
-                switch (this->uiElements[i]->type) {
-
-                    case QUAD:
-
-                        Gfx::drawQuad(e->x, e->y, e->width, e->height, e->colour, 0);
-
-                        break;
-
-                    case TEXT:
-
-                        e->font.draw(e->x, e->y, e->text.c_str());
-
-                        break;
-
-                    case IMAGE:
-                                        
-                        Gfx::ImageClip clip;
-                        clip.x = e->offsetX;
-                        clip.y = e->offsetY;
-                        clip.width = e->width;
-                        clip.height = e->height;
-                    
-                        e->image.draw(e->x, e->y, &clip);
-
-                        break;
-                        
-                    case CUSTOM:
-                    
-                        // Let the callback render
-                        this->customElementHandlers[e->name]->renderElement(this, e);
-                    
-                        break;
-
-                    case NOOP:
-                    default:
-                        break;
-
-                }
+                this->renderElement(this->uiElements[i]);
 
             }
 

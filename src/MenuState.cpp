@@ -32,8 +32,10 @@
 #include "xM/States/Menu.h"
 #include "xM/Engine/FileManager.h"
 #include "xM/Engine/InputManager.h"
+#include "xM/Net/Net.h"
 #include "xM/Ui/Dialogs.h"
 #include "xM/Util/Log.h"
+#include "xM/Util/Utils.h"
 // END Includes
 
 namespace xM {
@@ -45,34 +47,16 @@ namespace xM {
          */
         void Menu::init(void) {
 
-            rotate = 0.0f;
-            timer.start();
-
-            // A Non-power-of-two image (<512x512)
-            //testImg.loadFile("test2.png");
-            //testImg.swizzle();
-
-            // A power-of-two image (<512x512)
-            //testImg2.loadFile("test.png");
-            //testImg2.swizzle();
-
-            // A non-power-of-two image (>512x512)
-            //testImg3.loadFile("test3.png");
-            //testImg3.swizzle();
-
-            // A power-of-two image (>512x512)
-            //testImg4.loadFile("test4.png");
-            //testImg4.swizzle();
-            
-            textFont.loadFont(Gfx::Font::LATIN_SANS_SERIF_REGULAR_SMALL, 1.0f, Gfx::Colour::GREEN, Gfx::Colour::RED, 0, 0);
-                        
-            // Register before loading the file
-            parser.registerCustomElementHandler("psarText", this);
+            parser.registerCustomElementHandler("menuList", this);
             parser.parseFile("ui/menu.xml");
             
-            // Which dialog
-            dialog = 0;
-                                    
+            this->menuList.push_back("Read Manga");
+            this->menuList.push_back("Recent Manga");
+            this->menuList.push_back("Bookmarks");
+            this->menuList.push_back("Options");
+            this->menuList.push_back("About");
+            this->menuList.push_back("Quit");
+                                                
         }
 
         /**
@@ -80,7 +64,7 @@ namespace xM {
          */
         void Menu::cleanUp(void) {
 
-            parser.deRegisterCustomElementHandler("psarText");
+            parser.deRegisterCustomElementHandler("menuList");
 
         }
 
@@ -109,35 +93,19 @@ namespace xM {
 
             Engine::InputManager* iM = Engine::InputManager::getInstance();
             
-            if (iM->pressed(PSP_CTRL_DOWN))
-                Util::logMsg("Down pressed.");
-                
-            if (iM->pressed(PSP_CTRL_CROSS))
-                Util::logMsg("× pressed.");
-
+            // Reload XML on-the-fly
             if (__xM_DEBUG && iM->pressed(PSP_CTRL_LTRIGGER)) {
             
                 Util::logMsg("Reloading XML ui file.");
             
                 parser.parseFile("ui/menu.xml");    
             
-            } else if (iM->pressed(PSP_CTRL_TRIANGLE)) {
-            
-                Ui::Dialog::msg("Hello!");
-                
-                dialog = 1;
-            
-            } else if (iM->pressed(PSP_CTRL_SQUARE)) {
-            
-                Ui::Dialog::msg("Do I work?", true);
-                
-                dialog = 2;
-            
-            } else if (iM->pressed(PSP_CTRL_CIRCLE)) {
-            
-                Ui::Dialog::net();
-            
             }
+            
+            if (iM->pressed(PSP_CTRL_DOWN))
+                selected += 1;
+            else if (iM->pressed(PSP_CTRL_UP))
+                selected -= 1;
             
         }
 
@@ -145,40 +113,25 @@ namespace xM {
          * Now do something with the data we got from events and what not.
          */
         void Menu::handleLogic(void) {
-        
-            rotate -= (1.0f * timer.getDeltaTicks(true));
-            
-            if (dialog == 1 && Ui::Dialog::getMsgDialogResult() == Ui::Dialog::RESPONSE_BACK) {
-
-                Ui::Dialog::msg("I knew you'd press 'Back'");
-                
-                dialog = 0;
-            
-            } else if (dialog == 2) {
-            
-                if (Ui::Dialog::getMsgDialogResult() == Ui::Dialog::RESPONSE_YES) {
-                
-                    Ui::Dialog::msg("Smart you are.");
-                    dialog = 0;
                     
-                } else if (Ui::Dialog::getMsgDialogResult() == Ui::Dialog::RESPONSE_NO) {
-                
-                    Ui::Dialog::msg("o.O\nChallenged are you?");
-                    dialog = 0;
-                
-                } else if (Ui::Dialog::getMsgDialogResult() == Ui::Dialog::RESPONSE_BACK) {
-                
-                    Ui::Dialog::msg("Don't avoid the question!\nDo I work?", true);
-                    
-                    dialog = 2;
-                
-                }
-            
-            } else {
-            
-                dialog = 0;
-                
-            }
+            // BEGIN Menu Traversing Logic
+	        if ((signed int)this->selected < 0)
+		        this->selected = 0;
+	        if (this->selected > (this->menuList.size() - 1))
+		        this->selected = this->menuList.size() - 1;
+	        if (this->selected < this->minList) {
+	
+		        this->minList = this->selected;
+		        this->maxList = this->minList + this->maxItems;	
+		
+	        }
+	        if (this->selected > this->maxList) {
+	
+		        this->maxList = this->selected;
+		        this->minList = this->maxList - this->maxItems;
+	
+	        }
+	        // END Menu Traversing Logic
 
         }
 
@@ -187,6 +140,7 @@ namespace xM {
          */
         void Menu::draw(void) {
             
+            // Draw based on XML
             parser.draw();
             
         }
@@ -199,9 +153,17 @@ namespace xM {
          */
         void Menu::initElement(Ui::XMLParser* parser, Ui::Element* customElement) {
         
-            Engine::FileManager* fM = Engine::FileManager::getInstance();
+            if (customElement->name == "menuList") {
         
-            customElement->text = fM->readFromPSAR(customElement->attributes["psarFile"]);
+                customElement->x = Util::stringToInt(customElement->attributes["x"]);
+                customElement->y = Util::stringToInt(customElement->attributes["y"]);
+                
+                this->maxItems = Util::stringToInt(customElement->attributes["maxItems"]) - 1;
+                this->minList = 0;
+                this->selected = 0;
+                this->maxList = this->minList + this->maxItems;
+            
+            }
                     
         }
         
@@ -212,8 +174,71 @@ namespace xM {
          * @param Element* customElement The custom element to be rendered.
          */
         void Menu::renderElement(Ui::XMLParser* parser, Ui::Element* customElement) {
+            
+            if (customElement->name == "menuList") {
+            
+                unsigned int i = this->minList;
+                std::string itemText;
+                int x = customElement->x;
+                int y = customElement->y;
                 
-            textFont.draw(customElement->x, customElement->y, customElement->text.c_str());
+                do {
+
+	                // Make sure to only show 4
+	                if (i >= this->menuList.size())
+		                break;
+	
+	                // Get the item name
+	                itemText = this->menuList[i];
+				
+				    if (i == selected) {	
+					
+	                    // Active elements					
+	                    for (unsigned int k = 0; k < customElement->children.size(); k++) {
+		                
+		                    if (customElement->children[k]->attributes["whence"] == "active") {
+	                            
+                                customElement->children[k]->x = x;
+                                customElement->children[k]->y = y;
+                                
+                                if (customElement->children[k]->type == Ui::TEXT)
+                                    customElement->children[k]->text = itemText;
+                                
+                                parser->renderElement(customElement->children[k]);
+	                                
+                            }
+	                        	            
+	                    }
+	                
+	                } else {
+
+	                    // Inactive elements					
+	                    for (unsigned int k = 0; k < customElement->children.size(); k++) {
+		                
+		                    if (customElement->children[k]->attributes["whence"] == "inactive") {
+	                            
+                                customElement->children[k]->x = x;
+                                customElement->children[k]->y = y;
+                                
+                                if (customElement->children[k]->type == Ui::TEXT)
+                                    customElement->children[k]->text = itemText;
+                                
+                                parser->renderElement(customElement->children[k]);
+	                                
+                            }
+	                        	            
+	                    }
+	                
+	                }
+	
+	                //printf("(%d, %d)\n", x, y);
+	                x += customElement->offsetX;
+	                y += customElement->offsetY;
+	                i++;
+
+                } while (i <= this->maxList);
+                
+            }
         
         }
 

@@ -78,6 +78,20 @@ namespace xM {
             void parseFile(const std::string& xFile);
             
             /**
+             * Parse a single XML element.
+             * 
+             * @param TiXmlElement* xmlElement Element to parse.
+             */
+            Element* parseElement(TiXmlElement* xmlElement);
+            
+            /**
+             * Render a specific element.
+             * 
+             * @param Element* e Element to render.
+             */
+            void renderElement(Element* e);
+            
+            /**
              * Draws the UI described by the XML file.
              */
             void draw();

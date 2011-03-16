@@ -1,20 +1,24 @@
 <window name="Menu" type="main">
     
-    <!--<image x="0" y="0" src="test2.png" swizzle="true" />-->
+    <!-- Background -->
+    <quad x="0" y="0" width="480" height="272" colour="0,0,0" />
     
-    <text x="300" y="60" font="{LATIN_SANS_SERIF_REGULAR_SMALL}" size="1.0" colour="255,255,255" value="This is behind stuff~" />
+    <text x="240" y="20" font="{LATIN_SANS_SERIF_BOLD}" align="center" size="1.0" colour="255,0,0" shadowColour="white" value="xMangaPSP" />
+    <text x="240" y="40" font="{LATIN_SANS_SERIF_REGULAR_SMALL}" align="center" size="0.8" colour="255,255,255" value="PSP Manga Unleashed!" />
     
-    <quad x="300" y="35" colour="255,0,0,255" width="50" height="27" />
-    <quad x="350" y="35" colour="0,255,0,127" width="50" height="27" />
-    <quad x="400" y="35" colour="0,0,255,050" width="50" height="27" />
+    <!--<text x="240" y="100" font="{LATIN_SANS_SERIF_REGULAR}" align="center" size="1.0" colour="255,0,0" shadowColour="" value="Read Manga" />
+    <text x="240" y="120" font="{LATIN_SANS_SERIF_REGULAR}" align="center" size="1.0" colour="255,0,0" shadowColour="255,255,255" value="Recent Manga" />
+    <text x="240" y="140" font="{LATIN_SANS_SERIF_REGULAR}" align="center" size="1.0" colour="255,0,0" shadowColour="" value="Bookmarks" />
+    <text x="240" y="160" font="{LATIN_SANS_SERIF_REGULAR}" align="center" size="1.0" colour="255,0,0" shadowColour="" value="Options" />
+    <text x="240" y="180" font="{LATIN_SANS_SERIF_REGULAR}" align="center" size="1.0" colour="255,0,0" shadowColour="" value="About" />
+    <text x="240" y="200" font="{LATIN_SANS_SERIF_REGULAR}" align="center" size="1.0" colour="255,0,0" shadowColour="" value="Quit" />-->
     
-    <text x="310" y="100" font="{LATIN_SANS_SERIF_REGULAR_SMALL}" size="0.8" colour="0,0,255" shadowColour="100,0,0" value="From an XML template!" />
-    <text x="0" y="258" font="{LATIN_SERIF_ITALIC_BOLD}" altFonts="{JAPANESE_UTF8},{KOREAN_UTF8}" size="1.0" colour="255,0,0" shadowColour="0,0,50" value="More text here. åèíôüñ わたしわ 한국어" />
+    <menuList x="240" y="120" offsetX="0" offsetY="25" maxItems="4">
     
-    <psarText x="80" y="50" psarFile="res/psartester.txt" />
+        <text whence="active" font="{LATIN_SANS_SERIF_REGULAR}" align="center" size="1.0" colour="255,0,0" shadowColour="white" value="[]" />
+        
+        <text whence="inactive" font="{LATIN_SANS_SERIF_REGULAR}" align="center" size="1.0" colour="255,0,0" value="[]" />
     
-    <psarText x="80" y="75" psarFile="res/otherpsartester.txt" />
-    
-    <!--<image x="310" y="110" src="test.png" swizzle="true" />-->
+    </menuList>
     
 </window>

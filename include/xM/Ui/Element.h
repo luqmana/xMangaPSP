@@ -60,16 +60,16 @@ namespace xM {
         
             ElementType type;
             std::string name;
-            double x, y, offsetX, offsetY;
+            double x, y, offsetX, offsetY, paddingLeft, paddingRight;
             unsigned int colour, shadowColour;
             double width, height;
             std::string text;
             double size;
             Gfx::Text font;
             Gfx::Image image;
-            
-            // Only used by custom elements
             std::map<std::string, std::string> attributes;
+            
+            // Really only used by custom elements
             std::vector<struct Element*> children;
                     
         } Element;

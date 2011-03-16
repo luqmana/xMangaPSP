@@ -58,6 +58,23 @@ namespace xM {
 		}
 		
 		/**
+		 * Checks whether PSP is connected to AP.
+		 * From Criptych @ ps2dev forums.
+		 * 
+		 * @return bool Connection state.
+		 */
+		bool isConnected() {
+		
+		    int state;
+		    
+		    if (sceNetApctlGetState(&state) < 0)
+		        return false;
+		        
+		    return state == PSP_NET_APCTL_STATE_GOT_IP;
+		
+		}
+		
+		/**
 		 * Shutdown the network modules.
 		 */
 		void shutdown() {

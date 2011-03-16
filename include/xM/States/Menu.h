@@ -104,23 +104,13 @@ namespace xM {
 
         private:
 
-            Util::Timer timer;
-
-            float rotate;
-            
-            Gfx::Text textFont;
-            
-            Gfx::Image testImg;
-            Gfx::Image testImg2;
-            Gfx::Image testImg3;
-            Gfx::Image testImg4;
-            
-            int dialog;
-            
             Ui::XMLParser parser;
             
-            std::string readData;
-            std::string otherReadData;
+            std::vector<std::string> menuList;
+            unsigned int maxItems;
+            unsigned int minList;
+            unsigned int maxList;
+            unsigned int selected;
 
         };
 
