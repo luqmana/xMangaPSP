@@ -53,6 +53,15 @@ namespace xM {
 		    return running;
 		
 		}
+		
+		/**
+		 * Set the flag to initiate shutdown.
+		 */
+		inline void quit() {
+		
+		    running = false;
+		
+		}
 			
 	}
 

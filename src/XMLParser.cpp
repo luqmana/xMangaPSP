@@ -86,7 +86,7 @@ namespace xM {
             
             uiElement->type = NOOP;
             uiElement->name = xmlElement->Value();
-            uiElement->x = uiElement->y = uiElement->offsetX = uiElement->offsetY = uiElement->colour = uiElement->shadowColour = uiElement->width = uiElement->height = uiElement->paddingLeft = uiElement->paddingRight = 0;
+            uiElement->x = uiElement->y = uiElement->offsetX = uiElement->offsetY = uiElement->colour = uiElement->shadowColour = uiElement->width = uiElement->height = uiElement->paddingLeft = uiElement->paddingTop = 0;
             uiElement->text = "";
             uiElement->size = 1.0;
 
@@ -121,9 +121,27 @@ namespace xM {
             if (xmlElement->QueryDoubleAttribute("paddingLeft", &uiElement->paddingLeft) != TIXML_SUCCESS) {
                 uiElement->paddingLeft = 0;
             }
-            if (xmlElement->QueryDoubleAttribute("paddingRight", &uiElement->paddingRight) != TIXML_SUCCESS) {
-                uiElement->paddingRight = 0;
+            if (xmlElement->QueryDoubleAttribute("paddingTop", &uiElement->paddingTop) != TIXML_SUCCESS) {
+                uiElement->paddingTop = 0;
             }
+            if (xmlElement->Attribute("align") == NULL) {
+                uiElement->align = LEFT;
+            } else {
+            
+                std::string align = xmlElement->Attribute("align");
+                
+                if (align == "left")
+                    uiElement->align = LEFT;
+                else if (align == "right")
+                    uiElement->align = RIGHT;
+                else if (align == "center")
+                    uiElement->align = CENTER;
+                else if (align == "full")
+                    uiElement->align = FULL;
+                else
+                    uiElement->align = LEFT;
+            
+            }            
 
             // Specific elements
 
@@ -210,6 +228,16 @@ namespace xM {
                     
                 } else {
                     uiElement->text = xmlElement->Attribute("value");
+                }
+                
+                // handle newline characters
+                // replace \n with 0x0A
+                size_t newline = uiElement->text.find("\\n");
+                while (newline != std::string::npos) {
+                    
+                    uiElement->text.replace(newline, 2, "\n");
+                    
+                    newline = uiElement->text.find("\\n");
                 }
 
                 if (xmlElement->QueryDoubleAttribute("width", &uiElement->width) != TIXML_SUCCESS) {
@@ -326,22 +354,37 @@ namespace xM {
 
                 }
                 
+                if (xmlElement->QueryDoubleAttribute("rotate", &uiElement->rotate) != TIXML_SUCCESS) {
+                    uiElement->rotate = 0;
+                }
+                                
                 unsigned int fontStyleOps = 0;
+
+                switch (uiElement->align) {
                 
-                if (xmlElement->Attribute("align") == NULL) {
-                    fontStyleOps |= INTRAFONT_ALIGN_LEFT;
-                } else {
-                
-                    std::string align = xmlElement->Attribute("align");
+                    case LEFT:
                     
-                    if (align == "left")
                         fontStyleOps |= INTRAFONT_ALIGN_LEFT;
-                    else if (align == "right")
+                    
+                        break;
+                        
+                    case RIGHT:
+                    
                         fontStyleOps |= INTRAFONT_ALIGN_RIGHT;
-                    else if (align == "center")
+                    
+                        break;
+                        
+                    case CENTER:
+                    
                         fontStyleOps |= INTRAFONT_ALIGN_CENTER;
-                    else if (align == "full")
+                    
+                        break;
+                        
+                    case FULL:
+                    
                         fontStyleOps |= INTRAFONT_ALIGN_FULL;
+                    
+                        break;
                 
                 }
                 
@@ -356,87 +399,87 @@ namespace xM {
 
                     if (font == "{LATIN_SANS_SERIF_REGULAR}") {
 
-                        uiElement->font.loadFont(Gfx::Font::LATIN_SANS_SERIF_REGULAR, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps);
+                        uiElement->font.loadFont(Gfx::Font::LATIN_SANS_SERIF_REGULAR, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps, uiElement->rotate);
 
                     } else if (font == "{LATIN_SERIF_REGULAR}") {
 
-                        uiElement->font.loadFont(Gfx::Font::LATIN_SERIF_REGULAR, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps);
+                        uiElement->font.loadFont(Gfx::Font::LATIN_SERIF_REGULAR, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps, uiElement->rotate);
 
                     } else if (font == "{LATIN_SANS_SERIF_ITALIC}") {
 
-                        uiElement->font.loadFont(Gfx::Font::LATIN_SANS_SERIF_ITALIC, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps);
+                        uiElement->font.loadFont(Gfx::Font::LATIN_SANS_SERIF_ITALIC, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps, uiElement->rotate);
 
                     } else if (font == "{LATIN_SERIF_ITALIC}") {
 
-                        uiElement->font.loadFont(Gfx::Font::LATIN_SERIF_ITALIC, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps);
+                        uiElement->font.loadFont(Gfx::Font::LATIN_SERIF_ITALIC, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps, uiElement->rotate);
 
                     } else if (font == "{LATIN_SANS_SERIF_BOLD}") {
 
-                        uiElement->font.loadFont(Gfx::Font::LATIN_SANS_SERIF_BOLD, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps);
+                        uiElement->font.loadFont(Gfx::Font::LATIN_SANS_SERIF_BOLD, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps, uiElement->rotate);
 
                     } else if (font == "{LATIN_SERIF_BOLD}") {
 
-                        uiElement->font.loadFont(Gfx::Font::LATIN_SERIF_BOLD, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps);
+                        uiElement->font.loadFont(Gfx::Font::LATIN_SERIF_BOLD, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps, uiElement->rotate);
 
                     } else if (font == "{LATIN_SANS_SERIF_ITALIC_BOLD}") {
 
-                        uiElement->font.loadFont(Gfx::Font::LATIN_SANS_SERIF_ITALIC_BOLD, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps);
+                        uiElement->font.loadFont(Gfx::Font::LATIN_SANS_SERIF_ITALIC_BOLD, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps, uiElement->rotate);
 
                     } else if (font == "{LATIN_SERIF_ITALIC_BOLD}") {
 
-                        uiElement->font.loadFont(Gfx::Font::LATIN_SERIF_ITALIC_BOLD, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps);
+                        uiElement->font.loadFont(Gfx::Font::LATIN_SERIF_ITALIC_BOLD, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps, uiElement->rotate);
 
                     } else if (font == "{LATIN_SANS_SERIF_REGULAR_SMALL}") {
 
-                        uiElement->font.loadFont(Gfx::Font::LATIN_SANS_SERIF_REGULAR_SMALL, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps);
+                        uiElement->font.loadFont(Gfx::Font::LATIN_SANS_SERIF_REGULAR_SMALL, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps, uiElement->rotate);
 
                     } else if (font == "{LATIN_SERIF_REGULAR_SMALL}") {
 
-                        uiElement->font.loadFont(Gfx::Font::LATIN_SERIF_REGULAR_SMALL, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps);
+                        uiElement->font.loadFont(Gfx::Font::LATIN_SERIF_REGULAR_SMALL, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps, uiElement->rotate);
 
                     } else if (font == "{LATIN_SANS_SERIF_ITALIC_SMALL}") {
 
-                        uiElement->font.loadFont(Gfx::Font::LATIN_SANS_SERIF_ITALIC_SMALL, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps);
+                        uiElement->font.loadFont(Gfx::Font::LATIN_SANS_SERIF_ITALIC_SMALL, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps, uiElement->rotate);
 
                     } else if (font == "{LATIN_SERIF_ITALIC_SMALL}") {
 
-                        uiElement->font.loadFont(Gfx::Font::LATIN_SERIF_ITALIC_SMALL, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps);
+                        uiElement->font.loadFont(Gfx::Font::LATIN_SERIF_ITALIC_SMALL, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps, uiElement->rotate);
 
                     } else if (font == "{LATIN_SANS_SERIF_BOLD_SMALL}") {
 
-                        uiElement->font.loadFont(Gfx::Font::LATIN_SANS_SERIF_BOLD_SMALL, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps);
+                        uiElement->font.loadFont(Gfx::Font::LATIN_SANS_SERIF_BOLD_SMALL, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps, uiElement->rotate);
 
                     } else if (font == "{LATIN_SERIF_BOLD_SMALL}") {
 
-                        uiElement->font.loadFont(Gfx::Font::LATIN_SERIF_BOLD_SMALL, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps);
+                        uiElement->font.loadFont(Gfx::Font::LATIN_SERIF_BOLD_SMALL, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps, uiElement->rotate);
 
                     } else if (font == "{LATIN_SANS_SERIF_ITALIC_BOLD_SMALL}") {
 
-                        uiElement->font.loadFont(Gfx::Font::LATIN_SANS_SERIF_ITALIC_BOLD_SMALL, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps);
+                        uiElement->font.loadFont(Gfx::Font::LATIN_SANS_SERIF_ITALIC_BOLD_SMALL, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps, uiElement->rotate);
 
                     } else if (font == "{LATIN_SERIF_ITALIC_BOLD_SMALL}") {
 
-                        uiElement->font.loadFont(Gfx::Font::LATIN_SERIF_ITALIC_BOLD_SMALL, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps);
+                        uiElement->font.loadFont(Gfx::Font::LATIN_SERIF_ITALIC_BOLD_SMALL, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps, uiElement->rotate);
 
                     } else if (font == "{JAPANESE_SJIS}") {
 
-                        uiElement->font.loadFont(Gfx::Font::JAPANESE_SJIS, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps);
+                        uiElement->font.loadFont(Gfx::Font::JAPANESE_SJIS, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps, uiElement->rotate);
 
                     } else if (font == "{JAPANESE_UTF8}") {
 
-                        uiElement->font.loadFont(Gfx::Font::JAPANESE_UTF8, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps);
+                        uiElement->font.loadFont(Gfx::Font::JAPANESE_UTF8, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps, uiElement->rotate);
 
                     } else if (font == "{KOREAN_UTF8}") {
 
-                        uiElement->font.loadFont(Gfx::Font::KOREAN_UTF8, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps);
+                        uiElement->font.loadFont(Gfx::Font::KOREAN_UTF8, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps, uiElement->rotate);
 
                     } else if (font == "{SYMBOLS}") {
 
-                        uiElement->font.loadFont(Gfx::Font::SYMBOLS, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps);
+                        uiElement->font.loadFont(Gfx::Font::SYMBOLS, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps, uiElement->rotate);
 
                     } else if (font == "{CHINESE}") {
 
-                        uiElement->font.loadFont(Gfx::Font::CHINESE, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps);
+                        uiElement->font.loadFont(Gfx::Font::CHINESE, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps, uiElement->rotate);
 
                     } else {
 
@@ -460,87 +503,87 @@ namespace xM {
                                         
                         if (altFont == "{LATIN_SANS_SERIF_REGULAR}") {
 
-                            uiElement->font.loadAltFont(Gfx::Font::LATIN_SANS_SERIF_REGULAR, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps);
+                            uiElement->font.loadAltFont(Gfx::Font::LATIN_SANS_SERIF_REGULAR, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps, uiElement->rotate);
 
                         } else if (altFont == "{LATIN_SERIF_REGULAR}") {
 
-                            uiElement->font.loadAltFont(Gfx::Font::LATIN_SERIF_REGULAR, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps);
+                            uiElement->font.loadAltFont(Gfx::Font::LATIN_SERIF_REGULAR, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps, uiElement->rotate);
 
                         } else if (altFont == "{LATIN_SANS_SERIF_ITALIC}") {
 
-                            uiElement->font.loadAltFont(Gfx::Font::LATIN_SANS_SERIF_ITALIC, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps);
+                            uiElement->font.loadAltFont(Gfx::Font::LATIN_SANS_SERIF_ITALIC, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps, uiElement->rotate);
 
                         } else if (altFont == "{LATIN_SERIF_ITALIC}") {
 
-                            uiElement->font.loadAltFont(Gfx::Font::LATIN_SERIF_ITALIC, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps);
+                            uiElement->font.loadAltFont(Gfx::Font::LATIN_SERIF_ITALIC, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps, uiElement->rotate);
 
                         } else if (altFont == "{LATIN_SANS_SERIF_BOLD}") {
 
-                            uiElement->font.loadAltFont(Gfx::Font::LATIN_SANS_SERIF_BOLD, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps);
+                            uiElement->font.loadAltFont(Gfx::Font::LATIN_SANS_SERIF_BOLD, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps, uiElement->rotate);
 
                         } else if (altFont == "{LATIN_SERIF_BOLD}") {
 
-                            uiElement->font.loadAltFont(Gfx::Font::LATIN_SERIF_BOLD, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps);
+                            uiElement->font.loadAltFont(Gfx::Font::LATIN_SERIF_BOLD, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps, uiElement->rotate);
 
                         } else if (altFont == "{LATIN_SANS_SERIF_ITALIC_BOLD}") {
 
-                            uiElement->font.loadAltFont(Gfx::Font::LATIN_SANS_SERIF_ITALIC_BOLD, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps);
+                            uiElement->font.loadAltFont(Gfx::Font::LATIN_SANS_SERIF_ITALIC_BOLD, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps, uiElement->rotate);
 
                         } else if (altFont == "{LATIN_SERIF_ITALIC_BOLD}") {
 
-                            uiElement->font.loadAltFont(Gfx::Font::LATIN_SERIF_ITALIC_BOLD, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps);
+                            uiElement->font.loadAltFont(Gfx::Font::LATIN_SERIF_ITALIC_BOLD, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps, uiElement->rotate);
 
                         } else if (altFont == "{LATIN_SANS_SERIF_REGULAR_SMALL}") {
 
-                            uiElement->font.loadAltFont(Gfx::Font::LATIN_SANS_SERIF_REGULAR_SMALL, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps);
+                            uiElement->font.loadAltFont(Gfx::Font::LATIN_SANS_SERIF_REGULAR_SMALL, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps, uiElement->rotate);
 
                         } else if (altFont == "{LATIN_SERIF_REGULAR_SMALL}") {
 
-                            uiElement->font.loadAltFont(Gfx::Font::LATIN_SERIF_REGULAR_SMALL, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps);
+                            uiElement->font.loadAltFont(Gfx::Font::LATIN_SERIF_REGULAR_SMALL, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps, uiElement->rotate);
 
                         } else if (altFont == "{LATIN_SANS_SERIF_ITALIC_SMALL}") {
 
-                            uiElement->font.loadAltFont(Gfx::Font::LATIN_SANS_SERIF_ITALIC_SMALL, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps);
+                            uiElement->font.loadAltFont(Gfx::Font::LATIN_SANS_SERIF_ITALIC_SMALL, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps, uiElement->rotate);
 
                         } else if (altFont == "{LATIN_SERIF_ITALIC_SMALL}") {
 
-                            uiElement->font.loadAltFont(Gfx::Font::LATIN_SERIF_ITALIC_SMALL, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps);
+                            uiElement->font.loadAltFont(Gfx::Font::LATIN_SERIF_ITALIC_SMALL, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps, uiElement->rotate);
 
                         } else if (altFont == "{LATIN_SANS_SERIF_BOLD_SMALL}") {
 
-                            uiElement->font.loadAltFont(Gfx::Font::LATIN_SANS_SERIF_BOLD_SMALL, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps);
+                            uiElement->font.loadAltFont(Gfx::Font::LATIN_SANS_SERIF_BOLD_SMALL, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps, uiElement->rotate);
 
                         } else if (altFont == "{LATIN_SERIF_BOLD_SMALL}") {
 
-                            uiElement->font.loadAltFont(Gfx::Font::LATIN_SERIF_BOLD_SMALL, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps);
+                            uiElement->font.loadAltFont(Gfx::Font::LATIN_SERIF_BOLD_SMALL, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps, uiElement->rotate);
 
                         } else if (altFont == "{LATIN_SANS_SERIF_ITALIC_BOLD_SMALL}") {
 
-                            uiElement->font.loadAltFont(Gfx::Font::LATIN_SANS_SERIF_ITALIC_BOLD_SMALL, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps);
+                            uiElement->font.loadAltFont(Gfx::Font::LATIN_SANS_SERIF_ITALIC_BOLD_SMALL, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps, uiElement->rotate);
 
                         } else if (altFont == "{LATIN_SERIF_ITALIC_BOLD_SMALL}") {
 
-                            uiElement->font.loadAltFont(Gfx::Font::LATIN_SERIF_ITALIC_BOLD_SMALL, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps);
+                            uiElement->font.loadAltFont(Gfx::Font::LATIN_SERIF_ITALIC_BOLD_SMALL, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps, uiElement->rotate);
 
                         } else if (altFont == "{JAPANESE_SJIS}") {
 
-                            uiElement->font.loadAltFont(Gfx::Font::JAPANESE_SJIS, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps);
+                            uiElement->font.loadAltFont(Gfx::Font::JAPANESE_SJIS, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps, uiElement->rotate);
 
                         } else if (altFont == "{JAPANESE_UTF8}") {
 
-                            uiElement->font.loadAltFont(Gfx::Font::JAPANESE_UTF8, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps);
+                            uiElement->font.loadAltFont(Gfx::Font::JAPANESE_UTF8, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps, uiElement->rotate);
 
                         } else if (altFont == "{KOREAN_UTF8}") {
 
-                            uiElement->font.loadAltFont(Gfx::Font::KOREAN_UTF8, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps);
+                            uiElement->font.loadAltFont(Gfx::Font::KOREAN_UTF8, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps, uiElement->rotate);
 
                         } else if (altFont == "{SYMBOLS}") {
 
-                            uiElement->font.loadAltFont(Gfx::Font::SYMBOLS, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps);
+                            uiElement->font.loadAltFont(Gfx::Font::SYMBOLS, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps, uiElement->rotate);
 
                         } else if (altFont == "{CHINESE}") {
 
-                            uiElement->font.loadAltFont(Gfx::Font::CHINESE, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps);
+                            uiElement->font.loadAltFont(Gfx::Font::CHINESE, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps, uiElement->rotate);
 
                         } else {
 
@@ -594,7 +637,8 @@ namespace xM {
                     TiXmlNode* innerChild = xmlNode->FirstChild();    
                     while (innerChild != NULL) {
                     
-                        uiElement->children.push_back(this->parseElement(innerChild->ToElement()));
+                        if (innerChild->Type() == TiXmlNode::ELEMENT)
+                            uiElement->children.push_back(this->parseElement(innerChild->ToElement()));
                     
                         innerChild = innerChild->NextSibling();    
                             
@@ -698,13 +742,35 @@ namespace xM {
 
                 case QUAD:
 
-                    Gfx::drawQuad(e->x, e->y, e->width, e->height, e->colour, 0);
+                    switch (e->align) {
+                                                
+                        case RIGHT:
+                        
+                            Gfx::drawQuad(e->x - e->width + e->paddingLeft, e->y + e->paddingTop, e->width, e->height, e->colour, 0);
+                        
+                            break;
+                            
+                        case CENTER:
+                        case FULL:
+                        
+                            Gfx::drawQuad(e->x - (e->width / 2) + e->paddingLeft, e->y + e->paddingTop, e->width, e->height, e->colour, 0);
+                        
+                            break;
+                            
+                        case LEFT:
+                        default:
+                        
+                            Gfx::drawQuad(e->x + e->paddingLeft, e->y + e->paddingTop, e->width, e->height, e->colour, 0);
+                        
+                            break;
+                    
+                    }
 
                     break;
 
                 case TEXT:
 
-                    e->font.draw(e->x + e->paddingLeft, e->y, e->text.c_str());
+                    e->font.draw(e->x + e->paddingLeft, e->y + e->paddingTop, e->text.c_str());
 
                     break;
 

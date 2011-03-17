@@ -55,9 +55,9 @@ namespace xM {
          * @param Fonts font The font to load.
          * @param unsigned int colour Text colour.
          */
-        Text::Text(Font::Fonts font, float size, unsigned int colour, unsigned int shadowColour, unsigned int loadOps, unsigned int styleOps) {
+        Text::Text(Font::Fonts font, float size, unsigned int colour, unsigned int shadowColour, unsigned int loadOps, unsigned int styleOps, float rotation) {
         
-            this->loadFont(font, size, colour, shadowColour, loadOps, styleOps);    
+            this->loadFont(font, size, colour, shadowColour, loadOps, styleOps, rotation);    
         
         }
         
@@ -83,7 +83,7 @@ namespace xM {
          *
          * @param Fonts font Font to load.
          */
-        void Text::loadFont(Font::Fonts font, float size, unsigned int colour, unsigned int shadowColour, unsigned int loadOps, unsigned int styleOps) {
+        void Text::loadFont(Font::Fonts font, float size, unsigned int colour, unsigned int shadowColour, unsigned int loadOps, unsigned int styleOps, float rotation) {
         
             if (this->font != NULL)
                 intraFontUnload(this->font);
@@ -169,7 +169,7 @@ namespace xM {
                 
             }
             
-            intraFontSetStyle(this->font, size, colour, shadowColour, styleOps);
+            intraFontSetStyle(this->font, size, colour, shadowColour, rotation, styleOps);
             intraFontSetEncoding(this->font, INTRAFONT_STRING_UTF8);
                     
         }
@@ -180,7 +180,7 @@ namespace xM {
          *
          * @param Fonts font Font to load.
          */
-        void Text::loadAltFont(Font::Fonts font, float size, unsigned int colour, unsigned int shadowColour, unsigned int loadOps, unsigned int styleOps) {
+        void Text::loadAltFont(Font::Fonts font, float size, unsigned int colour, unsigned int shadowColour, unsigned int loadOps, unsigned int styleOps, float rotation) {
         
             std::stringstream file;
             
@@ -261,7 +261,7 @@ namespace xM {
                 
             }
             
-            intraFontSetStyle(altFont, size, colour, shadowColour, styleOps);
+            intraFontSetStyle(altFont, size, colour, shadowColour, rotation, styleOps);
             intraFontSetEncoding(altFont, INTRAFONT_STRING_UTF8);
             
             if (this->altFonts.size() > 0)

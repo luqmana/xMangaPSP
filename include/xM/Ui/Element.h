@@ -55,16 +55,26 @@ namespace xM {
             CUSTOM
         
         };
+        
+        enum Alignment {
+        
+            LEFT,
+            CENTER,
+            RIGHT,
+            FULL           
+        
+        };
     
         typedef struct Element {
         
             ElementType type;
             std::string name;
-            double x, y, offsetX, offsetY, paddingLeft, paddingRight;
+            double x, y, offsetX, offsetY, paddingLeft, paddingTop;
             unsigned int colour, shadowColour;
             double width, height;
             std::string text;
-            double size;
+            double size, rotate;
+            Alignment align;
             Gfx::Text font;
             Gfx::Image image;
             std::map<std::string, std::string> attributes;

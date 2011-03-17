@@ -32,7 +32,7 @@
 // BEGIN Includes
 #include "xM/Gfx/Graphics.h"
 
-#include <intraFont.h>
+#include <intraFontG/intraFont.h>
 #include <vector>
 // END Includes
 
@@ -97,7 +97,7 @@ namespace xM {
              * @param Fonts font The font to load.
              * @param unsigned int colour Text colour.
              */
-            Text(Font::Fonts font, float size, unsigned int colour, unsigned int shadowColour, unsigned int loadOps, unsigned int styleOps);
+            Text(Font::Fonts font, float size, unsigned int colour, unsigned int shadowColour, unsigned int loadOps = 0, unsigned int styleOps = 0, float rotation = 0.0f);
             
             /**
              * Destructor.
@@ -110,7 +110,7 @@ namespace xM {
              *
              * @param Fonts font Font to load.
              */
-            void loadFont(Font::Fonts font, float size, unsigned int colour, unsigned int shadowColour, unsigned int loadOps = 0, unsigned int styleOps = 0);
+            void loadFont(Font::Fonts font, float size, unsigned int colour, unsigned int shadowColour, unsigned int loadOps = 0, unsigned int styleOps = 0, float rotation = 0.0f);
             
             /**
              * Loads an alternate font.
@@ -118,7 +118,7 @@ namespace xM {
              *
              * @param Fonts font Font to load.
              */
-            void loadAltFont(Font::Fonts font, float size, unsigned int colour, unsigned int shadowColour, unsigned int loadOps = 0, unsigned int styleOps = 0);
+            void loadAltFont(Font::Fonts font, float size, unsigned int colour, unsigned int shadowColour, unsigned int loadOps = 0, unsigned int styleOps = 0, float rotation = 0.0f);
             
             /**
              * Draw the text beginning at position (x, y).

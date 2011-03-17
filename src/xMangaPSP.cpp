@@ -40,8 +40,6 @@
 #include "xM/Ui/Dialogs.h"
 #include "xM/Util/Stats.h"
 #include "xM/Util/Log.h"
-
-#include <intraFont.h>
 // END Includes
 
 // Less typing
@@ -82,8 +80,9 @@ int main(int argc, char **argv) {
     // Init intraFont font library
     intraFontInit();
     
-    // Red text
+    // Red text, no background
     pspDebugScreenSetTextColor(0xFF0000FF);
+    pspDebugScreenEnableBackColor(0);
     
     // Initiate network support
     Net::init();
@@ -111,13 +110,13 @@ int main(int argc, char **argv) {
         // Begin frame
         Gfx::beginFrame();
         
-        // Read input unless dialog active
-        if (!Ui::Dialog::isDialogActive())
+        // Read input and handle events unless dialog active
+        if (!Ui::Dialog::isDialogActive()) {
+        
             inputManager->readInput();
-
-        // Handle events unless dialog active
-        if (!Ui::Dialog::isDialogActive())
             stateManager->handleEvents();
+            
+        }
         
         // Handle logic and update unless dialog active    
         if (!Ui::Dialog::isDialogActive())

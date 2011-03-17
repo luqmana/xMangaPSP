@@ -41,13 +41,15 @@
  SRC  +=  $(STATES)
  
  # External Libs Source Files
- EXT_SRC = tinyxml.cpp tinyxmlparser.cpp tinyxmlerror.cpp tinystr.cpp
+ EXT_SRC_CPP = tinyxml.cpp tinyxmlparser.cpp tinyxmlerror.cpp tinystr.cpp
+ EXT_SRC_C 	 = intraFont.c libccc.c
  
  # Object files
  OBJS    = $(patsubst %.cpp, $(BUILD_DIR)/%.o, $(filter %.cpp, $(SRC)))
  
  # External Libs Object Files
- OBJS	+= $(patsubst %.cpp, $(BUILD_DIR)/%.o, $(filter %.cpp, $(EXT_SRC)))
+ OBJS	+= $(patsubst %.cpp, $(BUILD_DIR)/%.o, $(filter %.cpp, $(EXT_SRC_CPP)))
+ OBJS	+= $(patsubst %.c, $(BUILD_DIR)/%.o, $(filter %.c, $(EXT_SRC_C)))
  
  # Defines
  MAJOR_VERSION = 1
@@ -64,7 +66,7 @@
  INCDIR = $(SRC_DIR) $(SRC_DIR)/../include $(EXT_SRC_DIR) $(EXT_SRC_DIR)/../include $(PSPDEV)/psp/include/
  
  # Library Directories
- LIBS = -lzzip -lz -lintraFont -lpspgum -lpspgu -lm -lpsprtc -lpspsdk -lstdc++
+ LIBS = -lzzip -lz -lpspgum -lpspgu -lm -lpsprtc -lpspsdk -lstdc++
  
  # Compiler Flags
  CFLAGS = -Wall $(COMPILER_DEFINES) -falign-functions=64
@@ -118,3 +120,7 @@
  # Rule to build bundled TinyXML
  $(BUILD_DIR)/%.o: $(EXT_SRC_DIR)/tinyxml/%.cpp
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
+	
+ # Rule to build bundled intraFont-G
+ $(BUILD_DIR)/%.o: $(EXT_SRC_DIR)/intraFontG/%.c
+	$(CC) $(CFLAGS) -c -o $@ $<

@@ -1,24 +1,25 @@
 <window name="Menu" type="main">
     
     <!-- Background -->
-    <quad x="0" y="0" width="480" height="272" colour="0,0,0" />
+    <quad x="0" y="0" width="480" height="272" colour="235,234,235,200" />
     
-    <text x="240" y="20" font="{LATIN_SANS_SERIF_BOLD}" align="center" size="1.0" colour="255,0,0" shadowColour="white" value="xMangaPSP" />
-    <text x="240" y="40" font="{LATIN_SANS_SERIF_REGULAR_SMALL}" align="center" size="0.8" colour="255,255,255" value="PSP Manga Unleashed!" />
+    <quad x="0" y="0" width="480" height="30" colour="black" />
+    <text x="240" y="20" font="{LATIN_SANS_SERIF_BOLD}" align="center" size="1.0" colour="red" shadowColour="90,0,0" value="xMangaPSP" />
     
-    <!--<text x="240" y="100" font="{LATIN_SANS_SERIF_REGULAR}" align="center" size="1.0" colour="255,0,0" shadowColour="" value="Read Manga" />
-    <text x="240" y="120" font="{LATIN_SANS_SERIF_REGULAR}" align="center" size="1.0" colour="255,0,0" shadowColour="255,255,255" value="Recent Manga" />
-    <text x="240" y="140" font="{LATIN_SANS_SERIF_REGULAR}" align="center" size="1.0" colour="255,0,0" shadowColour="" value="Bookmarks" />
-    <text x="240" y="160" font="{LATIN_SANS_SERIF_REGULAR}" align="center" size="1.0" colour="255,0,0" shadowColour="" value="Options" />
-    <text x="240" y="180" font="{LATIN_SANS_SERIF_REGULAR}" align="center" size="1.0" colour="255,0,0" shadowColour="" value="About" />
-    <text x="240" y="200" font="{LATIN_SANS_SERIF_REGULAR}" align="center" size="1.0" colour="255,0,0" shadowColour="" value="Quit" />-->
-    
+    <text x="240" y="75" font="{LATIN_SANS_SERIF_ITALIC_BOLD}" align="center" size="1.0" colour="36,36,36" value="Choose an option:" />
+        
     <menuList x="240" y="120" offsetX="0" offsetY="25" maxItems="4">
     
-        <text whence="active" font="{LATIN_SANS_SERIF_REGULAR}" align="center" size="1.0" colour="255,0,0" shadowColour="white" value="[]" />
+        <text whence="scrolldown" x="310" y="120" font="{SYMBOLS}" align="center" size="1.0" colour="gray" value="" />
+        <text whence="scrollup" x="310" y="120" font="{SYMBOLS}" align="center" size="1.0" colour="black" value="" />
+    
+        <text whence="active" font="{LATIN_SANS_SERIF_REGULAR_SMALL}" align="center" size="1.0" colour="36,36,36" value="[]" />
         
-        <text whence="inactive" font="{LATIN_SANS_SERIF_REGULAR}" align="center" size="1.0" colour="255,0,0" value="[]" />
+        <text whence="inactive" font="{LATIN_SANS_SERIF_REGULAR_SMALL}" align="center" size="1.0" colour="red" value="[]" />
+        
+        <text whence="scrollup" x="310" y="190" font="{SYMBOLS}" align="center" size="1.0" colour="gray" rotate="180" value="" />
+        <text whence="scrolldown" x="310" y="190" font="{SYMBOLS}" align="center" size="1.0" colour="black" rotate="180" value="" />
     
     </menuList>
-    
+            
 </window>

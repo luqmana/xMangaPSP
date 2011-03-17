@@ -106,6 +106,13 @@ namespace xM {
 
             Ui::XMLParser parser;
             
+            Util::Timer timer;
+            float rotate;
+            
+            bool doAction;
+            
+            int activeDialog;
+            
             std::vector<std::string> menuList;
             unsigned int maxItems;
             unsigned int minList;

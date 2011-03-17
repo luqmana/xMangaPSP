@@ -29,10 +29,11 @@
 #define _MenuState_CPP
 
 // BEGIN Includes
-#include "xM/States/Menu.h"
+#include "xM/Engine/App.h"
 #include "xM/Engine/FileManager.h"
 #include "xM/Engine/InputManager.h"
 #include "xM/Net/Net.h"
+#include "xM/States/Menu.h"
 #include "xM/Ui/Dialogs.h"
 #include "xM/Util/Log.h"
 #include "xM/Util/Utils.h"
@@ -46,6 +47,13 @@ namespace xM {
          * Start up code.
          */
         void Menu::init(void) {
+        
+            timer.start();
+            rotate = 0.0f;
+            
+            doAction = false;
+            
+            activeDialog = 0;
 
             parser.registerCustomElementHandler("menuList", this);
             parser.parseFile("ui/menu.xml");
@@ -106,6 +114,9 @@ namespace xM {
                 selected += 1;
             else if (iM->pressed(PSP_CTRL_UP))
                 selected -= 1;
+                
+            if (iM->pressed(PSP_CTRL_CROSS))
+                doAction = true;
             
         }
 
@@ -113,7 +124,16 @@ namespace xM {
          * Now do something with the data we got from events and what not.
          */
         void Menu::handleLogic(void) {
-                    
+        
+            if (activeDialog == 1) {
+	        
+	            if (Ui::Dialog::getMsgDialogResult() == Ui::Dialog::RESPONSE_YES)
+	                Engine::quit();
+	                
+	            activeDialog = 0;
+	            
+	        }
+                            
             // BEGIN Menu Traversing Logic
 	        if ((signed int)this->selected < 0)
 		        this->selected = 0;
@@ -132,13 +152,54 @@ namespace xM {
 	
 	        }
 	        // END Menu Traversing Logic
-
+	        
+	        if (doAction) {
+	        
+	            switch (selected) {
+	            
+	                case 0:
+	                
+	                    break;
+	                    
+	                case 1:
+	                
+	                    break;
+	                    
+	                case 2:
+	                
+	                    break;
+	                    
+	                case 3:
+	                
+	                    break;
+	                    
+	                case 4:
+	                
+	                    break;
+	                    
+	                case 5:
+	                
+	                    Ui::Dialog::msg("Are you sure you want to quit?", true);
+	                    activeDialog = 1;
+	                    doAction = false;
+	                
+	                    break;
+	            
+	            }
+	        
+	        }
+	        	        
         }
 
         /**
          * Done with the logic? Draw what's needed then.
          */
         void Menu::draw(void) {
+        
+            rotate -= (1.0f * timer.getDeltaTicks(true));
+            
+            Gfx::drawQuad(240.0f - (100 / 2), 160.0f - (100 / 2), 100, 100, Gfx::Colour::WHITE, GU_COLOR(1.0f, 0.0f, 0.0f, 0.75f),
+                GU_COLOR(0.0f, 1.0f, 0.0f, 0.50f), GU_COLOR(0.0f, 0.0f, 1.0f, 0.25f), rotate);
             
             // Draw based on XML
             parser.draw();
@@ -190,14 +251,13 @@ namespace xM {
 	
 	                // Get the item name
 	                itemText = this->menuList[i];
+	                
+	                if (i == selected) {
 				
-				    if (i == selected) {	
-					
-	                    // Active elements					
-	                    for (unsigned int k = 0; k < customElement->children.size(); k++) {
-		                
-		                    if (customElement->children[k]->attributes["whence"] == "active") {
-	                            
+                        for (unsigned int k = 0; k < customElement->children.size(); k++) {
+	                    
+	                        if (customElement->children[k]->attributes["whence"] == "active") {
+                                
                                 customElement->children[k]->x = x;
                                 customElement->children[k]->y = y;
                                 
@@ -205,18 +265,17 @@ namespace xM {
                                     customElement->children[k]->text = itemText;
                                 
                                 parser->renderElement(customElement->children[k]);
-	                                
+                                    
                             }
-	                        	            
-	                    }
-	                
-	                } else {
-
-	                    // Inactive elements					
-	                    for (unsigned int k = 0; k < customElement->children.size(); k++) {
-		                
-		                    if (customElement->children[k]->attributes["whence"] == "inactive") {
-	                            
+                            	            
+                        }
+                    
+                    } else {
+				
+                        for (unsigned int k = 0; k < customElement->children.size(); k++) {
+	                    
+	                        if (customElement->children[k]->attributes["whence"] == "inactive") {
+                            
                                 customElement->children[k]->x = x;
                                 customElement->children[k]->y = y;
                                 
@@ -224,13 +283,27 @@ namespace xM {
                                     customElement->children[k]->text = itemText;
                                 
                                 parser->renderElement(customElement->children[k]);
-	                                
+                            
                             }
-	                        	            
-	                    }
-	                
-	                }
-	
+                            	            
+                        }
+                    
+                    }
+                    
+                    for (unsigned int k = 0; k < customElement->children.size(); k++) {
+                    
+                        if (this->minList > 0 && customElement->children[k]->attributes["whence"] == "scrollup") {
+                        
+                            parser->renderElement(customElement->children[k]);
+                        
+                        } else if (this->maxList < (this->menuList.size() - 1) && customElement->children[k]->attributes["whence"] == "scrolldown") {
+                        
+                            parser->renderElement(customElement->children[k]);
+                        
+                        }
+                        	            
+                    }
+                    	                	
 	                //printf("(%d, %d)\n", x, y);
 	                x += customElement->offsetX;
 	                y += customElement->offsetY;
