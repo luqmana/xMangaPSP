@@ -74,15 +74,49 @@ namespace xM {
                  * Set up some stuff.
                  */
                 void init(void);
+                
+                /**
+                 * Magic read function!
+                 * 
+                 * Reads the specified file from a multitude of possible locations choosing based on input.
+                 * 
+                 * "PSAR@afile.ext" => would load 'afile.ext' from the PSAR section of the EBOOT
+                 * "resources.zip@afile.ext" => would load 'afile.ext' from a zip file name 'resources.zip'
+                 * "afile.ext" => would simply be loaded from the filesystem.
+                 * 
+                 * @param const std::string& file The file.
+                 * 
+                 * @return std::string The contents of the file.
+                 */
+                std::string read(const std::string& file);
 		        
 		        /**
-                 * Read a file in from the PSAR archive (zip file).
+                 * Read a file in from the PSAR archive (zip file) in the EBOOT.
                  * 
                  * @param const std::string& file The file within the PSAR.
                  * 
                  * @return std::string The contents of the file.
                  */
                 std::string readFromPSAR(const std::string& file);
+                
+                /**
+                 * Read a file in from a zip file.
+                 * 
+                 * @param const std::string& zip The zip file.
+                 * @param const std::string& file The file within the zip.
+                 * 
+                 * @return std::string The contents of the file.
+                 */
+                std::string readFromZIP(const std::string& zip, const std::string& file);
+                
+                /**
+                 * Read a file in from the filesystem. (ms0 or host0 usually)
+                 * 
+                 * @param const std::string& file The file.
+                 * 
+                 * @return std::string The contents of the file.
+                 */
+                std::string readFromFS(const std::string& file);
 		    		        		
 		};
 			

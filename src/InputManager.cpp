@@ -129,7 +129,7 @@ namespace xM {
          * 
          * @param PspCtrlButton Which button to check
          */
-        bool InputManager::pressed(PspCtrlButtons button) {
+        bool InputManager::pressed(unsigned int button) {
         
             return (this->buttons != 0) && (this->buttons & button);
         

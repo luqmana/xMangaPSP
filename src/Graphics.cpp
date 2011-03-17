@@ -31,6 +31,7 @@
 // BEGIN Includes
 #include "xM/Gfx/Graphics.h"
 #include "xM/Util/Log.h"
+#include "xM/Util/Utils.h"
 
 #include <cstring>
 // END Includes
@@ -240,7 +241,7 @@ namespace xM {
 
             // Swap the front and back buffers
             frameBuffer0 = sceGuSwapBuffers();
-
+            
         }
 
         /**
@@ -250,6 +251,82 @@ namespace xM {
 
             sceGuTerm();
 
+        }
+        
+        /**
+         * Returns an ARGB colour as an unsigned int from a colour string.
+         * 
+         * @param const std::string& colour The colour string.
+         * 
+         * @return unsigned int ARGB colour.
+         */
+        unsigned int colourFromString(const std::string& colour) {
+        
+            std::vector<std::string> colourParts;
+
+            // Split string to RGBA parts
+            Util::tokenize(colour, colourParts, ",");
+
+            if (colourParts.size() == 1) {
+            
+                if (colourParts[0] == "red")
+                    return Colour::RED;
+                else if (colourParts[0] == "green")
+                    return Colour::GREEN;
+                else if (colourParts[0] == "blue")
+                    return Colour::BLUE;
+                else if (colourParts[0] == "black")
+                    return Colour::BLACK;
+                else if (colourParts[0] == "white")
+                    return Colour::WHITE;
+                else if (colourParts[0] == "gray")
+                    return Colour::GRAY;
+
+            } else if (colourParts.size() == 2) {
+            
+                unsigned int a = Util::stringToInt(colourParts[1]);
+            
+                if (colourParts[0] == "red")
+                    return Colour::RED & (a << 24);
+                else if (colourParts[0] == "green")
+                    return Colour::GREEN & (a << 24);
+                else if (colourParts[0] == "blue")
+                    return Colour::BLUE & (a << 24);
+                else if (colourParts[0] == "black")
+                    return Colour::BLACK & (a << 24);
+                else if (colourParts[0] == "white")
+                    return Colour::WHITE & (a << 24);
+                else if (colourParts[0] == "gray")
+                    return Colour::GRAY & (a << 24);
+
+
+            } else if (colourParts.size() == 3) {
+
+                unsigned int r, g, b;
+                r = Util::stringToInt(colourParts[0]);
+                g = Util::stringToInt(colourParts[1]);
+                b = Util::stringToInt(colourParts[2]);
+
+                return GU_RGBA(r, g, b, 255);
+
+            } else if (colourParts.size() == 4) {
+
+                unsigned int r, g, b, a;
+                r = Util::stringToInt(colourParts[0]);
+                g = Util::stringToInt(colourParts[1]);
+                b = Util::stringToInt(colourParts[2]);
+                a = Util::stringToInt(colourParts[3]);
+
+                return GU_RGBA(r, g, b, a);
+
+            } else {
+
+                return 0;
+
+            }
+            
+            return 0;
+        
         }
 
         /**

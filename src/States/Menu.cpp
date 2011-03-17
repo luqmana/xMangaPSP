@@ -29,13 +29,15 @@
 #define _MenuState_CPP
 
 // BEGIN Includes
-#include "xM/Engine/App.h"
 #include "xM/Engine/FileManager.h"
 #include "xM/Engine/InputManager.h"
+#include "xM/Engine/StateManager.h"
 #include "xM/Net/Net.h"
+#include "xM/States/About.h"
 #include "xM/States/Menu.h"
 #include "xM/Ui/Dialogs.h"
 #include "xM/Util/Log.h"
+#include "xM/Util/Timer.h"
 #include "xM/Util/Utils.h"
 // END Includes
 
@@ -47,15 +49,13 @@ namespace xM {
          * Start up code.
          */
         void Menu::init(void) {
-        
-            timer.start();
-            rotate = 0.0f;
-            
+                                
             doAction = false;
             
             activeDialog = 0;
 
             parser.registerCustomElementHandler("menuList", this);
+            parser.registerCustomElementHandler("bouncyBox", this);
             parser.parseFile("ui/menu.xml");
             
             this->menuList.push_back("Read Manga");
@@ -73,7 +73,8 @@ namespace xM {
         void Menu::cleanUp(void) {
 
             parser.deRegisterCustomElementHandler("menuList");
-
+            parser.deRegisterCustomElementHandler("bouncyBox");
+            
         }
 
         /**
@@ -128,7 +129,7 @@ namespace xM {
             if (activeDialog == 1) {
 	        
 	            if (Ui::Dialog::getMsgDialogResult() == Ui::Dialog::RESPONSE_YES)
-	                Engine::quit();
+	                Engine::StateManager::getInstance()->popState();
 	                
 	            activeDialog = 0;
 	            
@@ -172,14 +173,19 @@ namespace xM {
 	                case 3:
 	                
 	                    break;
-	                    
+	                 
+	                // About    
 	                case 4:
+	                
+	                    doAction = false;
+	                    Engine::StateManager::getInstance()->pushState(new About());
 	                
 	                    break;
 	                    
+	                // Quit
 	                case 5:
 	                
-	                    Ui::Dialog::msg("Are you sure you want to quit?", true);
+	                    Ui::Dialog::msg("Do you want quit xMangaPSP?", true);
 	                    activeDialog = 1;
 	                    doAction = false;
 	                
@@ -195,12 +201,7 @@ namespace xM {
          * Done with the logic? Draw what's needed then.
          */
         void Menu::draw(void) {
-        
-            rotate -= (1.0f * timer.getDeltaTicks(true));
-            
-            Gfx::drawQuad(240.0f - (100 / 2), 160.0f - (100 / 2), 100, 100, Gfx::Colour::WHITE, GU_COLOR(1.0f, 0.0f, 0.0f, 0.75f),
-                GU_COLOR(0.0f, 1.0f, 0.0f, 0.50f), GU_COLOR(0.0f, 0.0f, 1.0f, 0.25f), rotate);
-            
+                                
             // Draw based on XML
             parser.draw();
             
@@ -223,6 +224,24 @@ namespace xM {
                 this->minList = 0;
                 this->selected = 0;
                 this->maxList = this->minList + this->maxItems;
+            
+            } else if (customElement->name == "bouncyBox") {
+
+                customElement->colour = (customElement->attributes.find("colour") == customElement->attributes.end()) ? Gfx::Colour::GRAY : Gfx::colourFromString(customElement->attributes["colour"]);
+                customElement->width = (customElement->width == 0) ? 50 : customElement->width;
+                customElement->height = (customElement->height == 0) ? 50 : customElement->height;
+                
+                customElement->rotate = 0;
+                
+                // Not actually size, but a modifier for the rotatation
+                customElement->size = ((rand() % 4 + 1) % 2) ? 1 : -1;
+                
+                customElement->timer = new Util::Timer;
+                customElement->timer->start();
+                
+                // now these are actually velocities, but stored in offset variable
+                customElement->offsetX = (rand() % 4 + 1);
+                customElement->offsetY = (rand() % 4 + 1);
             
             }
                     
@@ -304,13 +323,46 @@ namespace xM {
                         	            
                     }
                     	                	
-	                //printf("(%d, %d)\n", x, y);
 	                x += customElement->offsetX;
 	                y += customElement->offsetY;
 	                i++;
 
                 } while (i <= this->maxList);
                 
+            }  else if (customElement->name == "bouncyBox") {
+            
+                customElement->x += customElement->offsetX;
+                customElement->y += customElement->offsetY;
+                                
+                customElement->rotate -= ((float)(rand() % 3 + 1) * customElement->timer->getDeltaTicks(true)) * customElement->size;
+                
+                if ((customElement->x + customElement->width) > 480 || customElement->x < 0) {
+                
+                    customElement->offsetX = (rand() % 4 + 1);
+                    customElement->offsetX *= (customElement->x < 0) ? 1 : -1;
+                    customElement->x += customElement->offsetX; 
+                    
+                    // Change rotation direction
+                    customElement->size *= -1;
+                    
+                }
+                
+                if ((customElement->y + customElement->height) > 272 || customElement->y < 0) {
+                
+                    customElement->offsetY = (rand() % 4 + 1);
+                    customElement->offsetY *= (customElement->y < 0) ? 1 : -1;
+                    customElement->y += customElement->offsetY; 
+                    
+                    // Change rotation direction
+                    customElement->size *= -1;
+                    
+                }
+                
+                // Let it render a quad
+                customElement->type = Ui::QUAD;
+                parser->renderElement(customElement);
+                customElement->type = Ui::CUSTOM;
+            
             }
         
         }
@@ -319,4 +371,4 @@ namespace xM {
 
 }
 
-#endif /* _State_CPP */
+#endif /* _MenuState_CPP */

@@ -33,12 +33,12 @@
  # Other files to be deleted when clean is called
  EXTRA_CLEAN = 
  
- # State Files
- STATES = MenuState.cpp
+ # States
+ STATES = About Menu
  
  # Source files
  SRC   =  xMangaPSP.cpp Callbacks.cpp Graphics.cpp Dialogs.cpp Stats.cpp Utils.cpp Timer.cpp FileManager.cpp InputManager.cpp StateManager.cpp Image.cpp Log.cpp PicoPNG.cpp Text.cpp XMLParser.cpp Net.cpp
- SRC  +=  $(STATES)
+ SRC  +=  $(patsubst %, %.cpp, $(STATES))
  
  # External Libs Source Files
  EXT_SRC_CPP = tinyxml.cpp tinyxmlparser.cpp tinyxmlerror.cpp tinystr.cpp
@@ -117,6 +117,14 @@
  $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
 
+ # Rule to build state classes
+ $(BUILD_DIR)/%.o: $(SRC_DIR)/States/%.cpp
+	$(CXX) $(CXXFLAGS) -c -o $@ $<
+	
+ # Rule to build PicoPNG with optimization
+ $(BUILD_DIR)/PicoPNG.o: $(SRC_DIR)/PicoPNG.cpp
+	$(CXX) $(CXXFLAGS) -O3 -G4 -ffast-math -c -o $@ $<
+	
  # Rule to build bundled TinyXML
  $(BUILD_DIR)/%.o: $(EXT_SRC_DIR)/tinyxml/%.cpp
 	$(CXX) $(CXXFLAGS) -c -o $@ $<

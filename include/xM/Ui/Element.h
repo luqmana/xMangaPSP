@@ -32,6 +32,7 @@
 // BEGIN Includes
 #include "xM/Gfx/Image.h"
 #include "xM/Gfx/Text.h"
+#include "xM/Util/Timer.h"
 
 #include <string>
 #include <vector>
@@ -81,6 +82,9 @@ namespace xM {
             
             // Really only used by custom elements
             std::vector<struct Element*> children;
+            
+            // Cause who knows when you might need a timer
+            Util::Timer* timer;
                     
         } Element;
         

@@ -31,6 +31,7 @@
 // BEGIN Includes
 #include "xM/Engine/FileManager.h"
 #include "xM/Util/Log.h"
+#include "xM/Util/Utils.h"
 
 #include <pspiofilemgr.h>
 
@@ -47,7 +48,7 @@
 #elif defined ZZIP_HAVE_IO_H
 #include <io.h>
 #else
-#error need posix io for this example
+#error need posix io
 #endif
 // END Includes
 
@@ -171,11 +172,53 @@ namespace xM {
             psarZipHandlers.fd.write = &psarZipWrite;
         
         }
+        
+        /**
+         * Magic read function!
+         * 
+         * Reads the specified file from a multitude of possible locations choosing based on input.
+         * 
+         * "PSAR@afile.ext" => would load 'afile.ext' from the PSAR section of the EBOOT
+         * "resources.zip@afile.ext" => would load 'afile.ext' from a zip file name 'resources.zip'
+         * "afile.ext" => would simply be loaded from the filesystem.
+         * 
+         * @param const std::string& file The file.
+         * 
+         * @return std::string The contents of the file.
+         */
+        std::string FileManager::read(const std::string& file) {
+        
+            std::vector<std::string> fileParts;
+            
+            Util::tokenize(file, fileParts, "@");
+            
+            if (fileParts.size() == 1) {
+            
+                // the easy case :)
+                return this->readFromFS(file);
+            
+            } else if (fileParts.size() == 2) {
+            
+                if (fileParts[0] == "PSAR") {
+                
+                    return this->readFromPSAR(fileParts[1]);
+                
+                } else {
+                
+                    return this->readFromZIP(fileParts[0], fileParts[1]);
+                
+                }
+            
+            }
+            
+            return "";
+        
+        }
 
         /**
-         * Read a file in from the PSAR archive (zip file).
+         * Read a file in from the PSAR archive (zip file) in the EBOOT.
          * 
-         * @param const std::string& file The file within the PSAR.
+         * @param const std::string& file The file within the PSAR .
          * 
          * @return std::string The contents of the file.
          */
@@ -206,6 +249,13 @@ namespace xM {
 	
             // Alloc enough memory for file
             buffer = (char *) malloc(sizeof(char) * filesize);
+            
+            if (buffer == NULL) {
+
+                if (__xM_DEBUG)
+                    Util::logMsg("FileManager::readFromFS — Unable to allocate memory.");
+
+            }
 	
             // Read file
             int read = zzip_fread(buffer, 1, filesize, fP);
@@ -226,6 +276,133 @@ namespace xM {
             // Free memory
             free(buffer);
                                 
+            return out;
+        
+        }
+        
+        /**
+         * Read a file in from a zip file.
+         * 
+         * @param const std::string& zip The zip file.
+         * @param const std::string& file The file within the zip.
+         * 
+         * @return std::string The contents of the file.
+         */
+        std::string FileManager::readFromZIP(const std::string& zip, const std::string& file) {
+        
+            std::string out;
+            
+            zzip_strings_t ext[] = {"", 0};
+            
+            // Construct the path to the resource
+            std::stringstream path;
+            path << zip << "/" << file;
+        
+            ZZIP_FILE *fP = zzip_open_ext_io(path.str().c_str(), O_RDONLY | O_BINARY, ZZIP_ONLYZIP, ext, 0);
+            
+            // Temporary buffer
+            char *buffer;
+	
+            // Obtain filesize
+            // Seek to end
+            zzip_seek(fP, 0, SEEK_END);
+	
+            // Get position [so since we're at the end means filesize]
+            long filesize = zzip_tell(fP);
+            
+            // Go back to start of the file
+            zzip_rewind(fP);
+	
+            // Alloc enough memory for file
+            buffer = (char *) malloc(sizeof(char) * filesize);
+            
+            if (buffer == NULL) {
+
+                if (__xM_DEBUG)
+                    Util::logMsg("FileManager::readFromFS — Unable to allocate memory.");
+
+            }
+	
+            // Read file
+            int read = zzip_fread(buffer, 1, filesize, fP);
+	
+            if (read != filesize) {
+	
+	            if (__xM_DEBUG)
+                    Util::logMsg("FileManager::readFromZIP - Unable to completely read resource from zip [%s@%s][R: %d - F: %d].", zip.c_str(), file.c_str(), read, filesize);
+	
+            }
+				
+            // Alloc to std::string		
+            out.append(buffer, filesize);
+	
+            // Close handle
+            zzip_fclose(fP);
+	
+            // Free memory
+            free(buffer);
+            
+            return out;
+        
+        }
+        
+        /**
+         * Read a file in from the filesystem. (ms0 or host0 usually)
+         * 
+         * @param const std::string& file The file.
+         * 
+         * @return std::string The contents of the file.
+         */
+        std::string FileManager::readFromFS(const std::string& file) {
+        
+            std::string out;
+            
+            SceUID fD = sceIoOpen(file.c_str(), PSP_O_RDONLY, 0777);
+
+            if (fD < 0) {
+
+                if (__xM_DEBUG)
+                    Util::logMsg("FileManager::readFromFS — Unable to open file. [%s]", file.c_str());
+
+                return false;
+
+            }
+
+            // Seek to end of file
+            long filesize = sceIoLseek32(fD, 0, PSP_SEEK_END);
+
+            // Back to the beginning
+            sceIoLseek(fD, 0, 0);
+
+            // Alloc some memory for file contents
+            char* buffer = (char*) malloc(filesize);
+
+            if (buffer == NULL) {
+
+                if (__xM_DEBUG)
+                    Util::logMsg("FileManager::readFromFS — Unable to allocate memory.");
+
+            }
+
+            // Read in the png
+            int read = sceIoRead(fD, buffer, filesize);
+            
+            if (read != filesize) {
+	
+	            if (__xM_DEBUG)
+                    Util::logMsg("FileManager::readFromFS - Unable to completely read file [%s][R: %d - F: %d].", file.c_str(), read, filesize);
+	
+            }
+            
+            // Alloc to std::string		
+            out.append(buffer, filesize);
+	
+            // Close handle
+            sceIoClose(fD);
+	
+            // Free memory
+            free(buffer);
+            
             return out;
         
         }

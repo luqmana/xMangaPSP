@@ -36,6 +36,7 @@
 #include <pspkernel.h>
 
 #include <malloc.h>
+#include <string>
 // END Includes
 
 // BEGIN Defines
@@ -136,6 +137,15 @@ namespace xM {
          * Terminates the GU.
          */
         void shutdownGu(void);
+        
+        /**
+         * Returns an ARGB colour as an unsigned int from a colour string.
+         * 
+         * @param const std::string& colour The colour string.
+         * 
+         * @return unsigned int ARGB colour.
+         */
+        unsigned int colourFromString(const std::string& colour);
 
         /**
          * Draw a simple one colour quad.

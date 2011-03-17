@@ -72,6 +72,9 @@ namespace xM {
 
                 // Let state cleanup
                 this->states.back()->cleanUp();
+                
+                // Free memory
+                delete this->states.back();
 
                 // Remove state from stack
                 this->states.pop_back();
@@ -92,6 +95,9 @@ namespace xM {
 
                 // Let current state cleanup
                 this->states.back()->cleanUp();
+                
+                // Free memory
+                delete this->states.back();
 
                 // Remove it
                 this->states.pop_back();
@@ -135,6 +141,9 @@ namespace xM {
 
                 // Let current state cleanup
                 this->states.back()->cleanUp();
+                
+                // Free memory
+                delete this->states.back();
 
                 // Remove it
                 this->states.pop_back();
@@ -154,7 +163,10 @@ namespace xM {
          */
         States::Base* StateManager::getCurrentState(void) {
 
-            return this->states.back();
+            if (!this->states.empty())
+                return this->states.back();
+            else
+                return NULL;
 
         }
 
@@ -164,7 +176,8 @@ namespace xM {
         void StateManager::handleEvents(void) {
 
             // Let each state handle their own events and whatnot
-            this->states.back()->handleEvents();
+            if (!this->states.empty())
+                this->states.back()->handleEvents();
 
         }
 
@@ -174,7 +187,8 @@ namespace xM {
         void StateManager::handleLogic(void) {
 
             // Let each state handle their own logic
-            this->states.back()->handleLogic();
+            if (!this->states.empty())
+                this->states.back()->handleLogic();
 
         }
 
@@ -184,7 +198,8 @@ namespace xM {
         void StateManager::draw(void) {
 
             // Let each state render their own content
-            this->states.back()->draw();
+            if (!this->states.empty())
+                this->states.back()->draw();
 
         }
 

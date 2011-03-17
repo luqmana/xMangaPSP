@@ -112,6 +112,12 @@ namespace xM {
             if (xmlElement->QueryDoubleAttribute("y", &uiElement->y) != TIXML_SUCCESS) {
                 uiElement->y = 0;
             }
+            if (xmlElement->QueryDoubleAttribute("width", &uiElement->width) != TIXML_SUCCESS) {
+                uiElement->width = 0;
+            }
+            if (xmlElement->QueryDoubleAttribute("height", &uiElement->height) != TIXML_SUCCESS) {
+                uiElement->height = 0;
+            }
             if (xmlElement->QueryDoubleAttribute("offsetX", &uiElement->offsetX) != TIXML_SUCCESS) {
                 uiElement->offsetX = 0;
             }
@@ -123,6 +129,9 @@ namespace xM {
             }
             if (xmlElement->QueryDoubleAttribute("paddingTop", &uiElement->paddingTop) != TIXML_SUCCESS) {
                 uiElement->paddingTop = 0;
+            }
+            if (xmlElement->QueryDoubleAttribute("rotate", &uiElement->rotate) != TIXML_SUCCESS) {
+                uiElement->rotate = 0;
             }
             if (xmlElement->Attribute("align") == NULL) {
                 uiElement->align = LEFT;
@@ -150,13 +159,13 @@ namespace xM {
 
                 uiElement->type = QUAD;
 
-                if (xmlElement->QueryDoubleAttribute("width", &uiElement->width) != TIXML_SUCCESS) {
+                if (uiElement->width == 0) {
                     
                     delete uiElement;
                     return NULL;
                     
                 }
-                if (xmlElement->QueryDoubleAttribute("height", &uiElement->height) != TIXML_SUCCESS) {
+                if (uiElement->height == 0) {
                     
                     delete uiElement;
                     return NULL;
@@ -167,52 +176,7 @@ namespace xM {
                     uiElement->colour = 0;
                 } else {
 
-                    std::string tempColour = xmlElement->Attribute("colour");
-
-                    std::vector<std::string> colourParts;
-
-                    // Split string to RGBA parts
-                    Util::tokenize(tempColour, colourParts, ",");
-
-                    if (colourParts.size() == 1) {
-                    
-                        if (colourParts[0] == "red")
-                            uiElement->colour = Gfx::Colour::RED;
-                        else if (colourParts[0] == "green")
-                            uiElement->colour = Gfx::Colour::GREEN;
-                        else if (colourParts[0] == "blue")
-                            uiElement->colour = Gfx::Colour::BLUE;
-                        else if (colourParts[0] == "black")
-                            uiElement->colour = Gfx::Colour::BLACK;
-                        else if (colourParts[0] == "white")
-                            uiElement->colour = Gfx::Colour::WHITE;
-                        else if (colourParts[0] == "gray")
-                            uiElement->colour = Gfx::Colour::GRAY;
-
-                    } else if (colourParts.size() == 3) {
-
-                        unsigned int r, g, b;
-                        r = Util::stringToInt(colourParts[0]);
-                        g = Util::stringToInt(colourParts[1]);
-                        b = Util::stringToInt(colourParts[2]);
-
-                        uiElement->colour = GU_RGBA(r, g, b, 255);
-
-                    } else if (colourParts.size() == 4) {
-
-                        unsigned int r, g, b, a;
-                        r = Util::stringToInt(colourParts[0]);
-                        g = Util::stringToInt(colourParts[1]);
-                        b = Util::stringToInt(colourParts[2]);
-                        a = Util::stringToInt(colourParts[3]);
-
-                        uiElement->colour = GU_RGBA(r, g, b, a);
-                        
-                    } else {
-
-                        uiElement->colour = 0;
-
-                    }
+                    uiElement->colour = Gfx::colourFromString(xmlElement->Attribute("colour"));
 
                 }
 
@@ -230,6 +194,10 @@ namespace xM {
                     uiElement->text = xmlElement->Attribute("value");
                 }
                 
+                if (xmlElement->QueryDoubleAttribute("size", &uiElement->size) != TIXML_SUCCESS) {
+                    uiElement->size = 0;
+                }
+                
                 // handle newline characters
                 // replace \n with 0x0A
                 size_t newline = uiElement->text.find("\\n");
@@ -239,65 +207,12 @@ namespace xM {
                     
                     newline = uiElement->text.find("\\n");
                 }
-
-                if (xmlElement->QueryDoubleAttribute("width", &uiElement->width) != TIXML_SUCCESS) {
-                    uiElement->width = 0;
-                }
-
-                if (xmlElement->QueryDoubleAttribute("size", &uiElement->size) != TIXML_SUCCESS) {
-                    uiElement->size = 0;
-                }
                 
                 if (xmlElement->Attribute("colour") == NULL) {
                     uiElement->colour = 0;
                 } else {
 
-                    std::string tempColour = xmlElement->Attribute("colour");
-
-                    std::vector<std::string> colourParts;
-
-                    // Split string to RGBA parts
-                    Util::tokenize(tempColour, colourParts, ",");
-
-                    if (colourParts.size() == 1) {
-                    
-                        if (colourParts[0] == "red")
-                            uiElement->colour = Gfx::Colour::RED;
-                        else if (colourParts[0] == "green")
-                            uiElement->colour = Gfx::Colour::GREEN;
-                        else if (colourParts[0] == "blue")
-                            uiElement->colour = Gfx::Colour::BLUE;
-                        else if (colourParts[0] == "black")
-                            uiElement->colour = Gfx::Colour::BLACK;
-                        else if (colourParts[0] == "white")
-                            uiElement->colour = Gfx::Colour::WHITE;
-                        else if (colourParts[0] == "gray")
-                            uiElement->colour = Gfx::Colour::GRAY;
-
-                    } else if (colourParts.size() == 3) {
-
-                        unsigned int r, g, b;
-                        r = Util::stringToInt(colourParts[0]);
-                        g = Util::stringToInt(colourParts[1]);
-                        b = Util::stringToInt(colourParts[2]);
-                        
-                        uiElement->colour = GU_RGBA(r, g, b, 255);
-
-                    } else if (colourParts.size() == 4) {
-
-                        unsigned int r, g, b, a;
-                        r = Util::stringToInt(colourParts[0]);
-                        g = Util::stringToInt(colourParts[1]);
-                        b = Util::stringToInt(colourParts[2]);
-                        a = Util::stringToInt(colourParts[3]);
-
-                        uiElement->colour = GU_RGBA(r, g, b, a);
-
-                    } else {
-
-                        uiElement->colour = 0;
-
-                    }
+                    uiElement->colour = Gfx::colourFromString(xmlElement->Attribute("colour"));
 
                 }
 
@@ -305,59 +220,10 @@ namespace xM {
                     uiElement->shadowColour = 0;
                 } else {
 
-                    std::string tempColour = xmlElement->Attribute("shadowColour");
-
-                    std::vector<std::string> colourParts;
-
-                    // Split string to RGBA parts
-                    Util::tokenize(tempColour, colourParts, ",");
-
-                    if (colourParts.size() == 1) {
-                    
-                        if (colourParts[0] == "red")
-                            uiElement->shadowColour = Gfx::Colour::RED;
-                        else if (colourParts[0] == "green")
-                            uiElement->shadowColour = Gfx::Colour::GREEN;
-                        else if (colourParts[0] == "blue")
-                            uiElement->shadowColour = Gfx::Colour::BLUE;
-                        else if (colourParts[0] == "black")
-                            uiElement->shadowColour = Gfx::Colour::BLACK;
-                        else if (colourParts[0] == "white")
-                            uiElement->shadowColour = Gfx::Colour::WHITE;
-                        else if (colourParts[0] == "gray")
-                            uiElement->shadowColour = Gfx::Colour::GRAY;
-
-                    } else if (colourParts.size() == 3) {
-
-                        unsigned int r, g, b;
-                        r = Util::stringToInt(colourParts[0]);
-                        g = Util::stringToInt(colourParts[1]);
-                        b = Util::stringToInt(colourParts[2]);
-
-                        uiElement->shadowColour = GU_RGBA(r, g, b, 255);
-
-                    } else if (colourParts.size() == 4) {
-
-                        unsigned int r, g, b, a;
-                        r = Util::stringToInt(colourParts[0]);
-                        g = Util::stringToInt(colourParts[1]);
-                        b = Util::stringToInt(colourParts[2]);
-                        a = Util::stringToInt(colourParts[3]);
-
-                        uiElement->shadowColour = GU_RGBA(r, g, b, a);
-
-                    } else {
-
-                        uiElement->shadowColour = 0;
-
-                    }
+                    uiElement->shadowColour = Gfx::colourFromString(xmlElement->Attribute("shadowColour"));
 
                 }
-                
-                if (xmlElement->QueryDoubleAttribute("rotate", &uiElement->rotate) != TIXML_SUCCESS) {
-                    uiElement->rotate = 0;
-                }
-                                
+                                                
                 unsigned int fontStyleOps = 0;
 
                 switch (uiElement->align) {
@@ -746,21 +612,21 @@ namespace xM {
                                                 
                         case RIGHT:
                         
-                            Gfx::drawQuad(e->x - e->width + e->paddingLeft, e->y + e->paddingTop, e->width, e->height, e->colour, 0);
+                            Gfx::drawQuad(e->x - e->width + e->paddingLeft, e->y + e->paddingTop, e->width, e->height, e->colour, e->rotate);
                         
                             break;
                             
                         case CENTER:
                         case FULL:
                         
-                            Gfx::drawQuad(e->x - (e->width / 2) + e->paddingLeft, e->y + e->paddingTop, e->width, e->height, e->colour, 0);
+                            Gfx::drawQuad(e->x - (e->width / 2) + e->paddingLeft, e->y + e->paddingTop, e->width, e->height, e->colour, e->rotate);
                         
                             break;
                             
                         case LEFT:
                         default:
                         
-                            Gfx::drawQuad(e->x + e->paddingLeft, e->y + e->paddingTop, e->width, e->height, e->colour, 0);
+                            Gfx::drawQuad(e->x + e->paddingLeft, e->y + e->paddingTop, e->width, e->height, e->colour, e->rotate);
                         
                             break;
                     
@@ -770,7 +636,10 @@ namespace xM {
 
                 case TEXT:
 
-                    e->font.draw(e->x + e->paddingLeft, e->y + e->paddingTop, e->text.c_str());
+                    if (e->width == 0)
+                        e->font.draw(e->x + e->paddingLeft, e->y + e->paddingTop, e->text.c_str());
+                    else
+                        e->font.drawColumn(e->x + e->paddingLeft, e->y + e->paddingTop, e->width, e->text.c_str());
 
                     break;
 

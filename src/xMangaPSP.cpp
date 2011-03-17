@@ -104,8 +104,13 @@ int main(int argc, char **argv) {
 
     // Setup ortho view
     Gfx::setUpOrthoView();
+    
+    bool showFPSMEM = (__xM_DEBUG) ? true : false;
             
     while (Engine::isRunning()) {
+    
+        if (stateManager->getCurrentState() == NULL)
+            break;
 
         // Begin frame
         Gfx::beginFrame();
@@ -125,9 +130,17 @@ int main(int argc, char **argv) {
         // Draw
         stateManager->draw();
         
+        // Toggle stats
+        if (__xM_DEBUG && inputManager->pressed(PSP_CTRL_RTRIGGER))
+            showFPSMEM = !showFPSMEM;
+        
         // Show some stats
-        Util::MEM();
-        Util::FPS();
+        if (showFPSMEM) {
+            
+            Util::MEM();
+            Util::FPS();
+            
+        }
         
         // End frame
         Gfx::endFrame();

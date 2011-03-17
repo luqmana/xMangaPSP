@@ -20,20 +20,21 @@
  */
  
 /**
- * The input manager.
+ * The resource manager.
  * Header file.
  * 
  * @package xMangaPSP
  */
 
-#ifndef _InputManager_H
-#define _InputManager_H
+#ifndef _ResourceManager_H
+#define _ResourceManager_H
 
 // BEGIN Includes
-#include "xM/Util/Timer.h"
+#include "xM/Engine/FileManager.h"
+#include "xM/Gfx/Image.h"
 
-#include <cstdlib>
-#include <pspctrl.h>
+#include <string>
+#include <map>
 // END Includes
 
 // BEGIN Defines
@@ -44,61 +45,58 @@ namespace xM {
 
 	namespace Engine {
 	
-		class InputManager {
+		class ResourceManager {
 		
             private:
             
                 /**
                  * This will be a singleton class so no need for a public constructor.
                  */
-                InputManager(void) { };
-                
-                /**
-                 * Holds the button input.
-                 */
-                SceCtrlData pad;
-                
-                Util::Timer repeatTimer;
-                bool repeat;
-                unsigned int buttons;
-                unsigned int lastButtons;
-                unsigned int repeatButtons;
-                                                            		
+                ResourceManager(void) { };
+                                            		
 		    public:
 		    
 		        /**
                  * The singleton instance.
                  */
-                static InputManager* iMInstance;
+                static ResourceManager* rMInstance;
 		    
 		        /**
 		         * Get an instance of the class.
 		         * 
-		         * @return InputManager* Singleton instance.
+		         * @return ResourceManager* Singleton instance.
 		         */
-		        static InputManager* getInstance(void);
-		    
-		        /**
-		         * Start up code.
-		         */
-		        void init(void);
+		        static ResourceManager* getInstance(void);
 		        
 		        /**
-		         * Reads input.
-		         */
-		        void readInput(void);
-		        
-		        /**
-                 * Check whether a certain button has been pressed.
-                 * 
-                 * @param PspCtrlButton Which button to check
+                 * Set up some stuff.
                  */
-                bool pressed(unsigned int button);
-		        		        		
+                void init(void);
+		        
+		        /**
+		         * Returns a cached image. If not cached, loads it.
+		         * 
+		         * @param const std::string& image The image.
+		         * 
+		         * @return Gfx::Image* The image.
+		         */
+		        Gfx::Image* getImage(const std::string& image);
+		        
+		        /**
+		         * A magic wrapper for the FileManager.
+		         * 
+		         * Tries to load a resource from different sources. PSAR, Resource File (resources.zip), FS (in that order)
+		         * 
+		         * @param const std::string& file The file.
+		         * 
+		         * @return std::string The resource.
+		         */
+		        std::string getRes(const std::string& file);
+		    		        		
 		};
 			
 	}
 
 }
 
-#endif /* _InputManager_H */
+#endif /* _FileManager_H */

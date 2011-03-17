@@ -20,14 +20,14 @@
  */
 
 /**
- * Menu state class.
+ * About state class.
  * Header file.
  * 
  * @package xMangaPSP
  */
 
-#ifndef _MenuState_H
-#define _MenuState_H
+#ifndef _AboutState_H
+#define _AboutState_H
 
 // BEGIN Includes
 #include "xM/States/Base.h"
@@ -47,7 +47,7 @@ namespace xM {
 
     namespace States {
 
-        class Menu : public Base, public Ui::CustomElementHandler {
+        class About : public Base, public Ui::CustomElementHandler {
         public:
 
             /**
@@ -104,21 +104,16 @@ namespace xM {
         private:
 
             Ui::XMLParser parser;
+            
+            Gfx::Image genesisSplash;
                         
-            bool doAction;
+            int action;
+            int state;
             
-            int activeDialog;
-            
-            std::vector<std::string> menuList;
-            unsigned int maxItems;
-            unsigned int minList;
-            unsigned int maxList;
-            unsigned int selected;
-
         };
 
     }
 
 }
 
-#endif /* _MenuState_H */
+#endif /* _AboutState_H */

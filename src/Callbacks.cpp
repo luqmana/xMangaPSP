@@ -55,7 +55,7 @@ namespace xM {
          */
         int exitCallback(int arg1, int arg2, void *common) {
 
-            Engine::quit();
+            Engine::running = false;
 
             return 0;
 
