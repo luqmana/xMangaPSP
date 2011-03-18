@@ -1,4 +1,4 @@
-<window name="Menu" type="main">
+<window name="About" type="main">
     
     <bouncyBox colour="red" />
     <bouncyBox x="480" colour="blue" />

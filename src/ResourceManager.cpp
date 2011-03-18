@@ -131,7 +131,7 @@ namespace xM {
         std::string ResourceManager::getRes(const std::string& file) {
         
             // Explicit location
-            if (file.find("a") != std::string::npos)
+            if (file.find("@") != std::string::npos)
                 return FileManager::getInstance()->read(file);
                 
             std::string res;
