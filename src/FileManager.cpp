@@ -283,7 +283,7 @@ namespace xM {
             }
 				
             // Alloc to std::string		
-            out.append(buffer, filesize);
+            out.assign(buffer, filesize);
 	
             // Close handle
             zzip_fclose(fP);
@@ -358,7 +358,7 @@ namespace xM {
             }
 				
             // Alloc to std::string		
-            out.append(buffer, filesize);
+            out.assign(buffer, filesize);
 	
             // Close handle
             zzip_fclose(fP);
@@ -408,7 +408,7 @@ namespace xM {
 
             }
 
-            // Read in the png
+            // Read in the file
             int read = sceIoRead(fD, buffer, filesize);
             
             if (read != filesize) {
@@ -419,7 +419,7 @@ namespace xM {
             }
             
             // Alloc to std::string		
-            out.append(buffer, filesize);
+            out.assign(buffer, filesize);
 	
             // Close handle
             sceIoClose(fD);

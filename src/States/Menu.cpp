@@ -53,7 +53,7 @@ namespace xM {
         
             // Cache it for the about state
             Engine::ResourceManager::getInstance()->getImage("genesis.png");
-                                
+                                            
             doAction = false;
             
             activeDialog = 0;

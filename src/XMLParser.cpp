@@ -29,6 +29,7 @@
 #define _XMLParser_CPP
 
 // BEGIN Includes
+#include "xM/Engine/ResourceManager.h"
 #include "xM/Ui/XMLParser.h"
 #include "xM/Util/Log.h"
 #include "xM/Util/Utils.h"
@@ -480,13 +481,11 @@ namespace xM {
                     
                 } else {
                 
-                    std::string src = xmlElement->Attribute("src");
+                    uiElement->image = Engine::ResourceManager::getInstance()->getImage(xmlElement->Attribute("src"));
                     
-                    uiElement->image.loadFile(src);
-                    
-                    if (strcmp(xmlElement->Attribute("swizzle"), "false") != 0)
-                        uiElement->image.swizzle();
-                                            
+                    if (xmlElement->Attribute("swizzle") != NULL && strcmp(xmlElement->Attribute("swizzle"), "true") == 0)
+                        uiElement->image->swizzle();
+                      
                 }
 
             //------CUSTOM [possibly]
@@ -650,8 +649,8 @@ namespace xM {
                     clip.y = e->offsetY;
                     clip.width = e->width;
                     clip.height = e->height;
-                
-                    e->image.draw(e->x, e->y, &clip);
+                    
+                    e->image->draw(e->x, e->y, &clip);
 
                     break;
                     

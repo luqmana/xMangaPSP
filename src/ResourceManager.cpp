@@ -62,7 +62,7 @@ namespace xM {
          */
         void ResourceManager::init(void) {
         
-            
+                
         
         }
         
@@ -74,18 +74,20 @@ namespace xM {
          * @return Gfx::Image* The image.
          */
         Gfx::Image* ResourceManager::getImage(const std::string& image) {
-        
+                        
+            const std::string key = image;
+                                    
             // Check if cached
-            if (images.find(image) != images.end())
-                return images.find(image)->second;
+            if (images.find(key) != images.end())
+                return images.find(key)->second;
                 
             // Not cached :(
-            Gfx::Image* img = new Gfx::Image;
+            Gfx::Image* img = new Gfx::Image();
             
             if (!img->loadFile(image))
                 return NULL;
             
-            images.insert(std::pair<const std::string, Gfx::Image*>(image, img));
+            images.insert(std::pair<const std::string, Gfx::Image*>(key, img));
             
             return img;
         
@@ -122,7 +124,8 @@ namespace xM {
         /**
          * A magic wrapper for the FileManager.
          * 
-         * Tries to load a resource from different sources. PSAR, Resource File (resources.zip), FS (in that order)
+         * Tries to load a resource from different sources.
+         * (Resource File (resources.zip), PSAR, then FS) (in that order)
          * 
          * @param const std::string& file The file.
          * 
@@ -135,14 +138,14 @@ namespace xM {
                 return FileManager::getInstance()->read(file);
                 
             std::string res;
-            
-            // Try PSAR
-            res = FileManager::getInstance()->readFromPSAR(file);
+                            
+            // Try ZIP
+            res = FileManager::getInstance()->readFromZIP("resources.zip", file);
             if (res != "")
                 return res;
                 
-            // Try ZIP
-            res = FileManager::getInstance()->readFromZIP("resources.zip", file);
+            // Try PSAR
+            res = FileManager::getInstance()->readFromPSAR(file);
             if (res != "")
                 return res;
                 

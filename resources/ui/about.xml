@@ -15,7 +15,7 @@
     <text x="5" y="70" font="{LATIN_SANS_SERIF_REGULAR_SMALL}" size="1.0" colour="23,23,23" value="xMangaPSP wouldn't be possible without the help of various people:" />
     
     <text x="20" y="100" font="{LATIN_SANS_SERIF_BOLD_SMALL}" size="1.0" colour="23,23,23" value="Chaotic([X]SinZ)" />
-    <text x="170" y="100" font="{LATIN_SANS_SERIF_ITALIC_SMALL}" size="1.0" colour="23,23,23" value="Creator of xMangaPSP." />
+    <text x="170" y="100" font="{LATIN_SANS_SERIF_ITALIC_SMALL}" size="1.0" colour="23,23,23" value="Creator of xMangaPSP. [me!]" />
     
     <text x="20" y="120" font="{LATIN_SANS_SERIF_BOLD_SMALL}" size="1.0" colour="23,23,23" value="##psp-programming" />
     <text x="170" y="120" font="{LATIN_SANS_SERIF_ITALIC_SMALL}" size="1.0" colour="23,23,23" value="Providing a lot of help." />
@@ -36,5 +36,5 @@
     
     <text x="455" y="261" font="{LATIN_SERIF_REGULAR_SMALL}" align="right" size="1.0" colour="73,73,73" value="Back - " />
     <text x="475" y="264" font="{SYMBOLS}" align="right" size="1.0" colour="23,23,23" value="" />
-                
+                    
 </window>

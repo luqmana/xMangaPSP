@@ -142,7 +142,7 @@ namespace xM {
             
             }
             
-            intraFont* f = Engine::ResourceManager::getInstance()->getFont(file.str(), loadOps);
+            intraFont* f = Engine::ResourceManager::getInstance()->getFont(file.str().c_str(), loadOps);
             
             if (!f || f == NULL) {
             
@@ -245,7 +245,7 @@ namespace xM {
             
             }
             
-            intraFont* f = Engine::ResourceManager::getInstance()->getFont(file.str(), loadOps);
+            intraFont* f = Engine::ResourceManager::getInstance()->getFont(file.str().c_str(), loadOps);
             
             if (!f || f == NULL) {
             

@@ -72,6 +72,13 @@ namespace xM {
             Image() {
                 this->reset();
             };
+            
+            /**
+             * Destructor
+             */
+            ~Image() {
+                this->reset();
+            };
 
             /**
              * Return whether the image is swizzled or not.
@@ -88,6 +95,13 @@ namespace xM {
              * @return bool Success or not?
              */
             bool loadFile(const std::string& file);
+            
+            /**
+             * Whether an image is already loaded.
+             * 
+             * @return bool
+             */
+            bool isLoaded();
 
             /**
              * Rearrange the pixels to optimize speed.

@@ -77,7 +77,7 @@ namespace xM {
             double size, rotate;
             Alignment align;
             Gfx::Text font;
-            Gfx::Image image;
+            Gfx::Image* image;
             std::map<std::string, std::string> attributes;
             
             // Really only used by custom elements

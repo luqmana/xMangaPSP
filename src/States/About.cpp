@@ -54,6 +54,7 @@ namespace xM {
             parser.parseFile("ui/about.xml");
             
             genesisSplash = Engine::ResourceManager::getInstance()->getImage("genesis.png");
+            genesisSplash->swizzle();
                                                 
         }
 

@@ -55,7 +55,7 @@ namespace xM {
                  */
                 ResourceManager(void) { };
                 
-                std::map<std::pair<std::string, unsigned int>, intraFont*> fonts;
+                std::map<std::pair<const std::string, unsigned int>, intraFont*> fonts;
                 std::map<const std::string, Gfx::Image*> images;
                                             		
 		    public:

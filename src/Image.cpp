@@ -48,7 +48,7 @@
 namespace xM {
 
     namespace Gfx {
-
+    
         /**
          * Return whether the image is swizzled or not.
          * 
@@ -74,21 +74,16 @@ namespace xM {
 
             this->reset();
 
-            std::string imageBuffer = Engine::ResourceManager::getInstance()->getRes(file);
-            
+            std::string imageBuffer = Engine::ResourceManager::getInstance()->getRes(file);      
             if (imageBuffer == "")
                 return false;
-
-            if (__xM_DEBUG)
-                printf("Before decode.\n");
-
+     
             ImageSegment mainSegment;
 
             // Decode the png
             decodePNG(mainSegment.pixels, mainSegment.width, mainSegment.height, (const unsigned char*) imageBuffer.c_str(), imageBuffer.size(), true);
-
-            if (__xM_DEBUG)
-                printf("After decode.\n");
+            
+            imageBuffer.clear();
 
             mainSegment.p2Width = Util::nextPow2(mainSegment.width);
             mainSegment.p2Height = Util::nextPow2(mainSegment.height);
@@ -178,9 +173,20 @@ namespace xM {
 
 
             }
-
+            
             return true;
 
+        }
+        
+        /**
+         * Whether an image is already loaded.
+         * 
+         * @return bool
+         */
+        bool Image::isLoaded() {
+        
+            return (this->segments.size() != 0);
+        
         }
 
         /**
@@ -188,14 +194,15 @@ namespace xM {
          */
         void Image::reset() {
 
-            /*if (!this->pixels.empty())
-                this->pixels.clear();
+            if (this->segments.size() != 0)
+                this->segments.clear();
 
             this->width = 0;
             this->height = 0;
+            this->p2Width = 0;
+            this->p2Height = 0;
             this->swizzled = false;
-            this->pixels.clear();*/
-
+            
         }
 
         /**
@@ -204,6 +211,9 @@ namespace xM {
          * @link http://wiki.ps2dev.org/psp:ge_faq
          */
         void Image::swizzle() {
+        
+            if (this->swizzled)
+                return;
 
             for (unsigned int r = 0; r < this->segments.size(); ++r) {
 
@@ -274,7 +284,7 @@ namespace xM {
                 offsetY = 0;
 
             }
-
+            
             // Enable 2D textures
             sceGuEnable(GU_TEXTURE_2D);
 
