@@ -67,14 +67,7 @@ namespace xM {
          */
         Text::~Text() {
         
-            // Unload the font.
-        
-            if (this->font != NULL)
-                intraFontUnload(this->font);
-                
-            // Unload alt fonts
-            for (unsigned int i = 0; i < this->altFonts.size(); ++i)
-                intraFontUnload(this->altFonts[i]);
+            
         
         }
         
@@ -85,14 +78,7 @@ namespace xM {
          * @param Fonts font Font to load.
          */
         void Text::loadFont(Font::Fonts font, float size, unsigned int colour, unsigned int shadowColour, unsigned int loadOps, unsigned int styleOps, float rotation) {
-        
-            if (this->font != NULL)
-                intraFontUnload(this->font);
-                
-            // Unload alt fonts
-            for (unsigned int i = 0; i < this->altFonts.size(); ++i)
-                intraFontUnload(this->altFonts[i]);
-                
+                        
             std::stringstream file; 
                
             switch (font) {
@@ -156,8 +142,19 @@ namespace xM {
             
             }
             
+            intraFont* f = Engine::ResourceManager::getInstance()->getFont(file.str(), loadOps);
+            
+            if (!f || f == NULL) {
+            
+                if (__xM_DEBUG)
+                    Util::logMsg("Text::loadFont — Unable to load font from resource manager [%s].", file.str().c_str());
+                
+                return;
+                
+            }
+            
             // Load the font
-            this->font = new intraFont(*Engine::ResourceManager::getInstance()->getFont(file.str(), loadOps));
+            this->font = new intraFont(*f);
                         
             if (!this->font) {
             
@@ -248,8 +245,19 @@ namespace xM {
             
             }
             
+            intraFont* f = Engine::ResourceManager::getInstance()->getFont(file.str(), loadOps);
+            
+            if (!f || f == NULL) {
+            
+                if (__xM_DEBUG)
+                    Util::logMsg("Text::loadAltFont — Unable to load font from resource manager [%s].", file.str().c_str());
+                
+                return;
+                
+            }
+            
             // Load the font
-            altFont = new intraFont(*Engine::ResourceManager::getInstance()->getFont(file.str(), loadOps));
+            altFont = new intraFont(*f);
                         
             if (!altFont) {
             
