@@ -32,6 +32,7 @@
 #include "xM/Engine/App.h"
 #include "xM/Engine/FileManager.h"
 #include "xM/Engine/InputManager.h"
+#include "xM/Engine/ResourceManager.h"
 #include "xM/Engine/StateManager.h"
 #include "xM/Gfx/Graphics.h"
 #include "xM/Net/Net.h"
@@ -90,6 +91,10 @@ int main(int argc, char **argv) {
     // Initiate the FileManager
     Engine::FileManager* fileManager = Engine::FileManager::getInstance();
     fileManager->init();
+    
+    // Initiate the ResourceManager
+    Engine::ResourceManager* resourceManager = Engine::ResourceManager::getInstance();
+    resourceManager->init();
     
     // Initiate the InputManager
     Engine::InputManager* inputManager = Engine::InputManager::getInstance();
@@ -165,6 +170,9 @@ int main(int argc, char **argv) {
         
     // Delete pointer to singleton InputManager
     delete Engine::InputManager::iMInstance;
+    
+    // Delete pointer to singleton ResourceManager
+    delete Engine::ResourceManager::rMInstance;
     
     // Delete pointer to singleton FileManager
     delete Engine::FileManager::fMInstance;

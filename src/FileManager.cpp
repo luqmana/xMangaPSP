@@ -180,7 +180,7 @@ namespace xM {
          * 
          * "PSAR@afile.ext" => would load 'afile.ext' from the PSAR section of the EBOOT
          * "resources.zip@afile.ext" => would load 'afile.ext' from a zip file name 'resources.zip'
-         * "afile.ext" => would simply be loaded from the filesystem.
+         * "afile.ext" or "FS@afile.ext" => would simply be loaded from the filesystem.
          * 
          * @param const std::string& file The file.
          * 
@@ -202,6 +202,12 @@ namespace xM {
                 if (fileParts[0] == "PSAR") {
                 
                     return this->readFromPSAR(fileParts[1]);
+                    
+                } else if (fileParts[0] == "FS") {
+                
+                    // The explicit case
+                
+                    return this->readFromFS(fileParts[1]);
                 
                 } else {
                 
@@ -234,6 +240,15 @@ namespace xM {
         
             ZZIP_FILE *fP = zzip_open_ext_io(path.str().c_str(), O_RDONLY | O_BINARY, ZZIP_ONLYZIP, ext, &psarZipHandlers);
             
+            if (!fP) {
+            
+                if (__xM_DEBUG)
+                    Util::logMsg("FileManager::readFromPSAR — Unable to open file [%s].", file.c_str());
+                    
+                return "";
+            
+            }
+            
             // Temporary buffer
             char *buffer;
 	
@@ -253,7 +268,7 @@ namespace xM {
             if (buffer == NULL) {
 
                 if (__xM_DEBUG)
-                    Util::logMsg("FileManager::readFromFS — Unable to allocate memory.");
+                    Util::logMsg("FileManager::readFromPSAR — Unable to allocate memory.");
 
             }
 	
@@ -300,6 +315,15 @@ namespace xM {
         
             ZZIP_FILE *fP = zzip_open_ext_io(path.str().c_str(), O_RDONLY | O_BINARY, ZZIP_ONLYZIP, ext, 0);
             
+            if (!fP) {
+            
+                if (__xM_DEBUG)
+                    Util::logMsg("FileManager::readFromZIP — Unable to open file in zip [%s@%s].", zip.c_str(), file.c_str());
+                    
+                return "";
+            
+            }
+            
             // Temporary buffer
             char *buffer;
 	
@@ -319,7 +343,7 @@ namespace xM {
             if (buffer == NULL) {
 
                 if (__xM_DEBUG)
-                    Util::logMsg("FileManager::readFromFS — Unable to allocate memory.");
+                    Util::logMsg("FileManager::readFromZIP — Unable to allocate memory.");
 
             }
 	

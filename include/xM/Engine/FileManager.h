@@ -82,7 +82,7 @@ namespace xM {
                  * 
                  * "PSAR@afile.ext" => would load 'afile.ext' from the PSAR section of the EBOOT
                  * "resources.zip@afile.ext" => would load 'afile.ext' from a zip file name 'resources.zip'
-                 * "afile.ext" => would simply be loaded from the filesystem.
+                 * "afile.ext" or "FS@afile.ext" => would simply be loaded from the filesystem.
                  * 
                  * @param const std::string& file The file.
                  * 

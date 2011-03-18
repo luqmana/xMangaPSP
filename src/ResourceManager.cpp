@@ -1,0 +1,131 @@
+/**
+ * This file is part of the xMangaPSP application.
+ *
+ * Copyright (C) Luqman Aden <www.luqmanrocks.co.cc>.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * Full License: GNU-LICENSE
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+ 
+/**
+ * The resource manager.
+ * 
+ * @package xMangaPSP
+ */
+
+#ifndef _ResourceManager_CPP
+#define _ResourceManager_CPP
+
+// BEGIN Includes
+#include "xM/Engine/FileManager.h"
+#include "xM/Engine/ResourceManager.h"
+// END Includes
+
+namespace xM {
+
+	namespace Engine {
+	
+        /**
+         * The singleton instance.
+         */
+        ResourceManager* ResourceManager::rMInstance = NULL;
+    
+        /**
+         * Get an instance of the class.
+         * 
+         * @return ResourceManager* Singleton instance.
+         */
+        ResourceManager* ResourceManager::getInstance(void) {
+        
+            // Create instance if necessary
+            if (rMInstance == NULL)
+                rMInstance = new ResourceManager;
+
+            return rMInstance;
+        
+        }
+        
+        /**
+         * Set up some stuff.
+         */
+        void ResourceManager::init(void) {
+        
+            
+        
+        }
+        
+        /**
+         * Returns a cached image. If not cached, loads it.
+         * 
+         * @param const std::string& image The image.
+         * 
+         * @return Gfx::Image* The image.
+         */
+        Gfx::Image* ResourceManager::getImage(const std::string& image) {
+        
+            return NULL;
+        
+        }
+        
+        /**
+         * Returns a cached font. If not cached, loads it.
+         * 
+         * @param const std::string& font The font.
+         *
+         * @return intraFont* The font.
+         */
+        intraFont* ResourceManager::getFont(const std::string& font) {
+        
+            return NULL;
+        
+        }
+        
+        /**
+         * A magic wrapper for the FileManager.
+         * 
+         * Tries to load a resource from different sources. PSAR, Resource File (resources.zip), FS (in that order)
+         * 
+         * @param const std::string& file The file.
+         * 
+         * @return std::string The resource.
+         */
+        std::string ResourceManager::getRes(const std::string& file) {
+        
+            // Explicit location
+            if (file.find("a") != std::string::npos)
+                return FileManager::getInstance()->read(file);
+                
+            std::string res;
+            
+            // Try PSAR
+            res = FileManager::getInstance()->readFromPSAR(file);
+            if (res != "")
+                return res;
+                
+            // Try ZIP
+            res = FileManager::getInstance()->readFromZIP("resources.zip", file);
+            if (res != "")
+                return res;
+                
+            // Finally try FS
+            return FileManager::getInstance()->readFromFS(file);
+        
+        }
+		    		        					
+	}
+
+}
+
+#endif /* _ResourceManager_CPP */

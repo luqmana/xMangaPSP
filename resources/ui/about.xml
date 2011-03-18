@@ -27,7 +27,7 @@
     <text x="20" y="180" font="{LATIN_SANS_SERIF_BOLD_SMALL}" size="1.0" colour="23,23,23" value="Samoi, kgsws, etc" />
     <text x="170" y="180" font="{LATIN_SANS_SERIF_ITALIC_SMALL}" size="1.0" colour="23,23,23" value="For the signing tool." />
     
-    <text x="240" y="210" font="{LATIN_SANS_SERIF_BOLD_SMALL}" size="1.0" align="center" colour="23,23,23" value="…and more people I'm forgetting! (Sorry)" />
+    <text x="240" y="210" font="{LATIN_SANS_SERIF_BOLD_SMALL}" size="1.0" align="center" colour="23,23,23" value="…and others I'm probably forgetting! (Sorry)" />
     
     <text x="240" y="252" font="{LATIN_SANS_SERIF_ITALIC_SMALL}" align="center" size="1.0" colour="red" value="Happy Manga Reading!" />
     

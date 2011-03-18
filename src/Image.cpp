@@ -30,11 +30,12 @@
 #define _Image_CPP
 
 // BEGIN Includes
+#include "xM/Engine/ResourceManager.h"
 #include "xM/Gfx/Graphics.h"
 #include "xM/Gfx/Image.h"
+#include "xM/Gfx/PicoPNG.h"
 #include "xM/Util/Log.h"
 #include "xM/Util/Utils.h"
-#include "xM/Gfx/PicoPNG.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -73,45 +74,7 @@ namespace xM {
 
             this->reset();
 
-            SceUID fD = sceIoOpen(file.c_str(), PSP_O_RDONLY, 0777);
-
-            if (fD < 0) {
-
-                if (__xM_DEBUG)
-                    Util::logMsg("Image::loadFile — Unable to open image file. [%s]", file.c_str());
-
-                return false;
-
-            }
-
-            // Seek to end of file
-            long imageSize = sceIoLseek32(fD, 0, PSP_SEEK_END);
-
-            if (__xM_DEBUG)
-                Util::logMsg("Image size: %d", (int) imageSize);
-
-            // Back to the beginning
-            sceIoLseek(fD, 0, 0);
-
-            unsigned char* buffer = (unsigned char*) malloc(imageSize);
-
-            if (buffer == NULL) {
-
-                if (__xM_DEBUG)
-                    Util::logMsg("Image::loadFile — Unable to allocate memory.");
-
-                return false;
-
-            }
-
-            if (__xM_DEBUG)
-                printf("Before read.\n");
-
-            // Read in the png
-            sceIoRead(fD, buffer, imageSize);
-            
-            // Close
-            sceIoClose(fD);
+            std::string imageBuffer = Engine::ResourceManager::getInstance()->getRes(file);
 
             if (__xM_DEBUG)
                 printf("Before decode.\n");
@@ -119,7 +82,7 @@ namespace xM {
             ImageSegment mainSegment;
 
             // Decode the png
-            decodePNG(mainSegment.pixels, mainSegment.width, mainSegment.height, (const unsigned char*) buffer, imageSize, true);
+            decodePNG(mainSegment.pixels, mainSegment.width, mainSegment.height, (const unsigned char*) imageBuffer.c_str(), imageBuffer.size(), true);
 
             if (__xM_DEBUG)
                 printf("After decode.\n");
@@ -131,9 +94,6 @@ namespace xM {
             this->height = mainSegment.height;
             this->p2Width = mainSegment.p2Width;
             this->p2Height = mainSegment.p2Height;
-
-            // Well, no need for the buffer now
-            free(buffer);
 
             if (!(mainSegment.width > 512 || mainSegment.height > 512)) {
 

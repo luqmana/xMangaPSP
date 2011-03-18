@@ -32,6 +32,7 @@
 // BEGIN Includes
 #include "xM/Engine/FileManager.h"
 #include "xM/Gfx/Image.h"
+#include <intraFontG/intraFont.h>
 
 #include <string>
 #include <map>
@@ -53,6 +54,9 @@ namespace xM {
                  * This will be a singleton class so no need for a public constructor.
                  */
                 ResourceManager(void) { };
+                
+                std::map<const std::string, intraFont*> fonts;
+                std::map<const std::string, Gfx::Image*> images;
                                             		
 		    public:
 		    
@@ -83,6 +87,15 @@ namespace xM {
 		        Gfx::Image* getImage(const std::string& image);
 		        
 		        /**
+		         * Returns a cached font. If not cached, loads it.
+		         * 
+		         * @param const std::string& font The font.
+		         *
+		         * @return intraFont* The font.
+		         */
+		        intraFont* getFont(const std::string& font);
+		        
+		        /**
 		         * A magic wrapper for the FileManager.
 		         * 
 		         * Tries to load a resource from different sources. PSAR, Resource File (resources.zip), FS (in that order)
@@ -99,4 +112,4 @@ namespace xM {
 
 }
 
-#endif /* _FileManager_H */
+#endif /* _ResourceManager_H */
