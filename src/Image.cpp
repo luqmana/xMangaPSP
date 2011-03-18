@@ -75,6 +75,9 @@ namespace xM {
             this->reset();
 
             std::string imageBuffer = Engine::ResourceManager::getInstance()->getRes(file);
+            
+            if (imageBuffer == "")
+                return false;
 
             if (__xM_DEBUG)
                 printf("Before decode.\n");

@@ -29,6 +29,7 @@
 #define _Text_CPP
 
 // BEGIN Includes
+#include "xM/Engine/ResourceManager.h"
 #include "xM/Gfx/Text.h"
 #include "xM/Util/Log.h"
 
@@ -156,7 +157,7 @@ namespace xM {
             }
             
             // Load the font
-            this->font = intraFontLoad(file.str().c_str(), loadOps);
+            this->font = new intraFont(*Engine::ResourceManager::getInstance()->getFont(file.str(), loadOps));
                         
             if (!this->font) {
             
@@ -248,7 +249,7 @@ namespace xM {
             }
             
             // Load the font
-            altFont = intraFontLoad(file.str().c_str(), loadOps);
+            altFont = new intraFont(*Engine::ResourceManager::getInstance()->getFont(file.str(), loadOps));
                         
             if (!altFont) {
             

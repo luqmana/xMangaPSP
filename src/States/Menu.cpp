@@ -31,6 +31,7 @@
 // BEGIN Includes
 #include "xM/Engine/FileManager.h"
 #include "xM/Engine/InputManager.h"
+#include "xM/Engine/ResourceManager.h"
 #include "xM/Engine/StateManager.h"
 #include "xM/Net/Net.h"
 #include "xM/States/About.h"
@@ -49,6 +50,9 @@ namespace xM {
          * Start up code.
          */
         void Menu::init(void) {
+        
+            // Cache it for the about state
+            Engine::ResourceManager::getInstance()->getImage("genesis.png");
                                 
             doAction = false;
             

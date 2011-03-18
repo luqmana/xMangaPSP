@@ -105,7 +105,7 @@ namespace xM {
 
             Ui::XMLParser parser;
             
-            Gfx::Image genesisSplash;
+            Gfx::Image* genesisSplash;
                         
             int action;
             int state;

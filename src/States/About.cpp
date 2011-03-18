@@ -30,6 +30,7 @@
 
 // BEGIN Includes
 #include "xM/Engine/InputManager.h"
+#include "xM/Engine/ResourceManager.h"
 #include "xM/Engine/StateManager.h"
 #include "xM/States/About.h"
 #include "xM/Util/Log.h"
@@ -52,7 +53,7 @@ namespace xM {
             parser.registerCustomElementHandler("bouncyBox", this);
             parser.parseFile("ui/about.xml");
             
-            genesisSplash.loadFile("genesis.png");
+            genesisSplash = Engine::ResourceManager::getInstance()->getImage("genesis.png");
                                                 
         }
 
@@ -134,7 +135,7 @@ namespace xM {
             if (state == 0)    
                 parser.draw();
             else if (state == 1)
-                genesisSplash.draw(0, 0);
+                genesisSplash->draw(0, 0);
             
         }
         

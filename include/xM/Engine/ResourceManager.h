@@ -55,7 +55,7 @@ namespace xM {
                  */
                 ResourceManager(void) { };
                 
-                std::map<const std::string, intraFont*> fonts;
+                std::map<std::pair<std::string, unsigned int>, intraFont*> fonts;
                 std::map<const std::string, Gfx::Image*> images;
                                             		
 		    public:
@@ -90,10 +90,11 @@ namespace xM {
 		         * Returns a cached font. If not cached, loads it.
 		         * 
 		         * @param const std::string& font The font.
+		         * @param unsigned int loadOps Font loading options.
 		         *
 		         * @return intraFont* The font.
 		         */
-		        intraFont* getFont(const std::string& font);
+		        intraFont* getFont(const std::string& font, unsigned int loadOps);
 		        
 		        /**
 		         * A magic wrapper for the FileManager.

@@ -75,7 +75,19 @@ namespace xM {
          */
         Gfx::Image* ResourceManager::getImage(const std::string& image) {
         
-            return NULL;
+            // Check if cached
+            if (images.find(image) != images.end())
+                return images.find(image)->second;
+                
+            // Not cached :(
+            Gfx::Image* img = new Gfx::Image;
+            
+            if (!img->loadFile(image))
+                return NULL;
+            
+            images.insert(std::pair<const std::string, Gfx::Image*>(image, img));
+            
+            return img;
         
         }
         
@@ -83,12 +95,27 @@ namespace xM {
          * Returns a cached font. If not cached, loads it.
          * 
          * @param const std::string& font The font.
+         * @param unsigned int loadOps Font loading options.
          *
          * @return intraFont* The font.
          */
-        intraFont* ResourceManager::getFont(const std::string& font) {
+        intraFont* ResourceManager::getFont(const std::string& font, unsigned int loadOps) {
         
-            return NULL;
+            std::pair<const std::string, unsigned int> key = std::pair<const std::string, unsigned int>(font, loadOps);
+        
+            // Check if cached
+            if (fonts.find(key) != fonts.end())
+                return fonts.find(key)->second;
+                
+            // Not cached :(
+            intraFont* iFont = intraFontLoad(font.c_str(), loadOps);
+            
+            if (!iFont)
+                return NULL;
+            
+            fonts.insert(std::pair<std::pair<const std::string, unsigned int>, intraFont*>(key, iFont));
+            
+            return iFont;
         
         }
         
