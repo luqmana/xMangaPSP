@@ -88,7 +88,7 @@ namespace xM {
                 
                 // actually maxList
                 customElement->height = customElement->width + customElement->colour;
-                            
+                                            
             }
                     
         }
@@ -143,8 +143,9 @@ namespace xM {
                 maxItems = customElement->colour;
                                 
                 unsigned int selected = *((unsigned int*) customElement->custom1);
+                unsigned int oldSelected = customElement->shadowColour;
                 std::vector<std::string>* list = (std::vector<std::string>*) customElement->custom2;
-                                
+                                                
                 // BEGIN Menu Traversing Logic
                 if (selected < minList) {
 

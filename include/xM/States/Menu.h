@@ -88,6 +88,7 @@ namespace xM {
 
             Ui::XMLParser parser;
             Ui::ExtraElements* extraElements;
+            Ui::ListInfo lInfo;
                         
             bool doAction;
             

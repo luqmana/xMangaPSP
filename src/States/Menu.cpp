@@ -67,7 +67,8 @@ namespace xM {
             
             extraElements = new Ui::ExtraElements;
             
-            Ui::ListInfo lInfo = {&this->selected, &this->menuList};
+            lInfo.selected = &this->selected;
+            lInfo.list = &this->menuList;
 
             parser.registerCustomElementHandler("list", extraElements, (void*)&lInfo);
             parser.registerCustomElementHandler("bouncyBox", extraElements);

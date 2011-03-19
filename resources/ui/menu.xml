@@ -29,5 +29,9 @@
     
     <text x="5" y="265" font="{SYMBOLS}" align="left" size="1.0" colour="23,23,23" value="" />
     <text x="25" y="261" font="{LATIN_SERIF_REGULAR_SMALL}" align="left" size="1.0" colour="73,73,73" value="- Select" />
+    
+    <!-- Just for caching purposes. -->
+    <text x="2" y="2" font="{LATIN_SANS_SERIF_BOLD_SMALL}" size="1.0" colour="white,0" value="" />
+    <text x="2" y="2" font="{LATIN_SANS_SERIF_ITALIC_SMALL}" size="1.0" colour="white,0" value="" />
             
 </window>

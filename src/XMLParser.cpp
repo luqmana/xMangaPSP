@@ -516,10 +516,7 @@ namespace xM {
                                                                     
                     // Call the back
                     customElementHandler->second->initElement(this, uiElement, data);
-                    
-                    if (data != NULL)
-                        customElementHandlersData.erase(xmlElement->Value());
-                
+                                    
                 } else {
                     
                     delete uiElement;
@@ -722,8 +719,14 @@ namespace xM {
          */
         void XMLParser::deRegisterCustomElementHandler(const std::string& element) {
         
-            if (this->customElementHandlers.find(element) != this->customElementHandlers.end())
+            if (this->customElementHandlers.find(element) != this->customElementHandlers.end()) {
+            
                 this->customElementHandlers.erase(element);
+                
+                if (this->customElementHandlersData.find(element) != this->customElementHandlersData.end())
+                    this->customElementHandlersData.erase(element);
+                
+            }
         
         }
 

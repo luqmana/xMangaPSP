@@ -100,7 +100,7 @@ namespace xM {
                         
                 if (this->lastButtons == this->pad.Buttons) {
                                                         
-                    if (this->repeatTimer.getDeltaTicks(false) > 0.35) {
+                    if (this->repeatTimer.getDeltaTicks(false) > 0.25) {
                     
                         this->repeatButtons = this->pad.Buttons;
                         this->repeat = true;
