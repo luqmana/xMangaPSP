@@ -55,12 +55,8 @@ namespace xM {
             Engine::ResourceManager::getInstance()->getImage("genesis.png");
                                             
             doAction = false;
-            
             activeDialog = 0;
-
-            parser.registerCustomElementHandler("menuList", this);
-            parser.registerCustomElementHandler("bouncyBox", this);
-            parser.parseFile("ui/menu.xml");
+            selected = 0;
             
             this->menuList.push_back("Read Manga");
             this->menuList.push_back("Recent Manga");
@@ -68,7 +64,15 @@ namespace xM {
             this->menuList.push_back("Options");
             this->menuList.push_back("About");
             this->menuList.push_back("Quit");
-                                                
+            
+            extraElements = new Ui::ExtraElements;
+            
+            Ui::ListInfo lInfo = {&this->selected, &this->menuList};
+
+            parser.registerCustomElementHandler("list", extraElements, (void*)&lInfo);
+            parser.registerCustomElementHandler("bouncyBox", extraElements);
+            parser.parseFile("ui/menu.xml");
+                                                            
         }
 
         /**
@@ -76,8 +80,10 @@ namespace xM {
          */
         void Menu::cleanUp(void) {
 
-            parser.deRegisterCustomElementHandler("menuList");
+            parser.deRegisterCustomElementHandler("list");
             parser.deRegisterCustomElementHandler("bouncyBox");
+            
+            delete extraElements;
             
         }
 
@@ -138,26 +144,14 @@ namespace xM {
 	            activeDialog = 0;
 	            
 	        }
-                            
-            // BEGIN Menu Traversing Logic
-	        if ((signed int)this->selected < 0)
-		        this->selected = 0;
-	        if (this->selected > (this->menuList.size() - 1))
-		        this->selected = this->menuList.size() - 1;
-	        if (this->selected < this->minList) {
-	
-		        this->minList = this->selected;
-		        this->maxList = this->minList + this->maxItems;	
-		
-	        }
-	        if (this->selected > this->maxList) {
-	
-		        this->maxList = this->selected;
-		        this->minList = this->maxList - this->maxItems;
-	
-	        }
-	        // END Menu Traversing Logic
 	        
+	        // BEGIN Menu Traversing Logic
+	        if ((signed int)this->selected < 0)
+                this->selected = 0;
+            if (this->selected > (this->menuList.size() - 1))
+                this->selected = this->menuList.size() - 1;
+            // END Menu Traversing Logic
+                            	        
 	        if (doAction) {
 	        
 	            switch (selected) {
@@ -210,167 +204,7 @@ namespace xM {
             parser.draw();
             
         }
-        
-        /**
-         * A callback function definition to handle the setup of a custom element read from XML UI file.
-         * 
-         * @param XMLParser* parser Pointer to the current XML parser.
-         * @param Element* customElement The custom element to be setup.
-         */
-        void Menu::initElement(Ui::XMLParser* parser, Ui::Element* customElement) {
-        
-            if (customElement->name == "menuList") {
-        
-                customElement->x = Util::stringToInt(customElement->attributes["x"]);
-                customElement->y = Util::stringToInt(customElement->attributes["y"]);
                 
-                this->maxItems = Util::stringToInt(customElement->attributes["maxItems"]) - 1;
-                this->minList = 0;
-                this->selected = 0;
-                this->maxList = this->minList + this->maxItems;
-            
-            } else if (customElement->name == "bouncyBox") {
-
-                customElement->colour = (customElement->attributes.find("colour") == customElement->attributes.end()) ? Gfx::Colour::GRAY : Gfx::colourFromString(customElement->attributes["colour"]);
-                customElement->width = (customElement->width == 0) ? 50 : customElement->width;
-                customElement->height = (customElement->height == 0) ? 50 : customElement->height;
-                
-                customElement->rotate = 0;
-                
-                // Not actually size, but a modifier for the rotatation
-                customElement->size = ((rand() % 4 + 1) % 2) ? 1 : -1;
-                
-                customElement->timer = new Util::Timer;
-                customElement->timer->start();
-                
-                // now these are actually velocities, but stored in offset variable
-                customElement->offsetX = (rand() % 4 + 1);
-                customElement->offsetY = (rand() % 4 + 1);
-            
-            }
-                    
-        }
-        
-        /**
-         * A callback function definition to handle custom elements in an XML UI file.
-         * 
-         * @param XMLParser* parser Pointer to the current XML parser.
-         * @param Element* customElement The custom element to be rendered.
-         */
-        void Menu::renderElement(Ui::XMLParser* parser, Ui::Element* customElement) {
-            
-            if (customElement->name == "menuList") {
-            
-                unsigned int i = this->minList;
-                std::string itemText;
-                int x = customElement->x;
-                int y = customElement->y;
-                
-                do {
-
-	                // Make sure to only show 4
-	                if (i >= this->menuList.size())
-		                break;
-	
-	                // Get the item name
-	                itemText = this->menuList[i];
-	                
-	                if (i == selected) {
-				
-                        for (unsigned int k = 0; k < customElement->children.size(); k++) {
-	                    
-	                        if (customElement->children[k]->attributes["whence"] == "active") {
-                                
-                                customElement->children[k]->x = x;
-                                customElement->children[k]->y = y;
-                                
-                                if (customElement->children[k]->type == Ui::TEXT)
-                                    customElement->children[k]->text = itemText;
-                                
-                                parser->renderElement(customElement->children[k]);
-                                    
-                            }
-                            	            
-                        }
-                    
-                    } else {
-				
-                        for (unsigned int k = 0; k < customElement->children.size(); k++) {
-	                    
-	                        if (customElement->children[k]->attributes["whence"] == "inactive") {
-                            
-                                customElement->children[k]->x = x;
-                                customElement->children[k]->y = y;
-                                
-                                if (customElement->children[k]->type == Ui::TEXT)
-                                    customElement->children[k]->text = itemText;
-                                
-                                parser->renderElement(customElement->children[k]);
-                            
-                            }
-                            	            
-                        }
-                    
-                    }
-                    
-                    for (unsigned int k = 0; k < customElement->children.size(); k++) {
-                    
-                        if (this->minList > 0 && customElement->children[k]->attributes["whence"] == "scrollup") {
-                        
-                            parser->renderElement(customElement->children[k]);
-                        
-                        } else if (this->maxList < (this->menuList.size() - 1) && customElement->children[k]->attributes["whence"] == "scrolldown") {
-                        
-                            parser->renderElement(customElement->children[k]);
-                        
-                        }
-                        	            
-                    }
-                    	                	
-	                x += customElement->offsetX;
-	                y += customElement->offsetY;
-	                i++;
-
-                } while (i <= this->maxList);
-                
-            }  else if (customElement->name == "bouncyBox") {
-            
-                customElement->x += customElement->offsetX;
-                customElement->y += customElement->offsetY;
-                                
-                customElement->rotate -= ((float)(rand() % 3 + 1) * customElement->timer->getDeltaTicks(true)) * customElement->size;
-                
-                if ((customElement->x + customElement->width) > 480 || customElement->x < 0) {
-                
-                    customElement->offsetX = (rand() % 4 + 1);
-                    customElement->offsetX *= (customElement->x < 0) ? 1 : -1;
-                    customElement->x += customElement->offsetX; 
-                    
-                    // Change rotation direction
-                    customElement->size *= -1;
-                    
-                }
-                
-                if ((customElement->y + customElement->height) > 272 || customElement->y < 0) {
-                
-                    customElement->offsetY = (rand() % 4 + 1);
-                    customElement->offsetY *= (customElement->y < 0) ? 1 : -1;
-                    customElement->y += customElement->offsetY; 
-                    
-                    // Change rotation direction
-                    customElement->size *= -1;
-                    
-                }
-                
-                // Let it render a quad
-                customElement->type = Ui::QUAD;
-                parser->renderElement(customElement);
-                customElement->type = Ui::CUSTOM;
-            
-            }
-        
-        }
-
     }
 
 }

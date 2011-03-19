@@ -34,8 +34,7 @@
 #include "xM/Gfx/Graphics.h"
 #include "xM/Gfx/Image.h"
 #include "xM/Gfx/Text.h"
-#include "xM/Ui/Element.h"
-#include "xM/Ui/CustomElementHandler.h"
+#include "xM/Ui/ExtraElements.h"
 #include "xM/Ui/XMLParser.h"
 // END Includes
 
@@ -47,7 +46,7 @@ namespace xM {
 
     namespace States {
 
-        class Menu : public Base, public Ui::CustomElementHandler {
+        class Menu : public Base {
         public:
 
             /**
@@ -84,35 +83,17 @@ namespace xM {
              * Done with the logic? Draw what's needed then.
              */
             void draw(void);
-            
-            /**
-             * A callback function definition to handle the setup of a custom element read from XML UI file.
-             * 
-             * @param XMLParser* parser Pointer to the current XML parser.
-             * @param Element* customElement The custom element to be setup.
-             */
-            virtual void initElement(Ui::XMLParser* parser, Ui::Element* customElement);
-            
-            /**
-             * A callback function definition to handle rendering custom elements in an XML UI file.
-             * 
-             * @param XMLParser* parser Pointer to the current XML parser.
-             * @param Element* customElement The custom element to be rendered.
-             */
-            virtual void renderElement(Ui::XMLParser* parser, Ui::Element* customElement);
 
         private:
 
             Ui::XMLParser parser;
+            Ui::ExtraElements* extraElements;
                         
             bool doAction;
             
             int activeDialog;
             
             std::vector<std::string> menuList;
-            unsigned int maxItems;
-            unsigned int minList;
-            unsigned int maxList;
             unsigned int selected;
 
         };

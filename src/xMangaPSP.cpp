@@ -131,10 +131,10 @@ int main(int argc, char **argv) {
         // Handle logic and update unless dialog active    
         if (!Ui::Dialog::isDialogActive())
             stateManager->handleLogic();
-                        
+                    
         // Draw
         stateManager->draw();
-        
+                
         // Toggle stats
         if (__xM_DEBUG && inputManager->pressed(PSP_CTRL_RTRIGGER))
             showFPSMEM = !showFPSMEM;

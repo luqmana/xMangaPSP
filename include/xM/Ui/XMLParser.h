@@ -57,6 +57,7 @@ namespace xM {
             std::string file;
             std::vector<Element*> uiElements;
             std::map<std::string, CustomElementHandler*> customElementHandlers;
+            std::map<std::string, void*> customElementHandlersData;
         
         public:
             
@@ -101,8 +102,9 @@ namespace xM {
              * 
              * @param const std::string& element The custom element.
              * @param CustomElementHandler* handler Pointer to the handling class.
+             * @param void* data[optional] Some extra data to pass to handler on init.
              */
-            void registerCustomElementHandler(const std::string& element, CustomElementHandler* handler);
+            void registerCustomElementHandler(const std::string& element, CustomElementHandler* handler, void* data = NULL);
             
             /**
              * Deregister a custom element handler.

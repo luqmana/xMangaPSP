@@ -13,7 +13,7 @@
     
     <text x="240" y="75" font="{LATIN_SANS_SERIF_ITALIC_BOLD}" align="center" size="1.0" colour="36,36,36" value="Choose an option:" />
         
-    <menuList x="240" y="120" offsetX="0" offsetY="25" maxItems="4">
+    <list x="240" y="120" offsetX="0" offsetY="25" maxItems="4">
     
         <text whence="scrolldown" x="310" y="120" font="{SYMBOLS}" align="center" size="1.0" colour="gray" value="" />
         <text whence="scrollup" x="310" y="120" font="{SYMBOLS}" align="center" size="1.0" colour="black" value="" />
@@ -25,7 +25,7 @@
         <text whence="scrollup" x="310" y="190" font="{SYMBOLS}" align="center" size="1.0" colour="gray" rotate="180" value="" />
         <text whence="scrolldown" x="310" y="190" font="{SYMBOLS}" align="center" size="1.0" colour="black" rotate="180" value="" />
     
-    </menuList>
+    </list>
     
     <text x="5" y="265" font="{SYMBOLS}" align="left" size="1.0" colour="23,23,23" value="" />
     <text x="25" y="261" font="{LATIN_SERIF_REGULAR_SMALL}" align="left" size="1.0" colour="73,73,73" value="- Select" />

@@ -33,6 +33,7 @@
 #include "xM/Engine/ResourceManager.h"
 #include "xM/Engine/StateManager.h"
 #include "xM/States/About.h"
+#include "xM/Ui/ExtraElements.h"
 #include "xM/Util/Log.h"
 #include "xM/Util/Timer.h"
 #include "xM/Util/Utils.h"
@@ -49,8 +50,10 @@ namespace xM {
                                 
             action = 0;
             state = 0;
+            
+            extraElements = new Ui::ExtraElements();
 
-            parser.registerCustomElementHandler("bouncyBox", this);
+            parser.registerCustomElementHandler("bouncyBox", extraElements);
             parser.parseFile("ui/about.xml");
             
             genesisSplash = Engine::ResourceManager::getInstance()->getImage("genesis.png");
@@ -64,6 +67,8 @@ namespace xM {
         void About::cleanUp(void) {
 
             parser.deRegisterCustomElementHandler("bouncyBox");
+            
+            delete extraElements;
             
         }
 
@@ -140,82 +145,6 @@ namespace xM {
             
         }
         
-        /**
-         * A callback function definition to handle the setup of a custom element read from XML UI file.
-         * 
-         * @param XMLParser* parser Pointer to the current XML parser.
-         * @param Element* customElement The custom element to be setup.
-         */
-        void About::initElement(Ui::XMLParser* parser, Ui::Element* customElement) {
-        
-            if (customElement->name == "bouncyBox") {
-
-                customElement->colour = (customElement->attributes.find("colour") == customElement->attributes.end()) ? Gfx::Colour::GRAY : Gfx::colourFromString(customElement->attributes["colour"]);
-                customElement->width = (customElement->width == 0) ? 50 : customElement->width;
-                customElement->height = (customElement->height == 0) ? 50 : customElement->height;
-                
-                customElement->rotate = 0;
-                
-                // Not actually size, but a modifier for the rotatation
-                customElement->size = ((rand() % 4 + 1) % 2) ? 1 : -1;
-                
-                customElement->timer = new Util::Timer;
-                customElement->timer->start();
-                
-                // now these are actually velocities, but stored in offset variable
-                customElement->offsetX = (rand() % 4 + 1);
-                customElement->offsetY = (rand() % 4 + 1);
-            
-            }
-                    
-        }
-        
-        /**
-         * A callback function definition to handle custom elements in an XML UI file.
-         * 
-         * @param XMLParser* parser Pointer to the current XML parser.
-         * @param Element* customElement The custom element to be rendered.
-         */
-        void About::renderElement(Ui::XMLParser* parser, Ui::Element* customElement) {
-            
-            if (customElement->name == "bouncyBox") {
-            
-                customElement->x += customElement->offsetX;
-                customElement->y += customElement->offsetY;
-                                
-                customElement->rotate -= ((float)(rand() % 3 + 1) * customElement->timer->getDeltaTicks(true)) * customElement->size;
-                
-                if ((customElement->x + customElement->width) > 480 || customElement->x < 0) {
-                
-                    customElement->offsetX = (rand() % 4 + 1);
-                    customElement->offsetX *= (customElement->x < 0) ? 1 : -1;
-                    customElement->x += customElement->offsetX; 
-                    
-                    // Change rotation direction
-                    customElement->size *= -1;
-                    
-                }
-                
-                if ((customElement->y + customElement->height) > 272 || customElement->y < 0) {
-                
-                    customElement->offsetY = (rand() % 4 + 1);
-                    customElement->offsetY *= (customElement->y < 0) ? 1 : -1;
-                    customElement->y += customElement->offsetY; 
-                    
-                    // Change rotation direction
-                    customElement->size *= -1;
-                    
-                }
-                
-                // Let it render a quad
-                customElement->type = Ui::QUAD;
-                parser->renderElement(customElement);
-                customElement->type = Ui::CUSTOM;
-            
-            }
-        
-        }
-
     }
 
 }

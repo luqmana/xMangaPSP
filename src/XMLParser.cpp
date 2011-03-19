@@ -113,10 +113,10 @@ namespace xM {
             if (xmlElement->QueryDoubleAttribute("y", &uiElement->y) != TIXML_SUCCESS) {
                 uiElement->y = 0;
             }
-            if (xmlElement->QueryDoubleAttribute("width", &uiElement->width) != TIXML_SUCCESS) {
+            if (xmlElement->QueryIntAttribute("width", (int*)&uiElement->width) != TIXML_SUCCESS) {
                 uiElement->width = 0;
             }
-            if (xmlElement->QueryDoubleAttribute("height", &uiElement->height) != TIXML_SUCCESS) {
+            if (xmlElement->QueryIntAttribute("height",(int*) &uiElement->height) != TIXML_SUCCESS) {
                 uiElement->height = 0;
             }
             if (xmlElement->QueryDoubleAttribute("offsetX", &uiElement->offsetX) != TIXML_SUCCESS) {
@@ -467,10 +467,10 @@ namespace xM {
             
                 uiElement->type = IMAGE;
                 
-                if (xmlElement->QueryDoubleAttribute("width", &uiElement->width) != TIXML_SUCCESS) {
+                if (xmlElement->QueryIntAttribute("width", (int*)&uiElement->width) != TIXML_SUCCESS) {
                     uiElement->width = 0;
                 }
-                if (xmlElement->QueryDoubleAttribute("height", &uiElement->height) != TIXML_SUCCESS) {
+                if (xmlElement->QueryIntAttribute("height", (int*)&uiElement->height) != TIXML_SUCCESS) {
                     uiElement->height = 0;
                 }                    
                 
@@ -508,9 +508,17 @@ namespace xM {
                         innerChild = innerChild->NextSibling();    
                             
                     }
+                    
+                    void* data = NULL;
+                    
+                    if (customElementHandlersData.find(xmlElement->Value()) != customElementHandlersData.end())
+                        data = customElementHandlersData.find(xmlElement->Value())->second;
                                                                     
                     // Call the back
-                    customElementHandler->second->initElement(this, uiElement);
+                    customElementHandler->second->initElement(this, uiElement, data);
+                    
+                    if (data != NULL)
+                        customElementHandlersData.erase(xmlElement->Value());
                 
                 } else {
                     
@@ -687,16 +695,23 @@ namespace xM {
          * 
          * @param const std::string& element The custom element.
          * @param CustomElementHandler* handler Pointer to the handling class.
+         * @param void* data[optional] Some extra data to pass to handler on init.
          */
-        void XMLParser::registerCustomElementHandler(const std::string& element, CustomElementHandler* handler) {
+        void XMLParser::registerCustomElementHandler(const std::string& element, CustomElementHandler* handler, void* data) {
         
             if (this->customElementHandlers.find(element) != this->customElementHandlers.end()) {
               
                 if (__xM_DEBUG)
                     Util::logMsg("XMLParser::registerCustomElementHandler — Custom element handler already registered for element '%s'.", element.c_str());
                 
-            } else
+            } else {
+                        
                 this->customElementHandlers.insert(std::pair<std::string, CustomElementHandler*>(element, handler));
+                
+                if (data != NULL)
+                    this->customElementHandlersData.insert(std::pair<std::string, void*>(element, data));
+                
+            }
         
         }
         
