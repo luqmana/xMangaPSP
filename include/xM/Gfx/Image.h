@@ -58,13 +58,13 @@ namespace xM {
 
         class Image {
         private:
-
-            unsigned int width, height;
-            unsigned int p2Width, p2Height;
             std::vector<ImageSegment> segments;
             bool swizzled;
 
         public:
+        
+            unsigned int width, height;
+            unsigned int p2Width, p2Height;
 
             /**
              * Default constructor.

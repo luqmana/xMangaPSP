@@ -35,6 +35,7 @@
 #include "xM/Engine/ResourceManager.h"
 #include "xM/Engine/StateManager.h"
 #include "xM/Gfx/Graphics.h"
+#include "xM/Manga/MangaAPI.h"
 #include "xM/Net/Net.h"
 #include "xM/States/Menu.h"
 #include "xM/Stn/Callbacks.h"
@@ -87,6 +88,9 @@ int main(int argc, char **argv) {
     
     // Initiate network support
     Net::init();
+    
+    // Initiate the Manga API Handler
+    Manga::initMangaAPIThread();
     
     // Initiate the FileManager
     Engine::FileManager* fileManager = Engine::FileManager::getInstance();
@@ -147,11 +151,16 @@ int main(int argc, char **argv) {
             
         }
         
+        // Render a semi-transparent black quad covering the whole screen to
+        // make dialogs better visible
+        if (Ui::Dialog::isDialogActive())
+            Gfx::drawQuad(0, 0, 480, 272, GU_COLOR(0.0f, 0.0f, 0.0f, 0.5f), 0);
+        
         // End frame
         Gfx::endFrame();
 
         // Draw any active dialogs
-        if (Ui::Dialog::isDialogActive())
+        if (Ui::Dialog::isDialogActive())            
             Ui::Dialog::renderDialogs();
         
         // V-Sync and swap buffers
@@ -176,6 +185,9 @@ int main(int argc, char **argv) {
     
     // Delete pointer to singleton FileManager
     delete Engine::FileManager::fMInstance;
+    
+    // Shutdown the Manga API Handler
+    Manga::shutdownMangaAPIThread();
     
     // Shutdown network stuff
     Net::shutdown();

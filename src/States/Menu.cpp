@@ -33,7 +33,6 @@
 #include "xM/Engine/InputManager.h"
 #include "xM/Engine/ResourceManager.h"
 #include "xM/Engine/StateManager.h"
-#include "xM/Net/Net.h"
 #include "xM/States/About.h"
 #include "xM/States/Menu.h"
 #include "xM/Ui/Dialogs.h"
@@ -73,6 +72,15 @@ namespace xM {
             parser.registerCustomElementHandler("list", extraElements, (void*)&lInfo);
             parser.registerCustomElementHandler("bouncyBox", extraElements);
             parser.parseFile("ui/menu.xml");
+            
+            SceKernelMsgPacket hdr = {0};
+            
+            msg = new Manga::APIMessage;
+            msg->header = hdr;
+            
+            msgText = new std::string("The text.");
+            
+            Ui::Dialog::net();
                                                             
         }
 
@@ -85,6 +93,7 @@ namespace xM {
             parser.deRegisterCustomElementHandler("bouncyBox");
             
             delete extraElements;
+            delete msgText;
             
         }
 
@@ -159,6 +168,10 @@ namespace xM {
 	            
 	                case 0:
 	                
+	                    msg->text = msgText;
+	                    
+	                    sceKernelSendMbx(Manga::mangaAPIMbx, (void*)msg);
+	                
 	                    break;
 	                    
 	                case 1:
@@ -186,11 +199,12 @@ namespace xM {
 	                
 	                    Ui::Dialog::msg("Do you want quit xMangaPSP?", true);
 	                    activeDialog = 1;
-	                    doAction = false;
-	                
+	                    	                
 	                    break;
 	            
 	            }
+	            
+	            doAction = false;
 	        
 	        }
 	        	        
@@ -203,7 +217,7 @@ namespace xM {
                                 
             // Draw based on XML
             parser.draw();
-            
+                        
         }
                 
     }

@@ -75,6 +75,7 @@ namespace xM {
             std::string text;
             double size, rotate;
             Alignment align;
+            std::string whence;
             Gfx::Text font;
             Gfx::Image* image;
             std::map<std::string, std::string> attributes;

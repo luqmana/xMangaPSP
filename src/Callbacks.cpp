@@ -88,10 +88,10 @@ namespace xM {
         void setupCallbacks(void) {
 
             // Create the thread
-            callbackThreadId = sceKernelCreateThread("StandardCallbackThread", callbackThread, 0x11, 0xFA0, 0, 0);
+            callbackThreadId = sceKernelCreateThread("StandardCallbackThread", callbackThread, 0x11, 0xFA0, PSP_THREAD_ATTR_USER, NULL);
 
             // Start it
-            sceKernelStartThread(callbackThreadId, 0, 0);
+            sceKernelStartThread(callbackThreadId, 0, NULL);
 
         }
 

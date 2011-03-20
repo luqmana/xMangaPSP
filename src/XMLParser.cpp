@@ -30,6 +30,7 @@
 
 // BEGIN Includes
 #include "xM/Engine/ResourceManager.h"
+#include "xM/Net/Net.h"
 #include "xM/Ui/XMLParser.h"
 #include "xM/Util/Log.h"
 #include "xM/Util/Utils.h"
@@ -151,7 +152,9 @@ namespace xM {
                 else
                     uiElement->align = LEFT;
             
-            }            
+            }           
+            
+            uiElement->whence = (xmlElement->Attribute("whence") != NULL) ? xmlElement->Attribute("whence") : ""; 
 
             // Specific elements
 
@@ -608,6 +611,11 @@ namespace xM {
          */
         void XMLParser::renderElement(Element* e) {
         
+            if (e->whence == "online" && !Net::isConnected())
+                return;
+            else if (e->whence == "offline" && Net::isConnected())
+                return;
+        
             switch (e->type) {
 
                 case QUAD:
@@ -654,8 +662,30 @@ namespace xM {
                     clip.y = e->offsetY;
                     clip.width = e->width;
                     clip.height = e->height;
+                                        
+                    switch (e->align) {
+                                                
+                        case RIGHT:
+                        
+                            e->image->draw(e->x - e->image->width + e->paddingLeft, e->y + e->paddingTop, &clip);
+                        
+                            break;
+                            
+                        case CENTER:
+                        case FULL:
+                        
+                            e->image->draw(e->x - (e->image->width / 2) + e->paddingLeft, e->y + e->paddingTop, &clip);
+                        
+                            break;
+                            
+                        case LEFT:
+                        default:
+                        
+                            e->image->draw(e->x + e->paddingLeft, e->y + e->paddingTop, &clip);
+                        
+                            break;
                     
-                    e->image->draw(e->x, e->y, &clip);
+                    }
 
                     break;
                     

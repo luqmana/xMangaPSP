@@ -143,7 +143,6 @@ namespace xM {
                 maxItems = customElement->colour;
                                 
                 unsigned int selected = *((unsigned int*) customElement->custom1);
-                unsigned int oldSelected = customElement->shadowColour;
                 std::vector<std::string>* list = (std::vector<std::string>*) customElement->custom2;
                                                 
                 // BEGIN Menu Traversing Logic
@@ -178,7 +177,7 @@ namespace xM {
 				
                         for (unsigned int k = 0; k < customElement->children.size(); k++) {
 	                    
-	                        if (customElement->children[k]->attributes["whence"] == "active") {
+	                        if (customElement->children[k]->whence == "active") {
                                 
                                 customElement->children[k]->x = x;
                                 customElement->children[k]->y = y;
@@ -196,7 +195,7 @@ namespace xM {
 				
                         for (unsigned int k = 0; k < customElement->children.size(); k++) {
 	                    
-	                        if (customElement->children[k]->attributes["whence"] == "inactive") {
+	                        if (customElement->children[k]->whence == "inactive") {
                             
                                 customElement->children[k]->x = x;
                                 customElement->children[k]->y = y;
@@ -214,11 +213,11 @@ namespace xM {
                     
                     for (unsigned int k = 0; k < customElement->children.size(); k++) {
                     
-                        if (minList > 0 && customElement->children[k]->attributes["whence"] == "scrollup") {
+                        if (minList > 0 && customElement->children[k]->whence == "scrollup") {
                         
                             parser->renderElement(customElement->children[k]);
                         
-                        } else if (maxList < (list->size() - 1) && customElement->children[k]->attributes["whence"] == "scrolldown") {
+                        } else if (maxList < (list->size() - 1) && customElement->children[k]->whence == "scrolldown") {
                         
                             parser->renderElement(customElement->children[k]);
                         
