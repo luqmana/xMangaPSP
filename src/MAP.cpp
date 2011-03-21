@@ -20,53 +20,27 @@
  */
  
 /**
- * Net stuff.
- * Header file.
+ * Manga Acquisition Protocol Implementation
  * 
  * @package xMangaPSP
  */
 
-#ifndef _Net_H
-#define _Net_H
+#ifndef _MAP_CPP
+#define _MAP_CPP
 
 // BEGIN Includes
-#include <string>
+#include "xM/Manga/MAP.h"
+#include "xM/Net/Net.h"
 // END Includes
 
 namespace xM {
 
-	namespace Net {
+	namespace Manga {
 			
-	    /**
-	     * Init the network modules.
-	     */
-		void init();
-		
-		/**
-		 * Checks whether PSP is connected to AP.
-		 * From Criptych @ ps2dev forums.
-		 * 
-		 * @return bool Connection state.
-		 */
-		bool isConnected();
-		
-		/**
-         * Download a file using cURL.
-         * 
-         * @param const std::string& url The url to download from.
-         * @param std::string &response Pointer to string object to populate with response. (Which can also be error message.)
-         * 
-         * @return bool Success
-         */ 
-        bool downloadFile(const std::string& url, std::string &response);
-		
-		/**
-		 * Shutdown the network modules.
-		 */
-		void shutdown();
+	    
 			
 	}
 
 }
 
-#endif /* _Net_H */
+#endif /* _MAP_CPP */

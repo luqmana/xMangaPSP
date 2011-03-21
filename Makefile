@@ -66,7 +66,7 @@
  INCDIR = $(SRC_DIR) $(SRC_DIR)/../include $(EXT_SRC_DIR) $(EXT_SRC_DIR)/../include $(PSPDEV)/psp/include/
  
  # Library Directories
- LIBS = -lzzip -lz -lpspgum -lpspgu -lm -lpsprtc -lpspsdk -lstdc++
+ LIBS = -lcurl -lzzip -lz -lpspgum -lpspgu -lm -lpsprtc -lpspsdk -lstdc++
  
  # Compiler Flags
  CFLAGS = -Wall $(COMPILER_DEFINES) -falign-functions=64

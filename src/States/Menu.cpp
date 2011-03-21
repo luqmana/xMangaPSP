@@ -78,7 +78,7 @@ namespace xM {
             msg = new Manga::APIMessage;
             msg->header = hdr;
             
-            msgText = new std::string("The text.");
+            msgText = new std::string("http://omp.leonex.co.cc/");
             
             Ui::Dialog::net();
                                                             
@@ -146,6 +146,21 @@ namespace xM {
          */
         void Menu::handleLogic(void) {
         
+            Manga::APIMessage* rMsg = NULL;
+            
+            sceKernelPollMbx(Manga::mangaAPIRMbx, (void**)&rMsg);
+                
+            if (rMsg != NULL) {
+            
+                if (activeDialog == 2)
+                    activeDialog = 0;
+                            
+                Ui::Dialog::msg(*rMsg->text);
+                
+                return;
+                
+            }
+                    
             if (activeDialog == 1) {
 	        
 	            if (Ui::Dialog::getMsgDialogResult() == Ui::Dialog::RESPONSE_YES)
@@ -167,10 +182,18 @@ namespace xM {
 	            switch (selected) {
 	            
 	                case 0:
-	                
-	                    msg->text = msgText;
+	                	                    
+	                    if (activeDialog != 2) {
 	                    
-	                    sceKernelSendMbx(Manga::mangaAPIMbx, (void*)msg);
+	                        msg->text = msgText;
+	                    
+	                        sceKernelSendMbx(Manga::mangaAPIWMbx, (void*)msg);
+	                    
+	                        // not really a dialog
+	                        // but allows some control
+	                        activeDialog = 2;
+	                        
+	                    }
 	                
 	                    break;
 	                    

@@ -20,53 +20,49 @@
  */
  
 /**
- * Net stuff.
+ * MAP Co-ordinator
  * Header file.
  * 
  * @package xMangaPSP
  */
 
-#ifndef _Net_H
-#define _Net_H
+#ifndef _MangaAPI_H
+#define _MangaAPI_H
 
 // BEGIN Includes
+//#include "xM/Manga/MAP.h"
+
+#include <pspkernel.h>
+
 #include <string>
 // END Includes
 
 namespace xM {
 
-	namespace Net {
+	namespace Manga {
+	
+	    struct APIMessage {
+	    
+            SceKernelMsgPacket header;
+            std::string* text;
+            
+        };
+	
+	    extern SceUID mangaAPIWMbx;
+	    extern SceUID mangaAPIRMbx;
 			
+		/**
+		 * Setups the manga API handler thread.
+		 */
+	    void initMangaAPIThread();
+	    
 	    /**
-	     * Init the network modules.
+	     * Shuts down the manga API handler thread.
 	     */
-		void init();
-		
-		/**
-		 * Checks whether PSP is connected to AP.
-		 * From Criptych @ ps2dev forums.
-		 * 
-		 * @return bool Connection state.
-		 */
-		bool isConnected();
-		
-		/**
-         * Download a file using cURL.
-         * 
-         * @param const std::string& url The url to download from.
-         * @param std::string &response Pointer to string object to populate with response. (Which can also be error message.)
-         * 
-         * @return bool Success
-         */ 
-        bool downloadFile(const std::string& url, std::string &response);
-		
-		/**
-		 * Shutdown the network modules.
-		 */
-		void shutdown();
+	    void shutdownMangaAPIThread();
 			
 	}
 
 }
 
-#endif /* _Net_H */
+#endif /* _MangaAPI_H */
