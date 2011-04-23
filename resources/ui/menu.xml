@@ -7,6 +7,7 @@
         
     <!-- Background -->
     <quad x="0" y="0" width="480" height="272" colour="235,234,235,200" />
+    <image x="0" y="0" src="test5.jpg" />
     
     <quad x="0" y="0" width="480" height="30" colour="black,200" />
     <text x="240" y="20" font="{LATIN_SANS_SERIF_BOLD}" align="center" size="1.0" colour="red" shadowColour="90,0,0" value="xMangaPSP" />

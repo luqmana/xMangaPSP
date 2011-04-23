@@ -191,6 +191,7 @@ namespace xM {
         bool Image::isPNG(const std::string& imgBuffer) {
         	
         	unsigned char sig[8] = { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A };
+        	
         	unsigned char rsig[8];
         	
         	// Read in from the supposed png data
@@ -212,7 +213,21 @@ namespace xM {
          */
         bool Image::isJPEG(const std::string& imgBuffer) {
         
-        	return false;
+        	unsigned char bMagic[2] = { 0xFF, 0xD8 };
+        	unsigned char eMagic[2] = { 0xFF, 0xD9 };
+        	
+        	unsigned char cB[2];
+        	unsigned char cE[2];
+        	
+        	// Read in from the supposed jpg data
+        	memcpy(cB, &imgBuffer[0], 2);
+        	memcpy(cE, &imgBuffer[0] + (imgBuffer.size() - 2), 2);
+        	        	
+        	// Compare away!
+        	int rB = memcmp(bMagic, cB, 2);
+        	int rE = memcmp(eMagic, cE, 2);
+        	        
+        	return (rB == 0) && (rE == 0);
         
         }
         
@@ -238,12 +253,17 @@ namespace xM {
         		Util::logMsg("Loading PNG image...");
         		
         		// Decode the png
-            	decodePNG(destImg->pixels, destImg->width, destImg->height, (const unsigned char*) imgBuffer.c_str(), imgBuffer.size(), true);
+            	int r = decodePNG(destImg->pixels, destImg->width, destImg->height, (const unsigned char*) imgBuffer.c_str(), imgBuffer.size(), true);
+            	
+            	if (r != 0)
+            		return false;
         		
         	} else if (this->isJPEG(imgBuffer)) {
         	
         		// a JPEG! Oh joy!
         		Util::logMsg("Loading JPEG image...");
+        		
+        		return false;
         	
         	} else {
         	
@@ -345,6 +365,9 @@ namespace xM {
          * @param const ImageClip* clip Src blitting region.
          */
         void Image::draw(float x, float y, const ImageClip* clip) {
+
+			if (this->segments.size() == 0)
+				return;
 
             unsigned int w, h;
             int offsetX, offsetY;

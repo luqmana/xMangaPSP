@@ -486,6 +486,13 @@ namespace xM {
                 
                     uiElement->image = Engine::ResourceManager::getInstance()->getImage(xmlElement->Attribute("src"));
                     
+                    if (uiElement->image == NULL) {
+                    
+                    	delete uiElement;
+                    	return NULL;
+                    
+                    }
+                    
                     if (xmlElement->Attribute("swizzle") != NULL && strcmp(xmlElement->Attribute("swizzle"), "true") == 0)
                         uiElement->image->swizzle();
                       
