@@ -80,7 +80,7 @@ namespace xM {
             
             msgText = new std::string("http://omp.leonex.co.cc/");
             
-            Ui::Dialog::net();
+            //Ui::Dialog::net();
                                                             
         }
 

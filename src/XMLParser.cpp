@@ -505,7 +505,7 @@ namespace xM {
                     TiXmlNode* innerChild = xmlNode->FirstChild();    
                     while (innerChild != NULL) {
                     
-                        if (innerChild->Type() == TiXmlNode::ELEMENT)
+                        if (innerChild->Type() == TiXmlNode::TINYXML_ELEMENT)
                             uiElement->children.push_back(this->parseElement(innerChild->ToElement()));
                     
                         innerChild = innerChild->NextSibling();    
@@ -589,7 +589,7 @@ namespace xM {
             
             for (childNode = TiXmlHandle(root).FirstChild().ToNode(); childNode; childNode = childNode->NextSibling()) {
             
-                if (childNode->Type() != TiXmlNode::ELEMENT)
+                if (childNode->Type() != TiXmlNode::TINYXML_ELEMENT)
                     continue;
                     
                 TiXmlElement* child = childNode->ToElement();

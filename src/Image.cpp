@@ -74,15 +74,18 @@ namespace xM {
 
             this->reset();
 
+			// Load the image from wherever (FS, cache, PSAR, zip)
             std::string imageBuffer = Engine::ResourceManager::getInstance()->getRes(file);      
             if (imageBuffer == "")
                 return false;
-     
-            ImageSegment mainSegment;
-
-            // Decode the png
-            decodePNG(mainSegment.pixels, mainSegment.width, mainSegment.height, (const unsigned char*) imageBuffer.c_str(), imageBuffer.size(), true);
             
+            // Holds the big picture    
+            ImageSegment mainSegment;
+     
+     		// Load image (could be PNG, JPEG, etc) otherwise get out
+     		if (!this->loadImage(imageBuffer, &mainSegment))
+     			return false;
+     		                 
             imageBuffer.clear();
 
             mainSegment.p2Width = Util::nextPow2(mainSegment.width);
@@ -176,6 +179,85 @@ namespace xM {
             
             return true;
 
+        }
+        
+        /**
+         * Determine if this is a PNG image.
+         * 
+         * @param const std::string& imgBuffer Reference to the image buffer.
+         * 
+         * @return bool Yes or no.
+         */
+        bool Image::isPNG(const std::string& imgBuffer) {
+        	
+        	unsigned char sig[8] = { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A };
+        	unsigned char rsig[8];
+        	
+        	// Read in from the supposed png data
+        	memcpy(rsig, &imgBuffer[0], 8);
+        	
+        	// Compare away!
+        	int r = memcmp(sig, rsig, 8);
+        	
+        	return (r == 0);
+        
+        }
+        
+        /**
+         * Determine if this is a JPEG image.
+         * 
+         * @param const std::string& imgBuffer Reference to the image buffer.
+         * 
+         * @return bool Yes or no.
+         */
+        bool Image::isJPEG(const std::string& imgBuffer) {
+        
+        	return false;
+        
+        }
+        
+        /**
+         * Attempts to figure out what type of image is in the buffer
+         * and load it accordingly. Only PNG & JPEG supported currently.
+         * 
+         * @param const std::string& imgBuffer Reference to the image buffer.
+         * @param ImageSegment* destImg Where to store the decoded result.
+         * 
+         * @return bool Whether it all worked out.
+         */
+        bool Image::loadImage(const std::string& imgBuffer, ImageSegment* destImg) {
+        
+        	printf("\n\n\n\n\nBEGIN IMG\n");
+        	
+        	printf("Size: %d\n", imgBuffer.size());
+        	
+        	// Figure out what type of image this is
+        	if (this->isPNG(imgBuffer)) {
+        	
+        		// well, what dya know? It's a PNG! Rejoice!
+        		Util::logMsg("Loading PNG image...");
+        		
+        		// Decode the png
+            	decodePNG(destImg->pixels, destImg->width, destImg->height, (const unsigned char*) imgBuffer.c_str(), imgBuffer.size(), true);
+        		
+        	} else if (this->isJPEG(imgBuffer)) {
+        	
+        		// a JPEG! Oh joy!
+        		Util::logMsg("Loading JPEG image...");
+        	
+        	} else {
+        	
+        		// Bah, we don't support you!
+        		Util::logMsg("Unknown image...");
+        		
+        		return false;
+        	
+        	}
+        	
+        	printf("END IMG\n\n\n\n\n\n");
+        
+        	return true;
+        
         }
         
         /**
