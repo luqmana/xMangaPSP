@@ -41,8 +41,13 @@
 #include <string.h>
 #include <malloc.h>
 #include <math.h>
+#include <iostream>
+#include <sstream>
+#include <string>
 
 #include <pspiofilemgr.h>
+
+#include <jpegxx/read.hpp>
 // END Includes
 
 namespace xM {
@@ -74,15 +79,18 @@ namespace xM {
 
             this->reset();
 
+			// Load the image from wherever (FS, cache, PSAR, zip)
             std::string imageBuffer = Engine::ResourceManager::getInstance()->getRes(file);      
             if (imageBuffer == "")
                 return false;
-     
-            ImageSegment mainSegment;
-
-            // Decode the png
-            decodePNG(mainSegment.pixels, mainSegment.width, mainSegment.height, (const unsigned char*) imageBuffer.c_str(), imageBuffer.size(), true);
             
+            // Holds the big picture    
+            ImageSegment mainSegment;
+     
+     		// Load image (could be PNG, JPEG, etc) otherwise get out
+     		if (!this->loadImage(imageBuffer, &mainSegment))
+     			return false;
+     		                 
             imageBuffer.clear();
 
             mainSegment.p2Width = Util::nextPow2(mainSegment.width);
@@ -179,6 +187,125 @@ namespace xM {
         }
         
         /**
+         * Determine if this is a PNG image.
+         * 
+         * @param const std::string& imgBuffer Reference to the image buffer.
+         * 
+         * @return bool Yes or no.
+         */
+        bool Image::isPNG(const std::string& imgBuffer) {
+        	
+        	// PNG `magic` sequence
+        	unsigned char sig[8] = { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A };
+        	
+        	unsigned char rsig[8];
+        	
+        	// Read in from the supposed png data
+        	memcpy(rsig, &imgBuffer[0], 8);
+        	
+        	// Compare away!
+        	int r = memcmp(sig, rsig, 8);
+        	
+        	return (r == 0);
+        
+        }
+        
+        /**
+         * Determine if this is a JPEG image.
+         * 
+         * @param const std::string& imgBuffer Reference to the image buffer.
+         * 
+         * @return bool Yes or no.
+         */
+        bool Image::isJPEG(const std::string& imgBuffer) {
+        
+        	// JPEG `magic` at beginning of file
+        	unsigned char bMagic[2] = { 0xFF, 0xD8 };
+        	
+        	// JPEG `magic` at end of file
+        	unsigned char eMagic[2] = { 0xFF, 0xD9 };
+        	
+        	unsigned char cB[2];
+        	unsigned char cE[2];
+        	
+        	// Read in from the supposed jpg data
+        	memcpy(cB, &imgBuffer[0], 2);
+        	memcpy(cE, &imgBuffer[0] + (imgBuffer.size() - 2), 2);
+        	        	
+        	// Compare away!
+        	int rB = memcmp(bMagic, cB, 2);
+        	int rE = memcmp(eMagic, cE, 2);
+        	        
+        	return (rB == 0) && (rE == 0);
+        
+        }
+        
+        /**
+         * Attempts to figure out what type of image is in the buffer
+         * and load it accordingly. Only PNG & JPEG supported currently.
+         * 
+         * @param const std::string& imgBuffer Reference to the image buffer.
+         * @param ImageSegment* destImg Where to store the decoded result.
+         * 
+         * @return bool Whether it all worked out.
+         */
+        bool Image::loadImage(const std::string& imgBuffer, ImageSegment* destImg) {
+                	
+        	// Figure out what type of image this is
+        	if (this->isPNG(imgBuffer)) {
+        	
+        		// well, what dya know? It's a PNG! Rejoice!
+        		
+        		// Decode the png
+            	int r = decodePNG(destImg->pixels, destImg->width, destImg->height, (const unsigned char*) imgBuffer.c_str(), imgBuffer.size(), true);
+            	
+            	if (r != 0)
+            		return false;
+        		
+        	} else if (this->isJPEG(imgBuffer)) {
+        	
+        		// a JPEG! Oh joy!        		
+        		std::vector<unsigned char> pixels;
+        		
+        		// Use a stream to pass the image to jpegxx
+        		std::istringstream imgBufferStream;
+        		imgBufferStream.str(imgBuffer);
+        		
+				imagexx::raster_details d = jpegxx::read_image(imgBufferStream, std::back_inserter(pixels));
+
+				destImg->width = d.width();
+				destImg->height = d.height();
+				
+				// Since this is only a 24bit image we need to pad it to 32 bit
+				// so we add an alpha channel with full opacity
+				unsigned int w = 0;			
+				for (unsigned int i = 0; i < pixels.size(); i++) {
+									
+					destImg->pixels.push_back(pixels[i]);						
+					w++;
+					
+					// Add the new alpha after the r,g,b components
+					if (w == 3) {
+						destImg->pixels.push_back(0xFF);
+						w = 0;
+					}
+				
+				}
+				        		        	
+        	} else {
+        	
+        		// Bah, we don't support you!
+        		Util::logMsg("Unknown image format...");
+        		
+        		return false;
+        	
+        	}
+        	        
+        	return true;
+        
+        }
+        
+        /**
          * Whether an image is already loaded.
          * 
          * @return bool
@@ -264,6 +391,9 @@ namespace xM {
          */
         void Image::draw(float x, float y, const ImageClip* clip) {
 
+			if (this->segments.size() == 0)
+				return;
+
             unsigned int w, h;
             int offsetX, offsetY;
 
@@ -313,6 +443,8 @@ namespace xM {
 
             Vertex2* finalImage = (Vertex2*) sceGuGetMemory(sizeof(Vertex2) * 2);
             memcpy(finalImage, image, sizeof(Vertex2) * 2);
+            
+            sceKernelDcacheWritebackAll();
 
             // Draw the quad
             sceGumDrawArray(GU_SPRITES, GU_TEXTURE_32BITF | GU_VERTEX_32BITF, 2, 0, finalImage);

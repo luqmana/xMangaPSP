@@ -10,7 +10,7 @@
     
     <quad x="0" y="0" width="480" height="30" colour="black,200" />
     <text x="240" y="20" font="{LATIN_SANS_SERIF_BOLD}" align="center" size="1.0" colour="red" shadowColour="90,0,0" value="About &amp; Credits" />
-    <image whence="online" x="475" y="3" align="right" src="wifi.png" />
+    <!--<image whence="online" x="475" y="3" align="right" src="wifi.png" />-->
     
     <text x="5" y="50" font="{LATIN_SANS_SERIF_BOLD_SMALL}" size="1.0" colour="23,23,23" value="Thanks for using xMangaPSP!" />
     <text x="5" y="70" font="{LATIN_SANS_SERIF_REGULAR_SMALL}" size="1.0" colour="23,23,23" value="xMangaPSP wouldn't be possible without the help of various people:" />

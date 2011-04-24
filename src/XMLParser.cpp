@@ -486,7 +486,14 @@ namespace xM {
                 
                     uiElement->image = Engine::ResourceManager::getInstance()->getImage(xmlElement->Attribute("src"));
                     
-                    if (xmlElement->Attribute("swizzle") != NULL && strcmp(xmlElement->Attribute("swizzle"), "true") == 0)
+                    if (uiElement->image == NULL) {
+                    
+                    	delete uiElement;
+                    	return NULL;
+                    
+                    }
+                    
+					if (xmlElement->Attribute("swizzle") != NULL && strcmp(xmlElement->Attribute("swizzle"), "true") == 0)
                         uiElement->image->swizzle();
                       
                 }
@@ -505,7 +512,7 @@ namespace xM {
                     TiXmlNode* innerChild = xmlNode->FirstChild();    
                     while (innerChild != NULL) {
                     
-                        if (innerChild->Type() == TiXmlNode::ELEMENT)
+                        if (innerChild->Type() == TiXmlNode::TINYXML_ELEMENT)
                             uiElement->children.push_back(this->parseElement(innerChild->ToElement()));
                     
                         innerChild = innerChild->NextSibling();    
@@ -589,7 +596,7 @@ namespace xM {
             
             for (childNode = TiXmlHandle(root).FirstChild().ToNode(); childNode; childNode = childNode->NextSibling()) {
             
-                if (childNode->Type() != TiXmlNode::ELEMENT)
+                if (childNode->Type() != TiXmlNode::TINYXML_ELEMENT)
                     continue;
                     
                 TiXmlElement* child = childNode->ToElement();

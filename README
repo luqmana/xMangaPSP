@@ -53,3 +53,8 @@ intraFont (and intraFont-G) is released under the Creative Commons Attribution-S
 http://creativecommons.org/licenses/by-sa/3.0/
 
 ---
+
+JPEG support is thanks to imagexx/jpegxx which wraps libjpeg into a much more manageable package.
+imagexx/jpegxx is copyright (c) Edd Dawson and is licensed with the Boost Software License.
+
+---

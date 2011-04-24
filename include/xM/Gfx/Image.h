@@ -60,7 +60,36 @@ namespace xM {
         private:
             std::vector<ImageSegment> segments;
             bool swizzled;
-
+            
+            /**
+             * Determine if this is a PNG image.
+             * 
+             * @param const std::string& imgBuffer Reference to the image buffer.
+             * 
+             * @return bool Yes or no.
+             */
+            bool isPNG(const std::string& imgBuffer);
+            
+            /**
+             * Determine if this is a JPEG image.
+             * 
+             * @param const std::string& imgBuffer Reference to the image buffer.
+             * 
+             * @return bool Yes or no.
+             */
+            bool isJPEG(const std::string& imgBuffer);
+            
+            /**
+             * Attempts to figure out what type of image is in the buffer
+             * and load it accordingly. Only PNG & JPEG supported currently.
+             * 
+             * @param const std::string& imgBuffer Reference to the image buffer.
+             * @param ImageSegment* destImg Where to store the decoded result.
+             * 
+             * @return bool Whether it all worked out.
+             */
+            bool loadImage(const std::string& imgBuffer, ImageSegment* destImg);
+            
         public:
         
             unsigned int width, height;

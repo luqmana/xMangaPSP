@@ -23,7 +23,10 @@
  
  BUILD_DIR = build
  SRC_DIR = src
- EXT_SRC_DIR = ext/src
+ INC_DIR = include
+ EXT_DIR = ext
+ EXT_SRC_DIR = $(EXT_DIR)/src
+ EXT_INC_DIR = $(EXT_DIR)/include
  RES_DIR = resources
  
  # Targets
@@ -41,9 +44,14 @@
  SRC  +=  $(patsubst %, %.cpp, $(STATES))
  
  # External Libs Source Files
- EXT_SRC_CPP = tinyxml.cpp tinyxmlparser.cpp tinyxmlerror.cpp tinystr.cpp
- EXT_SRC_C 	 = intraFont.c libccc.c
+ EXT_SRC_CPP += $(wildcard $(EXT_SRC_DIR)/tinyxml/*.cpp)
+ EXT_SRC_CPP += $(wildcard $(EXT_SRC_DIR)/imagexx/*.cpp)
+ EXT_SRC_CPP += $(wildcard $(EXT_SRC_DIR)/jpegxx/*.cpp)
+ EXT_SRC_C 	 += $(wildcard $(EXT_SRC_DIR)/intraFontG/*.c)
  
+ EXT_SRC_CPP := $(patsubst ext/src/%.cpp, %.cpp, $(EXT_SRC_CPP))
+ EXT_SRC_C   := $(patsubst ext/src/%.c, %.c, $(EXT_SRC_C))
+  
  # Object files
  OBJS    = $(patsubst %.cpp, $(BUILD_DIR)/%.o, $(filter %.cpp, $(SRC)))
  
@@ -63,19 +71,19 @@
  COMPILER_DEFINES = -D_MAJOR_VERSION=$(MAJOR_VERSION) -D_MINOR_VERSION=$(MINOR_VERSION) -D_API_VERSION=$(API_VERSION) -D_EXTRA_VERION=$(EXTRA_VERSION) -D__xM_DEBUG=$(DEBUG) -DTIXML_USE_STL
  
  # Include Directories
- INCDIR = $(SRC_DIR) $(SRC_DIR)/../include $(EXT_SRC_DIR) $(EXT_SRC_DIR)/../include $(PSPDEV)/psp/include/
+ INCDIR = $(SRC_DIR) $(INC_DIR) $(EXT_SRC_DIR) $(EXT_INC_DIR) $(PSPDEV)/psp/include/
  
  # Library Directories
- LIBS = -lcurl -lzzip -lz -lpspgum -lpspgu -lm -lpsprtc -lpspsdk -lstdc++
+ LIBS = -lcurl -ljpeg -lzzip -lz -lpspgum -lpspgu -lm -lpsprtc -lpspsdk -lstdc++
  
  # Compiler Flags
  CFLAGS = -Wall $(COMPILER_DEFINES) -falign-functions=64
- CXXFLAGS = $(CFLAGS) -fno-rtti
+ CXXFLAGS = $(CFLAGS) #-fno-rtti
  ASFLAGS =
 
  # Enable the debug options
  ifeq ($(DEBUG), 1)
- CFLAGS += -g
+ CFLAGS += -g -G4
  else
  CFLAGS += -O3 -G4 -ffast-math
  endif
@@ -126,9 +134,25 @@
 	$(CXX) $(CXXFLAGS) -O3 -G4 -ffast-math -c -o $@ $<
 	
  # Rule to build bundled TinyXML
- $(BUILD_DIR)/%.o: $(EXT_SRC_DIR)/tinyxml/%.cpp
+ $(BUILD_DIR)/tinyxml/%.o: $(EXT_SRC_DIR)/tinyxml/%.cpp | $(BUILD_DIR)/tinyxml
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
+ $(BUILD_DIR)/tinyxml:
+	mkdir $(BUILD_DIR)/tinyxml
 	
  # Rule to build bundled intraFont-G
- $(BUILD_DIR)/%.o: $(EXT_SRC_DIR)/intraFontG/%.c
+ $(BUILD_DIR)/intraFontG/%.o: $(EXT_SRC_DIR)/intraFontG/%.c | $(BUILD_DIR)/intraFontG
 	$(CC) $(CFLAGS) -c -o $@ $<
+ $(BUILD_DIR)/intraFontG:
+	mkdir $(BUILD_DIR)/intraFontG
+
+ # Rule to build bundled imagexx
+ $(BUILD_DIR)/imagexx/%.o: $(EXT_SRC_DIR)/imagexx/%.cpp | $(BUILD_DIR)/imagexx
+	$(CXX) $(CXXFLAGS) -c -o $@ $<
+ $(BUILD_DIR)/imagexx:
+	mkdir $(BUILD_DIR)/imagexx
+
+ # Rule to build bundled jpegxx
+ $(BUILD_DIR)/jpegxx/%.o: $(EXT_SRC_DIR)/jpegxx/%.cpp | $(BUILD_DIR)/jpegxx
+	$(CXX) $(CXXFLAGS) -I$(EXT_SRC_DIR)/jpegxx -I$(EXT_INC_DIR)/jpegxx -O3 -ffast-math -c -o $@ $<
+ $(BUILD_DIR)/jpegxx:
+	mkdir $(BUILD_DIR)/jpegxx
