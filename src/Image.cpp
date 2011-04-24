@@ -195,6 +195,7 @@ namespace xM {
          */
         bool Image::isPNG(const std::string& imgBuffer) {
         	
+        	// PNG `magic` sequence
         	unsigned char sig[8] = { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A };
         	
         	unsigned char rsig[8];
@@ -218,7 +219,10 @@ namespace xM {
          */
         bool Image::isJPEG(const std::string& imgBuffer) {
         
+        	// JPEG `magic` at beginning of file
         	unsigned char bMagic[2] = { 0xFF, 0xD8 };
+        	
+        	// JPEG `magic` at end of file
         	unsigned char eMagic[2] = { 0xFF, 0xD9 };
         	
         	unsigned char cB[2];
@@ -251,7 +255,6 @@ namespace xM {
         	if (this->isPNG(imgBuffer)) {
         	
         		// well, what dya know? It's a PNG! Rejoice!
-        		Util::logMsg("Loading PNG image...");
         		
         		// Decode the png
             	int r = decodePNG(destImg->pixels, destImg->width, destImg->height, (const unsigned char*) imgBuffer.c_str(), imgBuffer.size(), true);
@@ -261,9 +264,7 @@ namespace xM {
         		
         	} else if (this->isJPEG(imgBuffer)) {
         	
-        		// a JPEG! Oh joy!
-        		Util::logMsg("Loading JPEG image...");
-        		
+        		// a JPEG! Oh joy!        		
         		std::vector<unsigned char> pixels;
         		
         		// Use a stream to pass the image to jpegxx
@@ -294,7 +295,7 @@ namespace xM {
         	} else {
         	
         		// Bah, we don't support you!
-        		Util::logMsg("Unknown image...");
+        		Util::logMsg("Unknown image format...");
         		
         		return false;
         	
