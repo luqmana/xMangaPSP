@@ -41,8 +41,13 @@
 #include <string.h>
 #include <malloc.h>
 #include <math.h>
+#include <iostream>
+#include <sstream>
+#include <string>
 
 #include <pspiofilemgr.h>
+
+#include <jpegxx/read.hpp>
 // END Includes
 
 namespace xM {
@@ -241,11 +246,7 @@ namespace xM {
          * @return bool Whether it all worked out.
          */
         bool Image::loadImage(const std::string& imgBuffer, ImageSegment* destImg) {
-        
-        	printf("\n\n\n\n\nBEGIN IMG\n");
-        	
-        	printf("Size: %d\n", imgBuffer.size());
-        	
+                	
         	// Figure out what type of image this is
         	if (this->isPNG(imgBuffer)) {
         	
@@ -263,8 +264,33 @@ namespace xM {
         		// a JPEG! Oh joy!
         		Util::logMsg("Loading JPEG image...");
         		
-        		return false;
-        	
+        		std::vector<unsigned char> pixels;
+        		
+        		// Use a stream to pass the image to jpegxx
+        		std::istringstream imgBufferStream;
+        		imgBufferStream.str(imgBuffer);
+        		
+				imagexx::raster_details d = jpegxx::read_image(imgBufferStream, std::back_inserter(pixels));
+
+				destImg->width = d.width();
+				destImg->height = d.height();
+				
+				// Since this is only a 24bit image we need to pad it to 32 bit
+				// so we add an alpha channel with full opacity
+				unsigned int w = 0;			
+				for (unsigned int i = 0; i < pixels.size(); i++) {
+									
+					destImg->pixels.push_back(pixels[i]);						
+					w++;
+					
+					// Add the new alpha after the r,g,b components
+					if (w == 3) {
+						destImg->pixels.push_back(0xFF);
+						w = 0;
+					}
+				
+				}
+				        		        	
         	} else {
         	
         		// Bah, we don't support you!
@@ -273,9 +299,7 @@ namespace xM {
         		return false;
         	
         	}
-        	
-        	printf("END IMG\n\n\n\n\n\n");
-        
+        	        
         	return true;
         
         }
@@ -418,6 +442,8 @@ namespace xM {
 
             Vertex2* finalImage = (Vertex2*) sceGuGetMemory(sizeof(Vertex2) * 2);
             memcpy(finalImage, image, sizeof(Vertex2) * 2);
+            
+            sceKernelDcacheWritebackAll();
 
             // Draw the quad
             sceGumDrawArray(GU_SPRITES, GU_TEXTURE_32BITF | GU_VERTEX_32BITF, 2, 0, finalImage);

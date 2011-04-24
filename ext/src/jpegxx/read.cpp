@@ -37,6 +37,13 @@ namespace jpegxx
                 decomp_.client_data = this;
 
                 TRY(jpeg_create_decompress(&decomp_));
+                
+                decomp_.out_color_space = JCS_RGB;
+                decomp_.quantize_colors = FALSE;
+                decomp_.scale_num = 1;
+                decomp_.scale_denom = 1;
+                decomp_.dct_method = JDCT_FASTEST;
+                decomp_.do_fancy_upsampling = FALSE;
 
                 // Set up buffering callbacks
                 source_mgr_.init_source = init_source;

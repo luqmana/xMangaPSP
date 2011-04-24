@@ -45,8 +45,8 @@
  
  # External Libs Source Files
  EXT_SRC_CPP += $(wildcard $(EXT_SRC_DIR)/tinyxml/*.cpp)
- EXT_SRC_CPP += $(wildcard $(EXT_SRC_DIR)/jpegxx/*.cpp)
  EXT_SRC_CPP += $(wildcard $(EXT_SRC_DIR)/imagexx/*.cpp)
+ EXT_SRC_CPP += $(wildcard $(EXT_SRC_DIR)/jpegxx/*.cpp)
  EXT_SRC_C 	 += $(wildcard $(EXT_SRC_DIR)/intraFontG/*.c)
  
  EXT_SRC_CPP := $(patsubst ext/src/%.cpp, %.cpp, $(EXT_SRC_CPP))
@@ -83,7 +83,7 @@
 
  # Enable the debug options
  ifeq ($(DEBUG), 1)
- CFLAGS += -g
+ CFLAGS += -g -G4
  else
  CFLAGS += -O3 -G4 -ffast-math
  endif
@@ -144,15 +144,15 @@
 	$(CC) $(CFLAGS) -c -o $@ $<
  $(BUILD_DIR)/intraFontG:
 	mkdir $(BUILD_DIR)/intraFontG
-	
- # Rule to build bundled jpegxx
- $(BUILD_DIR)/jpegxx/%.o: $(EXT_SRC_DIR)/jpegxx/%.cpp | $(BUILD_DIR)/jpegxx
-	$(CXX) $(CXXFLAGS) -I$(EXT_SRC_DIR)/jpegxx -I$(EXT_INC_DIR)/jpegxx -c -o $@ $<
- $(BUILD_DIR)/jpegxx:
-	mkdir $(BUILD_DIR)/jpegxx
-	
+
  # Rule to build bundled imagexx
  $(BUILD_DIR)/imagexx/%.o: $(EXT_SRC_DIR)/imagexx/%.cpp | $(BUILD_DIR)/imagexx
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
  $(BUILD_DIR)/imagexx:
 	mkdir $(BUILD_DIR)/imagexx
+
+ # Rule to build bundled jpegxx
+ $(BUILD_DIR)/jpegxx/%.o: $(EXT_SRC_DIR)/jpegxx/%.cpp | $(BUILD_DIR)/jpegxx
+	$(CXX) $(CXXFLAGS) -I$(EXT_SRC_DIR)/jpegxx -I$(EXT_INC_DIR)/jpegxx -O3 -ffast-math -c -o $@ $<
+ $(BUILD_DIR)/jpegxx:
+	mkdir $(BUILD_DIR)/jpegxx

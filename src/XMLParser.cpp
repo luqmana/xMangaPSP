@@ -493,7 +493,7 @@ namespace xM {
                     
                     }
                     
-                    if (xmlElement->Attribute("swizzle") != NULL && strcmp(xmlElement->Attribute("swizzle"), "true") == 0)
+					if (xmlElement->Attribute("swizzle") != NULL && strcmp(xmlElement->Attribute("swizzle"), "true") == 0)
                         uiElement->image->swizzle();
                       
                 }
