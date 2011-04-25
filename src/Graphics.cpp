@@ -112,7 +112,7 @@ namespace xM {
             sceGuClearDepth(0);
 
             sceGuFinish();
-            sceGuSync(0, 0);
+            sceGuSync(GU_SYNC_FINISH, GU_SYNC_WHAT_DONE);
 
             sceDisplayWaitVblankStart();
             sceGuDisplay(GU_TRUE);

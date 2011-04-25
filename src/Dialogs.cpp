@@ -142,14 +142,9 @@ namespace xM {
             void renderDialogs() {
             
                 if (isMsgDialogActive()) {
-                    
+                
                     switch (sceUtilityMsgDialogGetStatus()) {
                     
-                        // Shouldn't happen
-                        case PSP_UTILITY_DIALOG_NONE:
-                        
-                            break;
-                            
                         case PSP_UTILITY_DIALOG_VISIBLE:
                         case PSP_UTILITY_DIALOG_INIT:
                         
@@ -164,7 +159,11 @@ namespace xM {
                                                         
                             break;
                             
+                        case PSP_UTILITY_DIALOG_NONE: // Shouldn't happen
                         case PSP_UTILITY_DIALOG_FINISHED:
+                        
+                        	// but for some reason it does
+                        	// particulary when a large image is also being rendered behind
                         
                             msgDialogActive = false;
                                                         
@@ -193,13 +192,8 @@ namespace xM {
                 }
                 
                 if (isNetDialogActive()) {
-                
+                                
                     switch (sceUtilityNetconfGetStatus()) {
-                    
-                        // Shouldn't happen
-                        case PSP_UTILITY_DIALOG_NONE:
-                        
-                            break;
                             
                         case PSP_UTILITY_DIALOG_VISIBLE:
                         case PSP_UTILITY_DIALOG_INIT:
@@ -215,7 +209,11 @@ namespace xM {
                                                         
                             break;
                             
+                        case PSP_UTILITY_DIALOG_NONE: // Shouldn't happen
                         case PSP_UTILITY_DIALOG_FINISHED:
+
+							// but for some reason it does
+                        	// particulary when a large image is also being rendered behind
                         
                             netDialogActive = false;
                                                                                                     
