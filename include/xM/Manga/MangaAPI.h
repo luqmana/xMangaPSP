@@ -44,12 +44,12 @@ namespace xM {
 	    struct APIMessage {
 	    
             SceKernelMsgPacket header;
+            SceUID* returnBox;
             std::string* text;
             
         };
 	
-	    extern SceUID mangaAPIWMbx;
-	    extern SceUID mangaAPIRMbx;
+	    extern SceUID mangaAPIMbx;
 			
 		/**
 		 * Setups the manga API handler thread.

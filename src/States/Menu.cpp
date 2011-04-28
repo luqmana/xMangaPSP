@@ -72,12 +72,14 @@ namespace xM {
             parser.registerCustomElementHandler("list", extraElements, (void*)&lInfo);
             parser.registerCustomElementHandler("bouncyBox", extraElements);
             parser.parseFile("ui/menu.xml");
+                        
+            // Create our local mailbox
+            localBox = sceKernelCreateMbx("MenuStateBox", 0, NULL);
             
             SceKernelMsgPacket hdr = {0};
-            
             msg = new Manga::APIMessage;
             msg->header = hdr;
-            
+            msg->returnBox = &localBox;
             msgText = new std::string("http://omp.leonex.co.cc/");
             
             Ui::Dialog::net();
@@ -88,6 +90,8 @@ namespace xM {
          * Clean up code.
          */
         void Menu::cleanUp(void) {
+
+			sceKernelDeleteMbx(localBox);
 
             parser.deRegisterCustomElementHandler("list");
             parser.deRegisterCustomElementHandler("bouncyBox");
@@ -148,7 +152,7 @@ namespace xM {
         
             Manga::APIMessage* rMsg = NULL;
             
-            sceKernelPollMbx(Manga::mangaAPIRMbx, (void**)&rMsg);
+            sceKernelPollMbx(localBox, (void**)&rMsg);
                 
             if (rMsg != NULL) {
             
@@ -187,7 +191,7 @@ namespace xM {
 	                    
 	                        msg->text = msgText;
 	                    
-	                        sceKernelSendMbx(Manga::mangaAPIWMbx, (void*)msg);
+	                        sceKernelSendMbx(Manga::mangaAPIMbx, (void*)msg);
 	                    
 	                        // not really a dialog
 	                        // but allows some control

@@ -40,8 +40,7 @@ namespace xM {
 	namespace Manga {
 	
 	    SceUID mangaAPIThreadID = -1;
-	    SceUID mangaAPIWMbx;
-	    SceUID mangaAPIRMbx;
+	    SceUID mangaAPIMbx;
 				    
 	    /**
 	     * The manga api thread function.
@@ -54,7 +53,7 @@ namespace xM {
 	    	    
 	        while (true) {
 	        	            	            	            
-	            int res = sceKernelReceiveMbxCB(mangaAPIWMbx, (void**)&msg, NULL);
+	            int res = sceKernelReceiveMbxCB(mangaAPIMbx, (void**)&msg, NULL);
 	            
 	            if (!(res <  0) && msg != NULL) {
 	            	                
@@ -83,7 +82,7 @@ namespace xM {
                         sMsg = new APIMessage;
                         sMsg->header = hdr;
                         sMsg->text = sRes;
-	                    sceKernelSendMbx(Manga::mangaAPIRMbx, (void*)sMsg);
+	                    sceKernelSendMbx(*msg->returnBox, (void*)sMsg);
 	                    
 	                } else
 	                    Util::logMsg("Can't download [%s].", response.c_str());
@@ -115,9 +114,8 @@ namespace xM {
 		 */
 	    void initMangaAPIThread() {
 	    
-	        // create message boxes
-	        mangaAPIRMbx = sceKernelCreateMbx("MangaAPIBoxRead", 0, NULL);
-	        mangaAPIWMbx = sceKernelCreateMbx("MangaAPIBoxWrite", 0, NULL);
+	        // create message box
+	        mangaAPIMbx = sceKernelCreateMbx("MangaAPIBox", 0, NULL);
 	        	    
 	        // create the thread
 	        mangaAPIThreadID = sceKernelCreateThread("MangaAPIThread", mangaAPIThread, 0x22, 0x8000, PSP_THREAD_ATTR_USER | PSP_THREAD_ATTR_USBWLAN, NULL);
@@ -132,10 +130,10 @@ namespace xM {
 	     * Shuts down the manga API handler thread.
 	     */
 	    void shutdownMangaAPIThread() {
-	    
+	    	    
 	        if (mangaAPIThreadID > 0)
 	            sceKernelDeleteThread(mangaAPIThreadID);
-	    
+	            	    
 	    }
 			
 	}

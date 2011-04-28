@@ -99,6 +99,7 @@ namespace xM {
             unsigned int selected;
             
             Manga::APIMessage* msg;
+            SceUID localBox;
             std::string* msgText;
 
         };
