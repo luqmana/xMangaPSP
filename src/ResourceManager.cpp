@@ -84,8 +84,13 @@ namespace xM {
             // Not cached :(
             Gfx::Image* img = new Gfx::Image();
             
-            if (!img->loadFile(image))
+            if (!img->loadFile(image)) {
+            
+            	delete img;
+            	
                 return NULL;
+                
+            }
             
             images.insert(std::pair<const std::string, Gfx::Image*>(key, img));
             
