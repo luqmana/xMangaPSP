@@ -58,3 +58,8 @@ JPEG support is thanks to imagexx/jpegxx which wraps libjpeg into a much more ma
 imagexx/jpegxx is copyright (c) Edd Dawson and is licensed with the Boost Software License.
 
 ---
+
+JSON parsing is thanks to cJSON and is copyright Dave Gamble.
+An ultra-lightweight, portable, single-file, simple-as-can-be ANSI-C compliant JSON parser, under MIT license. 
+
+---
