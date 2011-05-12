@@ -19,6 +19,7 @@
     <text x="170" y="100" font="{LATIN_SANS_SERIF_ITALIC_SMALL}" size="1.0" colour="23,23,23" value="Creator of xMangaPSP. [me!]" />
     
     <text x="20" y="120" font="{LATIN_SANS_SERIF_BOLD_SMALL}" size="1.0" colour="23,23,23" value="##psp-programming" />
+    <text x="20" y="140" font="{LATIN_SANS_SERIF_ITALIC_BOLD_SMALL}" size="1.0" colour="23,23,23" value="(on freenode)" />
     <text x="170" y="120" font="{LATIN_SANS_SERIF_ITALIC_SMALL}" size="1.0" colour="23,23,23" value="Providing a lot of help." />
     <text x="170" y="140" font="{LATIN_SANS_SERIF_ITALIC_SMALL}" size="1.0" colour="23,23,23" value="(hardhat, slicer4ever, A_Nub, jonlimle, etc)" />
     

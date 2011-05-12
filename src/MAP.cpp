@@ -49,6 +49,7 @@ namespace xM {
         	this->endpoint = epoint;
         	this->mangaList = new MangaList;
         	this->error = "";
+        	this->loadedMangaList = false;
         
         }   
         
@@ -80,6 +81,9 @@ namespace xM {
         void MAP::setEndpoint(const std::string& epoint) {
         
         	this->endpoint = epoint;
+        	
+        	// New endpoint
+        	this->loadedMangaList = false;
         
         }
         
@@ -90,13 +94,18 @@ namespace xM {
          */
         bool MAP::loadMangaList() {
         
+        	// No point in loading again
+        	if (this->loadedMangaList)
+        		return true;
+        
         	std::string response;
 	                	          
 			// Attempt to download mangalist
             if (Net::downloadFile(this->endpoint, response)) {
             	                	                	  
 				// clear mangalist
-				this->mangaList->clear();
+				this->mangaList->names.clear();
+				this->mangaList->apiHandles.clear();
             	                	                	         
                 // No error, try to parse JSON
                 
@@ -115,17 +124,15 @@ namespace xM {
 				cJSON* mangas = cJSON_GetObjectItem(root, "Manga");
 
 				for (int i = 0; i < cJSON_GetArraySize(mangas); i++) {
-				
-					MangaListItem item;
-				
-					item.name = cJSON_GetObjectItem(cJSON_GetArrayItem(mangas, i), "name")->valuestring;
-					item.apiHandle = cJSON_GetObjectItem(cJSON_GetArrayItem(mangas, i), "apiHandle")->valuestring;
-					
-					this->mangaList->push_back(item);
-				
+								
+					this->mangaList->names.push_back(cJSON_GetObjectItem(cJSON_GetArrayItem(mangas, i), "name")->valuestring);
+					this->mangaList->apiHandles.push_back(cJSON_GetObjectItem(cJSON_GetArrayItem(mangas, i), "apiHandle")->valuestring);
+									
 				}
 				cJSON_Delete(root);
-            	                	                    
+            	                	
+				this->loadedMangaList = true;
+				                    
                 return true;
                 
             } else {

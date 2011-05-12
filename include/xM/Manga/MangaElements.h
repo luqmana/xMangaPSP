@@ -39,16 +39,13 @@ namespace xM {
 
 	namespace Manga {
 			
-	    // Manga list item
+	    // Manga list
 		typedef struct {
 
-			std::string name;
-			std::string apiHandle;
+			std::vector<std::string> names;
+			std::vector<std::string> apiHandles;
 
-		} MangaListItem;
-
-		// Manga list
-		typedef std::vector<MangaListItem> MangaList;
+		} MangaList;
 
 		// Chapter list item
 		typedef struct {

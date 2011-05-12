@@ -1,4 +1,4 @@
-<window name="Menu" type="main">
+<window name="Manga" type="main">
     
     <!--<image x="0" y="0" src="test5.jpg" swizzle="true" />-->
     
@@ -12,29 +12,27 @@
     
     <quad x="0" y="0" width="480" height="30" colour="black,200" />
     <text x="240" y="20" font="{LATIN_SANS_SERIF_BOLD}" align="center" size="1.0" colour="red" shadowColour="90,0,0" value="xMangaPSP" />
-    <!--<image whence="online" x="475" y="3" align="right" src="wifi.png" />-->
     
-    <text x="240" y="75" font="{LATIN_SANS_SERIF_ITALIC_BOLD}" align="center" size="1.0" colour="36,36,36" value="Choose an option:" />
+    <text x="240" y="75" font="{LATIN_SANS_SERIF_ITALIC_BOLD}" align="center" size="1.0" colour="36,36,36" value="Choose a manga series:" />
         
     <list x="240" y="120" offsetX="0" offsetY="25" maxItems="5">
     
-        <text whence="scrolldown" x="310" y="120" font="{SYMBOLS}" align="center" size="1.0" colour="gray" value="" />
-        <text whence="scrollup" x="310" y="120" font="{SYMBOLS}" align="center" size="1.0" colour="black" value="" />
+        <text whence="scrolldown" x="380" y="120" font="{SYMBOLS}" align="center" size="1.0" colour="gray" value="" />
+        <text whence="scrollup" x="380" y="120" font="{SYMBOLS}" align="center" size="1.0" colour="black" value="" />
     
         <text whence="active" font="{LATIN_SANS_SERIF_REGULAR_SMALL}" align="center" size="1.0" colour="36,36,36" value="[]" />
         
         <text whence="inactive" font="{LATIN_SANS_SERIF_REGULAR_SMALL}" align="center" size="1.0" colour="red" value="[]" />
         
-        <text whence="scrollup" x="310" y="214" font="{SYMBOLS}" align="center" size="1.0" colour="gray" rotate="180" value="" />
-        <text whence="scrolldown" x="310" y="214" font="{SYMBOLS}" align="center" size="1.0" colour="black" rotate="180" value="" />
+        <text whence="scrollup" x="380" y="214" font="{SYMBOLS}" align="center" size="1.0" colour="gray" rotate="180" value="" />
+        <text whence="scrolldown" x="380" y="214" font="{SYMBOLS}" align="center" size="1.0" colour="black" rotate="180" value="" />
     
     </list>
     
     <text x="5" y="265" font="{SYMBOLS}" align="left" size="1.0" colour="23,23,23" value="" />
     <text x="25" y="261" font="{LATIN_SERIF_REGULAR_SMALL}" align="left" size="1.0" colour="73,73,73" value="- Select" />
     
-    <!-- Just for caching purposes. -->
-    <text x="2" y="2" font="{LATIN_SANS_SERIF_BOLD_SMALL}" size="1.0" colour="white,0" value="" />
-    <text x="2" y="2" font="{LATIN_SANS_SERIF_ITALIC_SMALL}" size="1.0" colour="white,0" value="" />
+    <text x="455" y="261" font="{LATIN_SERIF_REGULAR_SMALL}" align="right" size="1.0" colour="73,73,73" value="Back - " />
+    <text x="475" y="264" font="{SYMBOLS}" align="right" size="1.0" colour="23,23,23" value="" />
             
 </window>

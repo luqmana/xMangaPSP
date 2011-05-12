@@ -45,6 +45,7 @@ namespace xM {
 	    	std::string endpoint;
 	    	std::string error;
 	    	MangaList* mangaList;
+	    	bool loadedMangaList;
 	    
 	    public:
 	    

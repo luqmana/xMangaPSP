@@ -20,14 +20,14 @@
  */
 
 /**
- * Menu state class.
+ * Manga selection state class.
  * Header file.
  * 
  * @package xMangaPSP
  */
 
-#ifndef _MenuState_H
-#define _MenuState_H
+#ifndef _MangaSelectState_H
+#define _MangaSelectState_H
 
 // BEGIN Includes
 #include "xM/States/Base.h"
@@ -47,7 +47,7 @@ namespace xM {
 
     namespace States {
 
-        class Menu : public Base {
+        class MangaSelect : public Base {
         public:
 
             /**
@@ -95,10 +95,10 @@ namespace xM {
             
             int activeDialog;
             
-            std::vector<std::string> menuList;
             unsigned int selected;
+            std::vector<std::string> mangaList;
             
-            Manga::APIMessage* msg;
+            xM::Manga::APIMessage* msg;
             SceUID localBox;
 
         };
@@ -107,4 +107,4 @@ namespace xM {
 
 }
 
-#endif /* _MenuState_H */
+#endif /* _MangaSelectState_H */

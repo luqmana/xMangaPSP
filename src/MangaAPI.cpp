@@ -90,7 +90,7 @@ namespace xM {
 	                			SceKernelMsgPacket hdr = {0};            
 				                sMsg->header = hdr;
 				                sMsg->returnBox = &mangaAPIMbx;
-				                sMsg->what = (void*)mapImp->getMangaList();
+				                sMsg->what = NULL;
 				                sMsg->result = true;
 					            sceKernelSendMbx(*msg->returnBox, (void*)sMsg);             	
 	                		

@@ -37,7 +37,7 @@
  EXTRA_CLEAN = 
  
  # States
- STATES = About Menu
+ STATES = About Menu MangaSelect
  
  # Source files
  SRC_CPP   =  xMangaPSP.cpp Callbacks.cpp Graphics.cpp Dialogs.cpp Stats.cpp Utils.cpp Timer.cpp FileManager.cpp InputManager.cpp ResourceManager.cpp StateManager.cpp Image.cpp Log.cpp PicoPNG.cpp Text.cpp XMLParser.cpp Net.cpp ExtraElements.cpp MangaAPI.cpp MAP.cpp

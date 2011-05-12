@@ -34,7 +34,9 @@
 #include "xM/Engine/ResourceManager.h"
 #include "xM/Engine/StateManager.h"
 #include "xM/States/About.h"
+#include "xM/States/MangaSelect.h"
 #include "xM/States/Menu.h"
+#include "xM/Net/Net.h"
 #include "xM/Ui/Dialogs.h"
 #include "xM/Util/Log.h"
 #include "xM/Util/Timer.h"
@@ -81,8 +83,9 @@ namespace xM {
             SceKernelMsgPacket hdr = {0};
             msg->header = hdr;
             msg->returnBox = &localBox;
-                        
-            Ui::Dialog::net();
+                       
+			if (!Net::isConnected())                        
+            	Ui::Dialog::net();
                                                             
         }
 
@@ -97,7 +100,6 @@ namespace xM {
             parser.deRegisterCustomElementHandler("bouncyBox");
             
             delete extraElements;
-            delete msgText;
             
         }
 
@@ -164,10 +166,14 @@ namespace xM {
                 	
                 	if (rMsg->result) {
                 	
-                		printf("# of manga loaded: %d\n", Manga::mapImp->getMangaList()->size());
+                		Engine::StateManager::getInstance()->changeState(new MangaSelect());
                 	
-                	} else
+                	} else {
+                	
                 		Ui::Dialog::msg(*(std::string*)rMsg->what);                	
+                		delete (std::string*)rMsg->what;
+                		
+                	}
                 	
                     activeDialog = 0;
                     
