@@ -31,6 +31,8 @@
 
 // BEGIN Includes
 #include "xM/Manga/MangaElements.h"
+
+#include <string>
 // END Includes
 
 namespace xM {
@@ -38,6 +40,12 @@ namespace xM {
 	namespace Manga {
 			
 	    class MAP {
+	    private:
+	    
+	    	std::string endpoint;
+	    	std::string error;
+	    	MangaList* mangaList;
+	    
 	    public:
 	    
 	        /**
@@ -45,12 +53,26 @@ namespace xM {
 	         * 
 	         * @param const std::string& endpoint API endpoint.
 	         */
-	        MAP(const std::string& endpoint);	        
+	        MAP(const std::string& epoint);	        
 	        
 	        /**
 	         * Default destructor.
 	         */
 	        ~MAP();
+	        
+	        /**
+	         * Get the last error string.
+	         * 
+	         * @return std::string& The last error.
+	         */
+	        std::string& getError();
+	        
+	        /**
+	         * Set the MAP API endpoint.
+	         * 
+	         * @param const std::string& epoint New endpoint
+	         */
+	        void setEndpoint(const std::string& epoint);
 	        
 	        /**
 	         * Attempt to load the manga list.
@@ -62,9 +84,9 @@ namespace xM {
 	        /**
 	         * Returns the loaded manga list or an empty list.
 	         * 
-	         * @return MangaList The manga list.
+	         * @return MangaList* The manga list.
 	         */
-	        MangaList getMangaList();
+	        MangaList* getMangaList();
 	        
 	        /**
 	         * Load the chapter list for a specific manga.
@@ -73,14 +95,14 @@ namespace xM {
 	         * 
 	         * @return bool Success or not.
 	         */
-	        bool loadChapterList(int mangaID);
+	        //bool loadChapterList(int mangaID);
 	        
 	        /**
 	         * Returns the loaded chapter list or an empty list.
 	         * 
 	         * @return ChapterList The chapter list.
 	         */
-	        ChapterList getChapterList();
+	        //ChapterList* getChapterList();
 	        
 	        /**
 	         * Load the image list for a specific chapter and manga.
@@ -90,14 +112,14 @@ namespace xM {
 	         * 
 	         * @return bool Success or not.
 	         */
-	        bool loadImageList(int mangaID, int chapterID);
+	        //bool loadImageList(int mangaID, int chapterID);
 	        
 	        /**
 	         * Returns the loaded image list or an empty list.
 	         * 
 	         * @return ImageList The image list.
 	         */
-	        ImageList getImageList();
+	        //ImageList getImageList();
 	        
 	        /**
 	         * Load the image list for a specific chapter and manga.
@@ -108,14 +130,14 @@ namespace xM {
 	         * 
 	         * @return bool Success or not.
 	         */
-	        bool loadImage(int mangaID, int chapterID, int imageID);
+	        //bool loadImage(int mangaID, int chapterID, int imageID);
 	        
 	        /**
 	         * Returns the loaded image.
 	         * 
 	         * @return MangaImage The image.
 	         */
-	        MangaImage getImage();
+	        //MangaImage getImage();
 	    
 	    };
 			

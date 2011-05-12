@@ -76,12 +76,12 @@ namespace xM {
             // Create our local mailbox
             localBox = sceKernelCreateMbx("MenuStateBox", 0, NULL);
             
-            SceKernelMsgPacket hdr = {0};
+            // Setup the defaults for the message struct
             msg = new Manga::APIMessage;
+            SceKernelMsgPacket hdr = {0};
             msg->header = hdr;
             msg->returnBox = &localBox;
-            msgText = new std::string("http://omp.leonex.co.cc/");
-            
+                        
             Ui::Dialog::net();
                                                             
         }
@@ -156,10 +156,22 @@ namespace xM {
                 
             if (rMsg != NULL) {
             
-                if (activeDialog == 2)
+                if (activeDialog == 2) {
+                
+                	// At this point
+                	// switch to manga state
+                	// if it went well
+                	
+                	if (rMsg->result) {
+                	
+                		printf("# of manga loaded: %d\n", Manga::mapImp->getMangaList()->size());
+                	
+                	} else
+                		Ui::Dialog::msg(*(std::string*)rMsg->what);                	
+                	
                     activeDialog = 0;
-                            
-                Ui::Dialog::msg(*rMsg->text);
+                    
+				}
                 
                 return;
                 
@@ -189,8 +201,8 @@ namespace xM {
 	                	                    
 	                    if (activeDialog != 2) {
 	                    
-	                        msg->text = msgText;
-	                    
+	                    	// Send the manga list request
+	                        msg->type = Manga::RequestMangaList;
 	                        sceKernelSendMbx(Manga::mangaAPIMbx, (void*)msg);
 	                    
 	                        // not really a dialog

@@ -164,7 +164,7 @@ namespace xM {
                 	curl_easy_cleanup(curl);
 			        curl_slist_free_all(headersList);
                 
-                	return -1;
+                	return false;
                 
                 }
 	

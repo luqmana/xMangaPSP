@@ -41,6 +41,7 @@ namespace xM {
 	
 	    SceUID mangaAPIThreadID = -1;
 	    SceUID mangaAPIMbx;
+	    MAP* mapImp = NULL;
 				    
 	    /**
 	     * The manga api thread function.
@@ -70,22 +71,62 @@ namespace xM {
 	                    sRes = NULL;
 	                
 	                }
+	                
+	                switch (msg->type) {
+	                
+	                	case SetEndpoint:
+	                	
+	                		//mapImp->setEndpoint();
+	                	
+	                		break;
+	                		
+	                	case RequestMangaList:
+	                	
+	                		if (mapImp->loadMangaList()) {
+	                		
+	                			printf("Manga list loaded.\n");
+	                			
+	                			sMsg = new APIMessage;
+	                			SceKernelMsgPacket hdr = {0};            
+				                sMsg->header = hdr;
+				                sMsg->returnBox = &mangaAPIMbx;
+				                sMsg->what = (void*)mapImp->getMangaList();
+				                sMsg->result = true;
+					            sceKernelSendMbx(*msg->returnBox, (void*)sMsg);             	
+	                		
+	                		} else {
+	                		
+	                			printf("Can't load [%s].\n", mapImp->getError().c_str());
+	                			
+	                			sMsg = new APIMessage;
+	                			SceKernelMsgPacket hdr = {0};            
+				                sMsg->header = hdr;
+				                sMsg->returnBox = &mangaAPIMbx;
+				                sMsg->what = (void*)new std::string(mapImp->getError());
+				                sMsg->result = false;
+					            sceKernelSendMbx(*msg->returnBox, (void*)sMsg);
+	                		
+	                		}
+	                	
+	                		break;
+	                
+	                }
 	                	            	            	                
-	                std::string response;
+	                /*std::string response;
 	                	                
 	                if (Net::downloadFile(*msg->text, response)) {
 	                	                	                	         
-                        sRes = new std::string(response);
+                        printf("%s\n", response.c_str());
 	                	                	                    
 	                    SceKernelMsgPacket hdr = {0};
             
                         sMsg = new APIMessage;
                         sMsg->header = hdr;
-                        sMsg->text = sRes;
+                        sMsg->text = new std::string("Downloaded");
 	                    sceKernelSendMbx(*msg->returnBox, (void*)sMsg);
 	                    
 	                } else
-	                    Util::logMsg("Can't download [%s].", response.c_str());
+	                    Util::logMsg("Can't download [%s].", response.c_str());*/
 	                
 	            }
 	        	        
@@ -123,6 +164,8 @@ namespace xM {
 	        // start it
 	        if (mangaAPIThreadID > 0)
 	            sceKernelStartThread(mangaAPIThreadID, 0, NULL);
+	            
+	        mapImp = new MAP("http://omp.leonex.co.cc/api/");
 	    
 	    }
 	    
@@ -133,7 +176,9 @@ namespace xM {
 	    	    
 	        if (mangaAPIThreadID > 0)
 	            sceKernelDeleteThread(mangaAPIThreadID);
-	            	    
+	        
+	        delete mapImp;
+	        	    
 	    }
 			
 	}

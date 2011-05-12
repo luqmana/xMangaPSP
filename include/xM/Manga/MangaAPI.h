@@ -30,7 +30,7 @@
 #define _MangaAPI_H
 
 // BEGIN Includes
-//#include "xM/Manga/MAP.h"
+#include "xM/Manga/MAP.h"
 
 #include <pspkernel.h>
 
@@ -41,15 +41,28 @@ namespace xM {
 
 	namespace Manga {
 	
+		enum RequestType {
+		
+			SetEndpoint,
+			RequestMangaList,
+			RequestChapterList,
+			RequestImageList,
+			RequestImage
+		
+		};
+	
 	    struct APIMessage {
 	    
             SceKernelMsgPacket header;
             SceUID* returnBox;
-            std::string* text;
+            RequestType type;
+            void* what;
+            bool result;
             
         };
 	
 	    extern SceUID mangaAPIMbx;
+	    extern MAP* mapImp;
 			
 		/**
 		 * Setups the manga API handler thread.

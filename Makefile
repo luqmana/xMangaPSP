@@ -40,8 +40,9 @@
  STATES = About Menu
  
  # Source files
- SRC   =  xMangaPSP.cpp Callbacks.cpp Graphics.cpp Dialogs.cpp Stats.cpp Utils.cpp Timer.cpp FileManager.cpp InputManager.cpp ResourceManager.cpp StateManager.cpp Image.cpp Log.cpp PicoPNG.cpp Text.cpp XMLParser.cpp Net.cpp ExtraElements.cpp MangaAPI.cpp
- SRC  +=  $(patsubst %, %.cpp, $(STATES))
+ SRC_CPP   =  xMangaPSP.cpp Callbacks.cpp Graphics.cpp Dialogs.cpp Stats.cpp Utils.cpp Timer.cpp FileManager.cpp InputManager.cpp ResourceManager.cpp StateManager.cpp Image.cpp Log.cpp PicoPNG.cpp Text.cpp XMLParser.cpp Net.cpp ExtraElements.cpp MangaAPI.cpp MAP.cpp
+ SRC_CPP  +=  $(patsubst %, %.cpp, $(STATES))
+ SRC_C	   = cJSON.c
  
  # External Libs Source Files
  EXT_SRC_CPP += $(wildcard $(EXT_SRC_DIR)/tinyxml/*.cpp)
@@ -53,7 +54,8 @@
  EXT_SRC_C   := $(patsubst ext/src/%.c, %.c, $(EXT_SRC_C))
   
  # Object files
- OBJS    = $(patsubst %.cpp, $(BUILD_DIR)/%.o, $(filter %.cpp, $(SRC)))
+ OBJS    += $(patsubst %.cpp, $(BUILD_DIR)/%.o, $(filter %.cpp, $(SRC_CPP)))
+ OBJS    += $(patsubst %.c, $(BUILD_DIR)/%.o, $(filter %.c, $(SRC_C)))
  
  # External Libs Object Files
  OBJS	+= $(patsubst %.cpp, $(BUILD_DIR)/%.o, $(filter %.cpp, $(EXT_SRC_CPP)))
@@ -124,6 +126,10 @@
  # Rule to keep src dir clean while building
  $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
+	
+ # Rule to keep src dir clean while building
+ $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
+	$(CC) $(CFLAGS) -c -o $@ $<
 
  # Rule to build state classes
  $(BUILD_DIR)/%.o: $(SRC_DIR)/States/%.cpp

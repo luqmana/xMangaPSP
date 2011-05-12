@@ -31,13 +31,125 @@
 // BEGIN Includes
 #include "xM/Manga/MAP.h"
 #include "xM/Net/Net.h"
+#include "xM/Util/cJSON.h"
+#include "xM/Util/Log.h"
 // END Includes
 
 namespace xM {
 
 	namespace Manga {
 			
-	    
+	    /**
+         * Default constructor.
+         * 
+         * @param const std::string& epoint API endpoint.
+         */
+        MAP::MAP(const std::string& epoint) {
+        
+        	this->endpoint = epoint;
+        	this->mangaList = new MangaList;
+        	this->error = "";
+        
+        }   
+        
+        /**
+         * Default destructor.
+         */
+        MAP::~MAP() {
+        
+        	delete this->mangaList;
+        
+        }
+        
+        /**
+         * Get the last error string.
+         * 
+         * @return std::string& The last error.
+         */
+        std::string& MAP::getError() {
+        
+        	return this->error;
+        
+        }
+        
+        /**
+         * Set the MAP API endpoint.
+         * 
+         * @param const std::string& epoint New endpoint
+         */
+        void MAP::setEndpoint(const std::string& epoint) {
+        
+        	this->endpoint = epoint;
+        
+        }
+        
+        /**
+         * Attempt to load the manga list.
+         * 
+         * @return bool Success or not.
+         */
+        bool MAP::loadMangaList() {
+        
+        	std::string response;
+	                	          
+			// Attempt to download mangalist
+            if (Net::downloadFile(this->endpoint, response)) {
+            	                	                	  
+				// clear mangalist
+				this->mangaList->clear();
+            	                	                	         
+                // No error, try to parse JSON
+                
+                cJSON* root = cJSON_Parse(response.c_str());
+                
+                if (root == 0) {
+                
+                	Util::logMsg("Can't parse JSON [%s] [%s].", this->endpoint.c_str(), response.c_str());
+                	
+                	this->error = "Unable to parse JSON.";
+                	
+                	return false;
+                
+                }                
+                
+				cJSON* mangas = cJSON_GetObjectItem(root, "Manga");
+
+				for (int i = 0; i < cJSON_GetArraySize(mangas); i++) {
+				
+					MangaListItem item;
+				
+					item.name = cJSON_GetObjectItem(cJSON_GetArrayItem(mangas, i), "name")->valuestring;
+					item.apiHandle = cJSON_GetObjectItem(cJSON_GetArrayItem(mangas, i), "apiHandle")->valuestring;
+					
+					this->mangaList->push_back(item);
+				
+				}
+				cJSON_Delete(root);
+            	                	                    
+                return true;
+                
+            } else {
+            
+                Util::logMsg("Can't download [%s] [%s].", this->endpoint.c_str(), response.c_str());
+                
+                this->error = response.c_str();
+                
+                return false;
+                
+            }
+        
+        }
+        
+        /**
+         * Returns the loaded manga list or an empty list.
+         * 
+         * @return MangaList* The manga list.
+         */
+        MangaList* MAP::getMangaList() {
+        
+        	return this->mangaList;
+        
+        }
 			
 	}
 
