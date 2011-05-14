@@ -36,7 +36,6 @@
 #include "xM/Ui/ExtraElements.h"
 #include "xM/Util/Log.h"
 #include "xM/Util/Timer.h"
-#include "xM/Util/Utils.h"
 // END Includes
 
 namespace xM {
@@ -47,19 +46,23 @@ namespace xM {
          * Start up code.
          */
         void About::init(void) {
-                                
-            action = 0;
-            state = 0;
-            
-            extraElements = new Ui::ExtraElements();
+                  
+            // init/reset some vars
+            this->action = 0;
+            this->state = 0;
+            this->extraElements = new Ui::ExtraElements();
 
-            parser.registerCustomElementHandler("bouncyBox", extraElements);
-            parser.parseFile("ui/about.xml");
+			// Register the XML UI parsers
+            this->parser.registerCustomElementHandler("bouncyBox", this->extraElements);
+            this->parser.parseFile("ui/about.xml");
             
-            genesisSplash = Engine::ResourceManager::getInstance()->getImage("genesis.png");
+            // Get the splash image
+            // (which should be cached, otherwise loaded now)
+            this->genesisSplash = Engine::ResourceManager::getInstance()->getImage("genesis.png");
             
-            if (genesisSplash != NULL)
-            	genesisSplash->swizzle();
+            // swizzle the splash image if it's been loaded
+            if (this->genesisSplash != NULL)
+            	this->genesisSplash->swizzle();
             else
             	Util::logMsg("Genesis splash wasn't loaded properly!");
                                                 
@@ -70,27 +73,24 @@ namespace xM {
          */
         void About::cleanUp(void) {
 
-            parser.deRegisterCustomElementHandler("bouncyBox");
+            this->parser.deRegisterCustomElementHandler("bouncyBox");
             
-            delete extraElements;
+            delete this->extraElements;
             
         }
 
         /**
          * Pause state.
          */
-        void About::pause(void) {
-
-
-
-        }
+        void About::pause(void) { }
 
         /**
          * Resume state.
          */
         void About::resume(void) {
 
-
+			// Reload XML ui
+			this->parser.parseFile("ui/about.xml");
 
         }
 
@@ -99,16 +99,18 @@ namespace xM {
          */
         void About::handleEvents(void) {
 
+			// Get pointer to input manager
             Engine::InputManager* iM = Engine::InputManager::getInstance();
             
-            // Reload XML on-the-fly
-            if (__xM_DEBUG && iM->pressed(PSP_CTRL_LTRIGGER)) {
+#ifdef __xM_DEBUG            
+            // DEBUG: Reload XML on-the-fly            
+            if (iM->pressed(PSP_CTRL_LTRIGGER)) {
             
                 Util::logMsg("Reloading XML ui file.");
-            
-                parser.parseFile("ui/about.xml");    
+                this->parser.parseFile("ui/about.xml");    
             
             }
+#endif
             
             if (iM->pressed(PSP_CTRL_CIRCLE))
                 action = 1;
@@ -123,15 +125,24 @@ namespace xM {
          */
         void About::handleLogic(void) {
         	        
-	        if (action == 1) {
+	        switch (this->action) {
 	        
-	            action = 0;
-	            Engine::StateManager::getInstance()->popState();
-	        
-	        } else if (action == 2) {
-	        
-	            state = (state == 0) ? 1 : 0;
-	            action = 0;
+	        	// Return to previous state
+	        	case 1:
+	        	
+	        		Engine::StateManager::getInstance()->popState();
+	        	
+	        		break;
+	        		
+	        	// Switch screen
+	        	case 2:
+	        	
+	        		this->state = (this->state == 0) ? 1 : 0;
+	        	
+	        		break;
+	        		
+	        	// Reset
+	        	this->action = 0;
 	        
 	        }
 	        	        
@@ -141,11 +152,26 @@ namespace xM {
          * Done with the logic? Draw what's needed then.
          */
         void About::draw(void) {
-                            
-            if (state == 0)    
-                parser.draw();
-            else if (state == 1)
-                genesisSplash->draw(0, 0);
+
+            switch (this->state) {
+            
+            	// Main screen
+            	case 0:
+            	
+            		// Render UI from XML
+            		this->parser.draw();
+            	
+            		break;
+            		
+            	// Splash screen
+            	case 1:
+            	
+            		// Render the splash image
+            		this->genesisSplash->draw(0, 0);
+            	
+            		break;
+            
+            }
             
         }
         

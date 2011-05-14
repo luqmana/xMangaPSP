@@ -76,7 +76,12 @@ namespace xM {
 	                
 	                	case SetEndpoint:
 	                	
-	                		//mapImp->setEndpoint();
+	                		if (msg->what != NULL) {
+	                		
+	                			mapImp->setEndpoint(*(std::string*)msg->what);
+	                			delete (std::string*)msg->what;
+	                			
+	                		}
 	                	
 	                		break;
 	                		
@@ -91,6 +96,7 @@ namespace xM {
 				                sMsg->header = hdr;
 				                sMsg->returnBox = &mangaAPIMbx;
 				                sMsg->what = NULL;
+				                sMsg->type = RequestMangaList;
 				                sMsg->result = true;
 					            sceKernelSendMbx(*msg->returnBox, (void*)sMsg);             	
 	                		
@@ -103,31 +109,22 @@ namespace xM {
 				                sMsg->header = hdr;
 				                sMsg->returnBox = &mangaAPIMbx;
 				                sMsg->what = (void*)new std::string(mapImp->getError());
+				                sMsg->type = RequestMangaList;
 				                sMsg->result = false;
 					            sceKernelSendMbx(*msg->returnBox, (void*)sMsg);
 	                		
 	                		}
 	                	
 	                		break;
+	                		
+	                	case RequestChapterList:
+						case RequestImageList:
+						case RequestImage:
+	                	
+	                		break;
 	                
 	                }
-	                	            	            	                
-	                /*std::string response;
-	                	                
-	                if (Net::downloadFile(*msg->text, response)) {
-	                	                	                	         
-                        printf("%s\n", response.c_str());
-	                	                	                    
-	                    SceKernelMsgPacket hdr = {0};
-            
-                        sMsg = new APIMessage;
-                        sMsg->header = hdr;
-                        sMsg->text = new std::string("Downloaded");
-	                    sceKernelSendMbx(*msg->returnBox, (void*)sMsg);
-	                    
-	                } else
-	                    Util::logMsg("Can't download [%s].", response.c_str());*/
-	                
+	                	            	            	                	                
 	            }
 	        	        
 	        }

@@ -571,7 +571,7 @@ namespace xM {
 
             this->file = xFile;
 
-            if (!this->uiXMLFile->LoadFile(file.c_str(), TIXML_ENCODING_UTF8)) {
+            if (!this->uiXMLFile->Parse(Engine::ResourceManager::getInstance()->getRes(this->file).c_str())) {
 
                 if (__xM_DEBUG)
                     Util::logMsg("XMLParser::parseFile — Unable to load UI XML file [%s][%s].", file.c_str(), uiXMLFile->ErrorDesc());

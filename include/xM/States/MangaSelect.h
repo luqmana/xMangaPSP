@@ -35,6 +35,7 @@
 #include "xM/Gfx/Image.h"
 #include "xM/Gfx/Text.h"
 #include "xM/Manga/MangaAPI.h"
+#include "xM/Manga/MangaElements.h"
 #include "xM/Ui/ExtraElements.h"
 #include "xM/Ui/XMLParser.h"
 // END Includes
@@ -96,7 +97,7 @@ namespace xM {
             int activeDialog;
             
             unsigned int selected;
-            std::vector<std::string> mangaList;
+            Manga::MangaList mangaList;
             
             xM::Manga::APIMessage* msg;
             SceUID localBox;
