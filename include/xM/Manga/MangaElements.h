@@ -46,37 +46,15 @@ namespace xM {
 			std::vector<std::string> apiHandles;
 
 		} MangaList;
-
-		// Chapter list item
-		typedef struct {
-
-			std::string name;
-			std::string apiHandle;
-
-		} ChapterListItem;
-
+		
 		// Chapter list
 		typedef struct {
 
-			MangaList* mangaList;
-			std::vector<ChapterListItem> list;
-	
+			std::string mangaSlug;
+			std::vector<std::string> names;
+			std::vector<std::string> apiHandles;
+
 		} ChapterList;
-
-		// Image list item
-		typedef struct {
-
-			std::string image;
-
-		} ImageListItem;
-
-		// Image list
-		typedef struct {
-
-			ChapterList* chapterList;
-			std::vector<ImageListItem> list;
-	
-		} ImageList;
 			
 	}
 

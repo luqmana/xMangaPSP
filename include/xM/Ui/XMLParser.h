@@ -58,6 +58,7 @@ namespace xM {
             std::vector<Element*> uiElements;
             std::map<std::string, CustomElementHandler*> customElementHandlers;
             std::map<std::string, void*> customElementHandlersData;
+            std::map<std::string, std::string> textSubstitutes;
         
         public:
             
@@ -112,6 +113,14 @@ namespace xM {
              * @param const std::string& element The custom element.
              */
             void deRegisterCustomElementHandler(const std::string& element);
+         
+         	/**
+         	 * Add a token to be replaced in text elements.
+         	 * 
+         	 * @param const std::string& key The token to replace.
+         	 * @param const std::string& replace What to replace with.
+         	 */
+            void addTextSubstitute(const std::string& key, const std::string& replace);
                     
         };
         

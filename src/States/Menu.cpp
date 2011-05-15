@@ -195,7 +195,7 @@ namespace xM {
 		            	
 		            	} else {
 		            	
-		            		// Something failed, print error message                	
+		            		// Something failed, display error message                	
 		            		Ui::Dialog::msg(*(std::string*)rMsg->what);                	
 		            		delete (std::string*)rMsg->what;
 		            		

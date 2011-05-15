@@ -212,6 +212,22 @@ namespace xM {
                     newline = uiElement->text.find("\\n");
                 }
                 
+                // handle var substitutions
+                for (std::map<std::string, std::string>::const_iterator iter = this->textSubstitutes.begin(); iter != this->textSubstitutes.end(); ++iter) {
+                
+                	std::string tag = "{" + iter->first + "}";
+                	
+                	size_t pos = uiElement->text.find(tag);
+                	
+                	if (pos != std::string::npos) {
+                	
+                		uiElement->text.replace(pos, tag.size(), iter->second);
+                	
+                	} else
+                		continue;
+                
+                }
+                
                 if (xmlElement->Attribute("colour") == NULL) {
                     uiElement->colour = 0;
                 } else {
@@ -764,6 +780,18 @@ namespace xM {
                     this->customElementHandlersData.erase(element);
                 
             }
+        
+        }
+        
+        /**
+     	 * Add a token to be replaced in text elements.
+     	 * 
+     	 * @param const std::string& key The token to replace.
+     	 * @param const std::string& replace What to replace with.
+     	 */
+        void XMLParser::addTextSubstitute(const std::string& key, const std::string& replace) {
+        
+        	this->textSubstitutes.insert(std::pair<std::string, std::string>(key, replace));
         
         }
 

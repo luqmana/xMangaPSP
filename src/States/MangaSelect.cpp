@@ -36,7 +36,7 @@
 #include "xM/States/Menu.h"
 #include "xM/Ui/Dialogs.h"
 #include "xM/Util/Log.h"
-#include "xM/Util/Timer.h"
+#include "xM/Util/Utils.h"
 // END Includes
 
 namespace xM {
@@ -70,6 +70,8 @@ namespace xM {
 			// Register the XML UI parsers
             this->parser.registerCustomElementHandler("list", this->extraElements, (void*)&this->lInfo);
             this->parser.registerCustomElementHandler("bouncyBox", this->extraElements);
+            
+            this->parser.addTextSubstitute("mangaCount", Util::toString(this->mangaList.names.size()));
             
             // read in the XML and generate the UI
             this->parser.parseFile("ui/manga.xml");
@@ -155,6 +157,10 @@ namespace xM {
          * Now do something with the data we got from events and what not.
          */
         void MangaSelect::handleLogic(void) {
+        
+        	//Check for any new messages in mailbox
+            Manga::APIMessage* rMsg = NULL;
+            sceKernelPollMbx(this->localBox, (void**)&rMsg);
                             	        
 	        // BEGIN Menu Traversing Logic
 	        if ((signed int)this->selected < 0)
@@ -162,7 +168,57 @@ namespace xM {
             if (this->selected > (this->mangaList.names.size() - 1))
                 this->selected = this->mangaList.names.size() - 1;
             // END Menu Traversing Logic
-                            	        	        	        
+            
+            // Handle any active requests
+            switch (this->activeDialog) {
+            
+            	// No outstanding requests
+            	case 0:
+            	
+            		if (this->doAction) {
+            
+            			// Send the manga list request
+				        this->msg->type = Manga::RequestChapterList;
+				        this->msg->what = (void*)new std::string(this->mangaList.apiHandles[selected]);
+				        sceKernelSendMbx(Manga::mangaAPIMbx, (void*)this->msg);
+				    
+				        // not really a dialog
+				        // but allows some control
+				        this->activeDialog = 1;			
+            			
+						this->doAction = false;
+				
+					}
+            	
+					break;
+					
+				case 1:
+				
+					// There's a response in the mailbox!
+            		if (rMsg != NULL) {
+                            
+                        // Loaded successfully, switch to new state
+		            	if (rMsg->type == Manga::RequestChapterList && rMsg->result == true) {
+		            	
+		            		//Engine::StateManager::getInstance()->changeState(new States::MangaSelect());
+		            		//return;
+		            	
+		            	} else {
+		            	
+		            		// Something failed, display error message                	
+		            		Ui::Dialog::msg(*(std::string*)rMsg->what);                	
+		            		delete (std::string*)rMsg->what;
+		            		
+		            	}
+		            	
+		                this->activeDialog = 0;
+		                
+					}
+					
+					break;
+            
+            }
+                                        	        	        	        
         }
 
         /**

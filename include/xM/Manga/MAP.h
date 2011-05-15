@@ -45,6 +45,7 @@ namespace xM {
 	    	std::string endpoint;
 	    	std::string error;
 	    	MangaList* mangaList;
+	    	ChapterList* chapterList;
 	    	bool loadedMangaList;
 	    
 	    public:
@@ -92,18 +93,18 @@ namespace xM {
 	        /**
 	         * Load the chapter list for a specific manga.
 	         * 
-	         * @param int mangaID The ID of the manga in the MangaList
+	         * @param const std::string& mangaSlug The slug of the manga in the MangaList
 	         * 
 	         * @return bool Success or not.
 	         */
-	        //bool loadChapterList(int mangaID);
+	        bool loadChapterList(const std::string& mangaSlug);
 	        
 	        /**
 	         * Returns the loaded chapter list or an empty list.
 	         * 
 	         * @return ChapterList The chapter list.
 	         */
-	        //ChapterList* getChapterList();
+	        ChapterList* getChapterList();
 	        
 	        /**
 	         * Load the image list for a specific chapter and manga.

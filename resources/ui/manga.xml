@@ -1,4 +1,4 @@
-<window name="Manga" type="main">
+<window name="MangaSelect" type="main">
     
     <!--<image x="0" y="0" src="test5.jpg" swizzle="true" />-->
     
@@ -13,7 +13,8 @@
     <quad x="0" y="0" width="480" height="30" colour="black,200" />
     <text x="240" y="20" font="{LATIN_SANS_SERIF_BOLD}" align="center" size="1.0" colour="red" shadowColour="90,0,0" value="xMangaPSP" />
     
-    <text x="240" y="75" font="{LATIN_SANS_SERIF_ITALIC_BOLD}" align="center" size="1.0" colour="36,36,36" value="Choose a manga series:" />
+    <text x="240" y="65" font="{LATIN_SANS_SERIF_ITALIC_BOLD}" align="center" size="1.0" colour="36,36,36" value="Choose a manga series:" />
+    <text x="240" y="85" font="{LATIN_SANS_SERIF_REGULAR_SMALL}" align="center" size="1.0" colour="36,36,36" value="(Total: {mangaCount})" />
         
     <list x="240" y="120" offsetX="0" offsetY="25" maxItems="5">
     

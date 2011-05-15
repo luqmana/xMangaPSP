@@ -118,6 +118,39 @@ namespace xM {
 	                		break;
 	                		
 	                	case RequestChapterList:
+	                	
+	                		if (mapImp->loadChapterList(*(std::string*)msg->what)) {
+	                		
+	                			printf("Chapter list loaded.\n");
+	                			
+	                			sMsg = new APIMessage;
+	                			SceKernelMsgPacket hdr = {0};            
+				                sMsg->header = hdr;
+				                sMsg->returnBox = &mangaAPIMbx;
+				                sMsg->what = NULL;
+				                sMsg->type = RequestChapterList;
+				                sMsg->result = true;
+					            sceKernelSendMbx(*msg->returnBox, (void*)sMsg);             	
+	                		
+	                		} else {
+	                		
+	                			printf("Can't load [%s].\n", mapImp->getError().c_str());
+	                			
+	                			sMsg = new APIMessage;
+	                			SceKernelMsgPacket hdr = {0};            
+				                sMsg->header = hdr;
+				                sMsg->returnBox = &mangaAPIMbx;
+				                sMsg->what = (void*)new std::string(mapImp->getError());
+				                sMsg->type = RequestChapterList;
+				                sMsg->result = false;
+					            sceKernelSendMbx(*msg->returnBox, (void*)sMsg);
+	                		
+	                		}
+	                		
+	                		delete (std::string*)msg->what;
+	                	
+	                		break;
+	                		
 						case RequestImageList:
 						case RequestImage:
 	                	
