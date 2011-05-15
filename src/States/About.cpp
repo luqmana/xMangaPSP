@@ -131,6 +131,9 @@ namespace xM {
 	        	case 1:
 	        	
 	        		Engine::StateManager::getInstance()->popState();
+	        		
+	        		// Reset
+	        		this->action = 0;
 	        	
 	        		break;
 	        		
@@ -138,12 +141,12 @@ namespace xM {
 	        	case 2:
 	        	
 	        		this->state = (this->state == 0) ? 1 : 0;
+	        		
+	        		// Reset
+	        		this->action = 0;
 	        	
 	        		break;
-	        		
-	        	// Reset
-	        	this->action = 0;
-	        
+	        			        
 	        }
 	        	        
         }
