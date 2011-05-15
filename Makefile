@@ -37,11 +37,12 @@
  EXTRA_CLEAN = 
  
  # States
- STATES = About Menu MangaSelect
+ STATES += $(wildcard $(SRC_DIR)/States/*.cpp)
+ STATES := $(patsubst $(SRC_DIR)/States/%.cpp, %.cpp, $(STATES))
  
  # Source files
  SRC_CPP   =  xMangaPSP.cpp Callbacks.cpp Graphics.cpp Dialogs.cpp Stats.cpp Utils.cpp Timer.cpp FileManager.cpp InputManager.cpp ResourceManager.cpp StateManager.cpp Image.cpp Log.cpp PicoPNG.cpp Text.cpp XMLParser.cpp Net.cpp ExtraElements.cpp MangaAPI.cpp MAP.cpp
- SRC_CPP  +=  $(patsubst %, %.cpp, $(STATES))
+ SRC_CPP  +=  $(STATES)
  SRC_C	   = cJSON.c
  
  # External Libs Source Files
@@ -50,8 +51,8 @@
  EXT_SRC_CPP += $(wildcard $(EXT_SRC_DIR)/jpegxx/*.cpp)
  EXT_SRC_C 	 += $(wildcard $(EXT_SRC_DIR)/intraFontG/*.c)
  
- EXT_SRC_CPP := $(patsubst ext/src/%.cpp, %.cpp, $(EXT_SRC_CPP))
- EXT_SRC_C   := $(patsubst ext/src/%.c, %.c, $(EXT_SRC_C))
+ EXT_SRC_CPP := $(patsubst $(EXT_SRC_DIR)/%.cpp, %.cpp, $(EXT_SRC_CPP))
+ EXT_SRC_C   := $(patsubst $(EXT_SRC_DIR)/%.c, %.c, $(EXT_SRC_C))
   
  # Object files
  OBJS    += $(patsubst %.cpp, $(BUILD_DIR)/%.o, $(filter %.cpp, $(SRC_CPP)))

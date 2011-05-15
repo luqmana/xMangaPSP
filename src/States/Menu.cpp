@@ -193,7 +193,7 @@ namespace xM {
 		            		Engine::StateManager::getInstance()->changeState(new States::MangaSelect());
 		            		return;
 		            	
-		            	} else {
+		            	} else if (rMsg->type == Manga::RequestMangaList && rMsg->result == false) {
 		            	
 		            		// Something failed, display error message                	
 		            		Ui::Dialog::msg(*(std::string*)rMsg->what);                	

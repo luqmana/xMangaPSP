@@ -25,16 +25,15 @@
  * @package xMangaPSP
  */
 
-#ifndef _MangaSelectState_CPP
-#define _MangaSelectState_CPP
+#ifndef _ChapterSelectState_CPP
+#define _ChapterSelectState_CPP
 
 // BEGIN Includes
 #include "xM/Engine/InputManager.h"
 #include "xM/Engine/ResourceManager.h"
 #include "xM/Engine/StateManager.h"
-#include "xM/States/MangaSelect.h"
 #include "xM/States/ChapterSelect.h"
-#include "xM/States/Menu.h"
+#include "xM/States/MangaSelect.h"
 #include "xM/Ui/Dialogs.h"
 #include "xM/Util/Log.h"
 #include "xM/Util/Utils.h"
@@ -47,10 +46,10 @@ namespace xM {
         /**
          * Start up code.
          */
-        void MangaSelect::init(void) {
+        void ChapterSelect::init(void) {
         
-        	// Make sure the manga list has actually been loaded
-        	if (Manga::mapImp->getMangaList() == NULL) {
+        	// Make sure the chapter list has actually been loaded
+        	if (Manga::mapImp->getChapterList() == NULL) {
         	
         		Engine::StateManager::getInstance()->popState();
         		return;
@@ -61,24 +60,24 @@ namespace xM {
             this->doAction = false;
             this->activeDialog = 0;
             this->selected = 0;
-            this->mangaList = *Manga::mapImp->getMangaList();      
+            this->chapterList = *Manga::mapImp->getChapterList();      
             this->extraElements = new Ui::ExtraElements;
                         
 			// setup the list element
             this->lInfo.selected = &this->selected;
-            this->lInfo.list = &this->mangaList.names;
+            this->lInfo.list = &this->chapterList.names;
 
 			// Register the XML UI parsers
             this->parser.registerCustomElementHandler("list", this->extraElements, (void*)&this->lInfo);
             this->parser.registerCustomElementHandler("bouncyBox", this->extraElements);
             
-            this->parser.addTextSubstitute("mangaCount", Util::toString(this->mangaList.names.size()));
+            this->parser.addTextSubstitute("chapterCount", Util::toString(this->chapterList.names.size()));
             
             // read in the XML and generate the UI
-            this->parser.parseFile("ui/manga.xml");
+            this->parser.parseFile("ui/chapter.xml");
                         
             // Create our local mailbox
-            this->localBox = sceKernelCreateMbx("MangaSelectStateBox", 0, NULL);
+            this->localBox = sceKernelCreateMbx("ChapterSelectStateBox", 0, NULL);
             
             // Setup the defaults for the message struct
             this->msg = new Manga::APIMessage;
@@ -91,7 +90,7 @@ namespace xM {
         /**
          * Clean up code.
          */
-        void MangaSelect::cleanUp(void) {
+        void ChapterSelect::cleanUp(void) {
 
 			sceKernelDeleteMbx(this->localBox);
 
@@ -108,22 +107,22 @@ namespace xM {
         /**
          * Pause state.
          */
-        void MangaSelect::pause(void) { }
+        void ChapterSelect::pause(void) { }
 
         /**
          * Resume state.
          */
-        void MangaSelect::resume(void) {
+        void ChapterSelect::resume(void) {
 
 			// Reload XML ui
-			this->parser.parseFile("ui/manga.xml");
+			this->parser.parseFile("ui/chapter.xml");
 			
         }
 
         /**
          * Poll for input, read event state etc
          */
-        void MangaSelect::handleEvents(void) {
+        void ChapterSelect::handleEvents(void) {
 
 			// Get pointer to input manager
             Engine::InputManager* iM = Engine::InputManager::getInstance();
@@ -133,7 +132,7 @@ namespace xM {
             if (iM->pressed(PSP_CTRL_LTRIGGER)) {
             
                 Util::logMsg("Reloading XML ui file.");
-                this->parser.parseFile("ui/manga.xml");    
+                this->parser.parseFile("ui/chapter.xml");    
             
             }
 #endif
@@ -150,14 +149,14 @@ namespace xM {
                 
             // Leave state
             if (iM->pressed(PSP_CTRL_CIRCLE))
-            	Engine::StateManager::getInstance()->changeState(new States::Menu());
+            	Engine::StateManager::getInstance()->changeState(new States::MangaSelect());
             
         }
 
         /**
          * Now do something with the data we got from events and what not.
          */
-        void MangaSelect::handleLogic(void) {
+        void ChapterSelect::handleLogic(void) {
         
         	//Check for any new messages in mailbox
             Manga::APIMessage* rMsg = NULL;
@@ -166,8 +165,8 @@ namespace xM {
 	        // BEGIN Menu Traversing Logic
 	        if ((signed int)this->selected < 0)
                 this->selected = 0;
-            if (this->selected > (this->mangaList.names.size() - 1))
-                this->selected = this->mangaList.names.size() - 1;
+            if (this->selected > (this->chapterList.names.size() - 1))
+                this->selected = this->chapterList.names.size() - 1;
             // END Menu Traversing Logic
             
             // Handle any active requests
@@ -178,8 +177,8 @@ namespace xM {
             	
             		if (this->doAction) {
             
-            			// Send the chapter list request
-				        this->msg->type = Manga::RequestChapterList;
+            			// Send the image list request
+				        /*this->msg->type = Manga::RequestImageList;
 				        this->msg->what = (void*)new std::string(this->mangaList.apiHandles[selected]);
 				        sceKernelSendMbx(Manga::mangaAPIMbx, (void*)this->msg);
 				    
@@ -187,7 +186,7 @@ namespace xM {
 				        // but allows some control
 				        this->activeDialog = 1;			
             			
-						this->doAction = false;
+						this->doAction = false;*/
 				
 					}
             	
@@ -196,7 +195,7 @@ namespace xM {
 				case 1:
 				
 					// There's a response in the mailbox!
-            		if (rMsg != NULL) {
+            		/*if (rMsg != NULL) {
                             
                         // Loaded successfully, switch to new state
 		            	if (rMsg->type == Manga::RequestChapterList && rMsg->result == true) {
@@ -214,7 +213,7 @@ namespace xM {
 		            	
 		                this->activeDialog = 0;
 		                
-					}
+					}*/
 					
 					break;
             
@@ -225,7 +224,7 @@ namespace xM {
         /**
          * Done with the logic? Draw what's needed then.
          */
-        void MangaSelect::draw(void) {
+        void ChapterSelect::draw(void) {
                                 
             // Draw based on XML
             this->parser.draw();
@@ -236,4 +235,4 @@ namespace xM {
 
 }
 
-#endif /* _MangaSelectState_CPP */
+#endif /* _ChapterSelectState_CPP */
