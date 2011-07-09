@@ -31,11 +31,7 @@
 
 // BEGIN Includes
 #include "xM/States/Base.h"
-#include "xM/Gfx/Graphics.h"
-#include "xM/Gfx/Image.h"
-#include "xM/Gfx/Text.h"
 #include "xM/Manga/MangaAPI.h"
-#include "xM/Manga/MangaElements.h"
 #include "xM/Ui/ExtraElements.h"
 #include "xM/Ui/XMLParser.h"
 // END Includes
@@ -89,7 +85,7 @@ namespace xM {
         private:
 
             Ui::XMLParser parser;
-            Ui::ExtraElements* extraElements;
+            Ui::ExtraElements extraElements;
             Ui::ListInfo lInfo;
                         
             bool doAction;
@@ -99,7 +95,7 @@ namespace xM {
             unsigned int selected;
             Manga::MangaList mangaList;
             
-            xM::Manga::APIMessage* msg;
+            xM::Manga::APIMessage msg;
             SceUID localBox;
 
         };

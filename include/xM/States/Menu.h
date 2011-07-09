@@ -31,9 +31,6 @@
 
 // BEGIN Includes
 #include "xM/States/Base.h"
-#include "xM/Gfx/Graphics.h"
-#include "xM/Gfx/Image.h"
-#include "xM/Gfx/Text.h"
 #include "xM/Manga/MangaAPI.h"
 #include "xM/Ui/ExtraElements.h"
 #include "xM/Ui/XMLParser.h"
@@ -88,7 +85,7 @@ namespace xM {
         private:
 
             Ui::XMLParser parser;
-            Ui::ExtraElements* extraElements;
+            Ui::ExtraElements extraElements;
             Ui::ListInfo lInfo;
                         
             bool doAction;
@@ -98,7 +95,7 @@ namespace xM {
             std::vector<std::string> menuList;
             unsigned int selected;
             
-            Manga::APIMessage* msg;
+            Manga::APIMessage msg;
             SceUID localBox;
 
         };

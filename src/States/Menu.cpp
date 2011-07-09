@@ -30,7 +30,6 @@
 
 // BEGIN Includes
 #include "xM/Engine/InputManager.h"
-#include "xM/Engine/ResourceManager.h"
 #include "xM/Engine/StateManager.h"
 #include "xM/States/About.h"
 #include "xM/States/MangaSelect.h"
@@ -48,15 +47,11 @@ namespace xM {
          * Start up code.
          */
         void Menu::init(void) {
-        
-            // Cache it for the about state
-            Engine::ResourceManager::getInstance()->getImage("genesis.png");
-                   
+                           
 			// init/reset some vars                         
             this->doAction = false;
             this->activeDialog = 0;
             this->selected = 0;
-            this->extraElements = new Ui::ExtraElements;
             
             // Populate menu
             this->menuList.push_back("Read Manga");
@@ -71,8 +66,8 @@ namespace xM {
             this->lInfo.list = &this->menuList;
             
 			// Register the XML UI parsers
-            this->parser.registerCustomElementHandler("list", this->extraElements, (void*)&this->lInfo);
-            this->parser.registerCustomElementHandler("bouncyBox", this->extraElements);
+            this->parser.registerCustomElementHandler("list", &this->extraElements, (void*)&this->lInfo);
+            this->parser.registerCustomElementHandler("bouncyBox", &this->extraElements);
             
             // read in the XML and generate the UI
             this->parser.parseFile("ui/menu.xml");
@@ -81,10 +76,9 @@ namespace xM {
             this->localBox = sceKernelCreateMbx("MenuStateBox", 0, NULL);
             
             // Setup the defaults for the message struct
-            this->msg = new Manga::APIMessage;
             SceKernelMsgPacket hdr = {0};
-            this->msg->header = hdr;
-            this->msg->returnBox = &this->localBox;
+            this->msg.header = hdr;
+            this->msg.returnBox = &this->localBox;
                        
 			// Call up the net dialog if not connected
 			if (!Net::isConnected())                        
@@ -101,11 +95,6 @@ namespace xM {
 
             this->parser.deRegisterCustomElementHandler("list");
             this->parser.deRegisterCustomElementHandler("bouncyBox");
-            
-            delete this->extraElements;
-            
-            if (this->msg != NULL)
-            	delete this->msg;
             
         }
 
@@ -220,8 +209,8 @@ namespace xM {
 						    case 0:
 						    	                    
 						    	// Send the manga list request
-						        this->msg->type = Manga::RequestMangaList;
-						        sceKernelSendMbx(Manga::mangaAPIMbx, (void*)this->msg);
+						        this->msg.type = Manga::RequestMangaList;
+						        sceKernelSendMbx(Manga::mangaAPIMbx, (void*)&this->msg);
 						    
 						        // not really a dialog
 						        // but allows some control

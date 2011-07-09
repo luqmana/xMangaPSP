@@ -30,12 +30,9 @@
 
 // BEGIN Includes
 #include "xM/Engine/InputManager.h"
-#include "xM/Engine/ResourceManager.h"
 #include "xM/Engine/StateManager.h"
 #include "xM/States/About.h"
-#include "xM/Ui/ExtraElements.h"
 #include "xM/Util/Log.h"
-#include "xM/Util/Timer.h"
 // END Includes
 
 namespace xM {
@@ -47,24 +44,11 @@ namespace xM {
          */
         void About::init(void) {
                   
-            // init/reset some vars
-            this->action = 0;
-            this->state = 0;
-            this->extraElements = new Ui::ExtraElements();
-
 			// Register the XML UI parsers
-            this->parser.registerCustomElementHandler("bouncyBox", this->extraElements);
+            this->parser.registerCustomElementHandler("bouncyBox", &this->extraElements);
+            
+            // Parse the required UI file
             this->parser.parseFile("ui/about.xml");
-            
-            // Get the splash image
-            // (which should be cached, otherwise loaded now)
-            this->genesisSplash = Engine::ResourceManager::getInstance()->getImage("genesis.png");
-            
-            // swizzle the splash image if it's been loaded
-            if (this->genesisSplash != NULL)
-            	this->genesisSplash->swizzle();
-            else
-            	Util::logMsg("Genesis splash wasn't loaded properly!");
                                                 
         }
 
@@ -74,9 +58,7 @@ namespace xM {
         void About::cleanUp(void) {
 
             this->parser.deRegisterCustomElementHandler("bouncyBox");
-            
-            delete this->extraElements;
-            
+                        
         }
 
         /**
@@ -112,69 +94,24 @@ namespace xM {
             }
 #endif
             
+			// Return to previous state
             if (iM->pressed(PSP_CTRL_CIRCLE))
-                action = 1;
-                
-            if (iM->pressed(PSP_CTRL_CROSS))
-                action = 2;
+                Engine::StateManager::getInstance()->popState();
             
         }
 
         /**
          * Now do something with the data we got from events and what not.
          */
-        void About::handleLogic(void) {
-        	        
-	        switch (this->action) {
-	        
-	        	// Return to previous state
-	        	case 1:
-	        	
-	        		Engine::StateManager::getInstance()->popState();
-	        		
-	        		// Reset
-	        		this->action = 0;
-	        	
-	        		break;
-	        		
-	        	// Switch screen
-	        	case 2:
-	        	
-	        		this->state = (this->state == 0) ? 1 : 0;
-	        		
-	        		// Reset
-	        		this->action = 0;
-	        	
-	        		break;
-	        			        
-	        }
-	        	        
-        }
+        void About::handleLogic(void) { }
 
         /**
          * Done with the logic? Draw what's needed then.
          */
         void About::draw(void) {
 
-            switch (this->state) {
-            
-            	// Main screen
-            	case 0:
-            	
-            		// Render UI from XML
-            		this->parser.draw();
-            	
-            		break;
-            		
-            	// Splash screen
-            	case 1:
-            	
-            		// Render the splash image
-            		this->genesisSplash->draw(0, 0);
-            	
-            		break;
-            
-            }
+            // Render UI from XML
+            this->parser.draw();
             
         }
         

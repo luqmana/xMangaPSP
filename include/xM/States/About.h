@@ -31,9 +31,6 @@
 
 // BEGIN Includes
 #include "xM/States/Base.h"
-#include "xM/Gfx/Graphics.h"
-#include "xM/Gfx/Image.h"
-#include "xM/Gfx/Text.h"
 #include "xM/Ui/ExtraElements.h"
 #include "xM/Ui/XMLParser.h"
 // END Includes
@@ -87,13 +84,8 @@ namespace xM {
         private:
 
             Ui::XMLParser parser;
-            Ui::ExtraElements* extraElements;
-            
-            Gfx::Image* genesisSplash;
+            Ui::ExtraElements extraElements;
                         
-            int action;
-            int state;
-            
         };
 
     }

@@ -119,7 +119,7 @@
  PSP_EBOOT_UNKPNG 	= NULL# Overlay Image			310 x 180
  PSP_EBOOT_PIC1 	= NULL# Background				480 x 272
  PSP_EBOOT_SND0 	= NULL# Background music
- PSP_EBOOT_PSAR 	= $(RES_DIR)/psar.zip# A data file. Store whatever in here.
+ #PSP_EBOOT_PSAR 	= $(RES_DIR)/psar.zip# A data file. Store whatever in here.
   
  # Get the base makefile
  include $(PSPSDK)/lib/build.mak

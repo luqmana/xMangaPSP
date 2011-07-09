@@ -30,10 +30,10 @@
 
 // BEGIN Includes
 #include "xM/Engine/InputManager.h"
-#include "xM/Engine/ResourceManager.h"
 #include "xM/Engine/StateManager.h"
 #include "xM/States/ChapterSelect.h"
 #include "xM/States/MangaSelect.h"
+#include "xM/Manga/MangaElements.h"
 #include "xM/Ui/Dialogs.h"
 #include "xM/Util/Log.h"
 #include "xM/Util/Utils.h"
@@ -61,16 +61,16 @@ namespace xM {
             this->activeDialog = 0;
             this->selected = 0;
             this->chapterList = *Manga::mapImp->getChapterList();      
-            this->extraElements = new Ui::ExtraElements;
                         
 			// setup the list element
             this->lInfo.selected = &this->selected;
             this->lInfo.list = &this->chapterList.names;
 
 			// Register the XML UI parsers
-            this->parser.registerCustomElementHandler("list", this->extraElements, (void*)&this->lInfo);
-            this->parser.registerCustomElementHandler("bouncyBox", this->extraElements);
+            this->parser.registerCustomElementHandler("list", &this->extraElements, (void*)&this->lInfo);
+            this->parser.registerCustomElementHandler("bouncyBox", &this->extraElements);
             
+            // The replace thingies
             this->parser.addTextSubstitute("chapterCount", Util::toString(this->chapterList.names.size()));
             
             // read in the XML and generate the UI
@@ -80,10 +80,9 @@ namespace xM {
             this->localBox = sceKernelCreateMbx("ChapterSelectStateBox", 0, NULL);
             
             // Setup the defaults for the message struct
-            this->msg = new Manga::APIMessage;
             SceKernelMsgPacket hdr = {0};
-            this->msg->header = hdr;
-            this->msg->returnBox = &this->localBox;
+            this->msg.header = hdr;
+            this->msg.returnBox = &this->localBox;
                                                                                     
         }
 
@@ -96,12 +95,7 @@ namespace xM {
 
             this->parser.deRegisterCustomElementHandler("list");
             this->parser.deRegisterCustomElementHandler("bouncyBox");
-            
-            delete this->extraElements;
-            
-            if (this->msg != NULL)
-            	delete this->msg;
-            
+                                    
         }
 
         /**
@@ -180,7 +174,7 @@ namespace xM {
             			// Send the image list request
 				        /*this->msg->type = Manga::RequestImageList;
 				        this->msg->what = (void*)new std::string(this->mangaList.apiHandles[selected]);
-				        sceKernelSendMbx(Manga::mangaAPIMbx, (void*)this->msg);
+				        sceKernelSendMbx(Manga::mangaAPIMbx, (void*)&this->msg);
 				    
 				        // not really a dialog
 				        // but allows some control
