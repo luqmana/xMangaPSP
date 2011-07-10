@@ -290,11 +290,13 @@ namespace xM {
          * @param float x X position.
          * @param float y Y position.
          * @param const char* text The text to draw.
+		 * 
+		 * @return float The x position after the last char.
          */
-        void Text::draw(float x, float y, const char* text, ...) {
+        float Text::draw(float x, float y, const char* text, ...) {
         
             if (this->font == NULL)
-                return;
+                return -1;
                 
             // Arguments
             va_list options;
@@ -308,13 +310,15 @@ namespace xM {
             // Format text
             vsnprintf(buffer, (size_t) sizeof (buffer), text, options);
                 
-            intraFontPrint(this->font, x, y, buffer);
+            float xPos = intraFontPrint(this->font, x, y, buffer);
             
             // Quit option list
             va_end(options);
             
             // Because intraFont messes them up
             resetRenderStates();
+			
+			return xPos;
         
         }
         
@@ -325,11 +329,13 @@ namespace xM {
          * @param float y Y position.
          * @param float width Maximum width before automatic linebreak.
          * @param const char* text The text to draw.
+		 * 
+		 * @return float The x position after the last char.
          */
-        void Text::drawColumn(float x, float y, float width, const char* text, ...) {
+        float Text::drawColumn(float x, float y, float width, const char* text, ...) {
         
             if (this->font == NULL)
-                return;
+                return -1;
                 
             // Arguments
             va_list options;
@@ -342,14 +348,19 @@ namespace xM {
 
             // Format text
             vsnprintf(buffer, (size_t) sizeof (buffer), text, options);
-                
-            intraFontPrintColumn(this->font, x, y, width, buffer);
+            
+			if (width == -1)
+				width = intraFontMeasureText(this->font, buffer);
+			
+            float xPos = intraFontPrintColumn(this->font, x, y, width, buffer);
             
             // Quit option list
             va_end(options);
                             
             // Because intraFont messes them up
             resetRenderStates();
+			
+			return xPos;
         
         }
         

@@ -108,10 +108,10 @@ namespace xM {
             uiElement->attributes = attributes;
 
             // Some common attributes
-            if (xmlElement->QueryDoubleAttribute("x", &uiElement->x) != TIXML_SUCCESS) {
+            if (xmlElement->QueryFloatAttribute("x", &uiElement->x) != TIXML_SUCCESS) {
                 uiElement->x = 0;
             }
-            if (xmlElement->QueryDoubleAttribute("y", &uiElement->y) != TIXML_SUCCESS) {
+            if (xmlElement->QueryFloatAttribute("y", &uiElement->y) != TIXML_SUCCESS) {
                 uiElement->y = 0;
             }
             if (xmlElement->QueryIntAttribute("width", (int*)&uiElement->width) != TIXML_SUCCESS) {
@@ -120,37 +120,37 @@ namespace xM {
             if (xmlElement->QueryIntAttribute("height",(int*) &uiElement->height) != TIXML_SUCCESS) {
                 uiElement->height = 0;
             }
-            if (xmlElement->QueryDoubleAttribute("offsetX", &uiElement->offsetX) != TIXML_SUCCESS) {
+            if (xmlElement->QueryFloatAttribute("offsetX", &uiElement->offsetX) != TIXML_SUCCESS) {
                 uiElement->offsetX = 0;
             }
-            if (xmlElement->QueryDoubleAttribute("offsetY", &uiElement->offsetY) != TIXML_SUCCESS) {
+            if (xmlElement->QueryFloatAttribute("offsetY", &uiElement->offsetY) != TIXML_SUCCESS) {
                 uiElement->offsetY = 0;
             }
-            if (xmlElement->QueryDoubleAttribute("paddingLeft", &uiElement->paddingLeft) != TIXML_SUCCESS) {
+            if (xmlElement->QueryFloatAttribute("paddingLeft", &uiElement->paddingLeft) != TIXML_SUCCESS) {
                 uiElement->paddingLeft = 0;
             }
-            if (xmlElement->QueryDoubleAttribute("paddingTop", &uiElement->paddingTop) != TIXML_SUCCESS) {
+            if (xmlElement->QueryFloatAttribute("paddingTop", &uiElement->paddingTop) != TIXML_SUCCESS) {
                 uiElement->paddingTop = 0;
             }
             if (xmlElement->QueryDoubleAttribute("rotate", &uiElement->rotate) != TIXML_SUCCESS) {
                 uiElement->rotate = 0;
             }
             if (xmlElement->Attribute("align") == NULL) {
-                uiElement->align = LEFT;
+                uiElement->align = ALIGN_LEFT;
             } else {
             
                 std::string align = xmlElement->Attribute("align");
                 
                 if (align == "left")
-                    uiElement->align = LEFT;
+                    uiElement->align = ALIGN_LEFT;
                 else if (align == "right")
-                    uiElement->align = RIGHT;
+                    uiElement->align = ALIGN_RIGHT;
                 else if (align == "center")
-                    uiElement->align = CENTER;
+                    uiElement->align = ALIGN_CENTER;
                 else if (align == "full")
-                    uiElement->align = FULL;
+                    uiElement->align = ALIGN_FULL;
                 else
-                    uiElement->align = LEFT;
+                    uiElement->align = ALIGN_LEFT;
             
             }           
             
@@ -248,31 +248,55 @@ namespace xM {
 
                 switch (uiElement->align) {
                 
-                    case LEFT:
+                    case ALIGN_LEFT:
                     
                         fontStyleOps |= INTRAFONT_ALIGN_LEFT;
                     
                         break;
                         
-                    case RIGHT:
+                    case ALIGN_RIGHT:
                     
                         fontStyleOps |= INTRAFONT_ALIGN_RIGHT;
                     
                         break;
                         
-                    case CENTER:
+                    case ALIGN_CENTER:
                     
                         fontStyleOps |= INTRAFONT_ALIGN_CENTER;
                     
                         break;
                         
-                    case FULL:
+                    case ALIGN_FULL:
                     
                         fontStyleOps |= INTRAFONT_ALIGN_FULL;
                     
                         break;
                 
                 }
+				
+				if (xmlElement->Attribute("scroll") != NULL) {
+				
+					std::string scroll = xmlElement->Attribute("scroll");
+					
+					if (scroll == "left") {
+					
+						uiElement->scroll = SCROLL_LEFT;
+						fontStyleOps |= INTRAFONT_SCROLL_LEFT;
+						
+					} else if (scroll == "through") {
+					
+						uiElement->scroll = SCROLL_THROUGH;
+						fontStyleOps |= INTRAFONT_SCROLL_THROUGH;
+						
+					} else if (scroll == "seesaw") {
+					
+						uiElement->scroll = SCROLL_SEESAW;
+						fontStyleOps |= INTRAFONT_SCROLL_SEESAW;
+						
+					}
+					
+				} else
+					uiElement->scroll = SCROLL_NONE;
                 
                 if (xmlElement->Attribute("font") == NULL) {
                     
@@ -645,20 +669,20 @@ namespace xM {
 
                     switch (e->align) {
                                                 
-                        case RIGHT:
+                        case ALIGN_RIGHT:
                         
                             Gfx::drawQuad(e->x - e->width + e->paddingLeft, e->y + e->paddingTop, e->width, e->height, e->colour, e->rotate);
                         
                             break;
                             
-                        case CENTER:
-                        case FULL:
+                        case ALIGN_CENTER:
+                        case ALIGN_FULL:
                         
                             Gfx::drawQuad(e->x - (e->width / 2) + e->paddingLeft, e->y + e->paddingTop, e->width, e->height, e->colour, e->rotate);
                         
                             break;
                             
-                        case LEFT:
+                        case ALIGN_LEFT:
                         default:
                         
                             Gfx::drawQuad(e->x + e->paddingLeft, e->y + e->paddingTop, e->width, e->height, e->colour, e->rotate);
@@ -670,12 +694,23 @@ namespace xM {
                     break;
 
                 case TEXT:
-
-                    if (e->width == 0)
-                        e->font.draw(e->x + e->paddingLeft, e->y + e->paddingTop, e->text.c_str());
-                    else
-                        e->font.drawColumn(e->x + e->paddingLeft, e->y + e->paddingTop, e->width, e->text.c_str());
-
+				    
+					if (e->scroll == SCROLL_NONE) {
+						
+						if (e->width == 0)
+							e->font.draw(e->x + e->paddingLeft, e->y + e->paddingTop, e->text.c_str());
+						else
+							e->font.drawColumn(e->x + e->paddingLeft, e->y + e->paddingTop, e->width, e->text.c_str());
+						
+					} else {
+					
+						if (e->width == 0)
+							e->x = e->font.drawColumn(e->x + e->paddingLeft, e->y + e->paddingTop, -1, e->text.c_str());
+						else
+							e->x = e->font.drawColumn(e->x + e->paddingLeft, e->y + e->paddingTop, e->width, e->text.c_str());
+						
+					}
+					
                     break;
 
                 case IMAGE:
@@ -688,20 +723,20 @@ namespace xM {
                                         
                     switch (e->align) {
                                                 
-                        case RIGHT:
+                        case ALIGN_RIGHT:
                         
                             e->image->draw(e->x - e->image->width + e->paddingLeft, e->y + e->paddingTop, &clip);
                         
                             break;
                             
-                        case CENTER:
-                        case FULL:
+                        case ALIGN_CENTER:
+                        case ALIGN_FULL:
                         
                             e->image->draw(e->x - (e->image->width / 2) + e->paddingLeft, e->y + e->paddingTop, &clip);
                         
                             break;
                             
-                        case LEFT:
+                        case ALIGN_LEFT:
                         default:
                         
                             e->image->draw(e->x + e->paddingLeft, e->y + e->paddingTop, &clip);

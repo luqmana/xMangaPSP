@@ -37,6 +37,10 @@
 #include "xM/Net/Net.h"
 #include "xM/Ui/Dialogs.h"
 #include "xM/Util/Log.h"
+
+#ifdef __xM_DEBUG
+#include "xM/States/Test.h"
+#endif
 // END Includes
 
 namespace xM {
@@ -121,7 +125,15 @@ namespace xM {
         	// Get pointer to input manager
             Engine::InputManager* iM = Engine::InputManager::getInstance();
             
-#ifdef __xM_DEBUG            
+#ifdef __xM_DEBUG
+			// DEBUG: Go to Test State
+			if (iM->pressed(PSP_CTRL_LTRIGGER) && iM->pressed(PSP_CTRL_RTRIGGER)) {
+			
+				Engine::StateManager::getInstance()->pushState(new States::Test());
+				return;
+			
+			}
+            
             // DEBUG: Reload XML on-the-fly            
             if (iM->pressed(PSP_CTRL_LTRIGGER)) {
             

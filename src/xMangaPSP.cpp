@@ -83,7 +83,7 @@ int main(int argc, char **argv) {
     intraFontInit();
     
     // Red text, no background
-    pspDebugScreenSetTextColor(0xFF0000FF);
+    pspDebugScreenSetTextColor(Gfx::Colour::RED);
     pspDebugScreenEnableBackColor(0);
     
     // Initiate network support
@@ -125,6 +125,7 @@ int main(int argc, char **argv) {
         Gfx::beginFrame();
         
         // Read input and handle events unless dialog active
+		// The built-in dialog system handles its own input/events
         if (!Ui::Dialog::isDialogActive()) {
         
             inputManager->readInput();

@@ -58,23 +58,33 @@ namespace xM {
         
         enum Alignment {
         
-            LEFT,
-            CENTER,
-            RIGHT,
-            FULL           
+            ALIGN_LEFT,
+            ALIGN_CENTER,
+            ALIGN_RIGHT,
+            ALIGN_FULL           
         
         };
+		
+		enum Scrolling {
+		
+			SCROLL_NONE,
+			SCROLL_LEFT,
+			SCROLL_THROUGH,
+			SCROLL_SEESAW
+		
+		};
     
         typedef struct Element {
         
             ElementType type;
             std::string name;
-            double x, y, offsetX, offsetY, paddingLeft, paddingTop;
+            float x, y, offsetX, offsetY, paddingLeft, paddingTop;
             unsigned int colour, shadowColour;
             unsigned int width, height;
             std::string text;
             double size, rotate;
             Alignment align;
+			Scrolling scroll;
             std::string whence;
             Gfx::Text font;
             Gfx::Image* image;

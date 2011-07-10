@@ -126,8 +126,10 @@ namespace xM {
              * @param float x X position.
              * @param float y Y position.
              * @param const char* text The text to draw.
+			 * 
+			 * @return float The x position after the last char.
              */
-            void draw(float x, float y, const char* text, ...);
+            float draw(float x, float y, const char* text, ...);
             
             /**
              * Draw the text beginning at position (x, y) with line wrapping.
@@ -136,8 +138,10 @@ namespace xM {
              * @param float y Y position.
              * @param float width Maximum width before automatic linebreak.
              * @param const char* text The text to draw.
+			 * 
+			 * @return float The x position after the last char.
              */
-            void drawColumn(float x, float y, float width, const char* text, ...);
+            float drawColumn(float x, float y, float width, const char* text, ...);
                         
             /**
              * Returns a pointer to the intraFont object.

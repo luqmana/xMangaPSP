@@ -20,18 +20,19 @@
  */
 
 /**
- * About state class.
+ * Test state class.
+ * Just to test out various features and stuff. NOT included in release.
  * 
  * @package xMangaPSP
  */
 
-#ifndef _AboutState_CPP
-#define _AboutState_CPP
+#ifndef _TestState_CPP
+#define _TestState_CPP
 
 // BEGIN Includes
 #include "xM/Engine/InputManager.h"
 #include "xM/Engine/StateManager.h"
-#include "xM/States/About.h"
+#include "xM/States/Test.h"
 #include "xM/Util/Log.h"
 // END Includes
 
@@ -42,76 +43,77 @@ namespace xM {
         /**
          * Start up code.
          */
-        void About::init(void) {
-                  
-			// Register the XML UI parsers
-            this->parser.registerCustomElementHandler("bouncyBox", &this->extraElements);
-            
-            // Parse the required UI file
-            this->parser.parseFile("ui/about.xml");
-                                                
-        }
+        void Test::init(void) {
+		
+			// Parse the required UI file
+            this->parser.parseFile("ui/test.xml");
+
+			x = 120;
+		
+			fontTest.loadFont(Gfx::Font::LATIN_SANS_SERIF_REGULAR, 1.0, Gfx::Colour::RED,
+						Gfx::Colour::GREEN, 0, INTRAFONT_ALIGN_LEFT | INTRAFONT_SCROLL_LEFT, 0);
+
+		}
 
         /**
          * Clean up code.
          */
-        void About::cleanUp(void) {
+        void Test::cleanUp(void) {
 
-            this->parser.deRegisterCustomElementHandler("bouncyBox");
-                        
+            
+			
         }
 
         /**
          * Pause state.
          */
-        void About::pause(void) { }
+        void Test::pause(void) { }
 
         /**
          * Resume state.
          */
-        void About::resume(void) {
-
-			// Reload XML ui
-			this->parser.parseFile("ui/about.xml");
-
-        }
+        void Test::resume(void) { }
 
         /**
          * Poll for input, read event state etc
          */
-        void About::handleEvents(void) {
-
+        void Test::handleEvents(void) {
+		
 			// Get pointer to input manager
             Engine::InputManager* iM = Engine::InputManager::getInstance();
-            
-#ifdef __xM_DEBUG            
-            // DEBUG: Reload XML on-the-fly            
-            if (iM->pressed(PSP_CTRL_LTRIGGER)) {
-            
-                Util::logMsg("Reloading XML ui file.");
-                this->parser.parseFile("ui/about.xml");    
-            
-            }
-#endif
-            
+		
 			// Return to previous state
             if (iM->pressed(PSP_CTRL_CIRCLE))
                 Engine::StateManager::getInstance()->popState();
+				
+			// DEBUG: Reload XML on-the-fly            
+            if (iM->pressed(PSP_CTRL_LTRIGGER)) {
             
-        }
+                Util::logMsg("Reloading XML ui file.");
+                this->parser.parseFile("ui/test.xml");    
+            
+            }
+
+		}
 
         /**
          * Now do something with the data we got from events and what not.
          */
-        void About::handleLogic(void) { }
+        void Test::handleLogic(void) { 
+		
+			
+		
+		}
 
         /**
          * Done with the logic? Draw what's needed then.
          */
-        void About::draw(void) {
+        void Test::draw(void) {
 
-            // Render UI from XML
+			// Render UI from XML
             this->parser.draw();
+		
+            x = fontTest.drawColumn(x, 120, -1, "Bra bra blah!~");
             
         }
         
@@ -119,4 +121,4 @@ namespace xM {
 
 }
 
-#endif /* _AboutState_CPP */
+#endif /* _TestState_CPP */
