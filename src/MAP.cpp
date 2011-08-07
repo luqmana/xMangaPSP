@@ -37,20 +37,20 @@
 
 namespace xM {
 
-	namespace Manga {
-			
-	    /**
+    namespace Manga {
+            
+        /**
          * Default constructor.
          * 
          * @param const std::string& epoint API endpoint.
          */
         MAP::MAP(const std::string& epoint) {
         
-        	this->endpoint = epoint;
-        	this->mangaList = new MangaList;
-        	this->chapterList = new ChapterList;
-        	this->error = "";
-        	this->loadedMangaList = false;
+            this->endpoint = epoint;
+            this->mangaList = new MangaList;
+            this->chapterList = new ChapterList;
+            this->error = "";
+            this->loadedMangaList = false;
         
         }   
         
@@ -59,8 +59,8 @@ namespace xM {
          */
         MAP::~MAP() {
         
-        	delete this->mangaList;
-        	delete this->chapterList;
+            delete this->mangaList;
+            delete this->chapterList;
         
         }
         
@@ -71,7 +71,7 @@ namespace xM {
          */
         std::string& MAP::getError() {
         
-        	return this->error;
+            return this->error;
         
         }
         
@@ -82,10 +82,10 @@ namespace xM {
          */
         void MAP::setEndpoint(const std::string& epoint) {
         
-        	this->endpoint = epoint;
-        	
-        	// New endpoint
-        	this->loadedMangaList = false;
+            this->endpoint = epoint;
+            
+            // New endpoint
+            this->loadedMangaList = false;
         
         }
         
@@ -96,45 +96,45 @@ namespace xM {
          */
         bool MAP::loadMangaList() {
         
-        	// No point in loading again
-        	if (this->loadedMangaList)
-        		return true;
+            // No point in loading again
+            if (this->loadedMangaList)
+                return true;
         
-        	std::string response;
-	                	          
-			// Attempt to download mangalist
+            std::string response;
+                                  
+            // Attempt to download mangalist
             if (Net::downloadFile(this->endpoint, response)) {
-            	                	                	  
-				// clear mangalist
-				this->mangaList->names.clear();
-				this->mangaList->apiHandles.clear();
-            	                	                	         
+                                                          
+                // clear mangalist
+                this->mangaList->names.clear();
+                this->mangaList->apiHandles.clear();
+                                                                 
                 // No error, try to parse JSON
                 
                 cJSON* root = cJSON_Parse(response.c_str());
                 
                 if (root == 0) {
                 
-                	Util::logMsg("Can't parse JSON [%s] [%s].", this->endpoint.c_str(), response.c_str());
-                	
-                	this->error = "Unable to parse JSON.";
-                	
-                	return false;
+                    Util::logMsg("Can't parse JSON [%s] [%s].", this->endpoint.c_str(), response.c_str());
+                    
+                    this->error = "Unable to parse JSON.";
+                    
+                    return false;
                 
                 }                
                 
-				cJSON* mangas = cJSON_GetObjectItem(root, "Manga");
+                cJSON* mangas = cJSON_GetObjectItem(root, "Manga");
 
-				for (int i = 0; i < cJSON_GetArraySize(mangas); i++) {
-								
-					this->mangaList->names.push_back(cJSON_GetObjectItem(cJSON_GetArrayItem(mangas, i), "name")->valuestring);
-					this->mangaList->apiHandles.push_back(cJSON_GetObjectItem(cJSON_GetArrayItem(mangas, i), "apiHandle")->valuestring);
-									
-				}
-				cJSON_Delete(root);
-            	                	
-				this->loadedMangaList = true;
-				                    
+                for (int i = 0; i < cJSON_GetArraySize(mangas); i++) {
+                                
+                    this->mangaList->names.push_back(cJSON_GetObjectItem(cJSON_GetArrayItem(mangas, i), "name")->valuestring);
+                    this->mangaList->apiHandles.push_back(cJSON_GetObjectItem(cJSON_GetArrayItem(mangas, i), "apiHandle")->valuestring);
+                                    
+                }
+                cJSON_Delete(root);
+                                    
+                this->loadedMangaList = true;
+                                    
                 return true;
                 
             } else {
@@ -156,7 +156,7 @@ namespace xM {
          */
         MangaList* MAP::getMangaList() {
         
-        	return this->mangaList;
+            return this->mangaList;
         
         }
         
@@ -169,53 +169,53 @@ namespace xM {
          */
         bool MAP::loadChapterList(const std::string& mangaSlug) {
                 
-        	std::string response;
-        	std::string url = this->endpoint + mangaSlug + "/";
-	                	          
-			// Attempt to download chapterlist
+            std::string response;
+            std::string url = this->endpoint + mangaSlug + "/";
+                                  
+            // Attempt to download chapterlist
             if (Net::downloadFile(url, response)) {
-            	                	                	  
-				// clear chapterlist
-				this->chapterList->mangaSlug = mangaSlug;
-				this->chapterList->names.clear();
-				this->chapterList->apiHandles.clear();
-            	                	                	         
+                                                          
+                // clear chapterlist
+                this->chapterList->mangaSlug = mangaSlug;
+                this->chapterList->names.clear();
+                this->chapterList->apiHandles.clear();
+                                                                 
                 // No error, try to parse JSON
                 
                 cJSON* root = cJSON_Parse(response.c_str());
                 
                 if (root == 0) {
                 
-                	Util::logMsg("Can't parse JSON [%s] [%s].", this->endpoint.c_str(), response.c_str());
-                	
-                	this->error = "Unable to parse JSON.";
-                	
-                	return false;
+                    Util::logMsg("Can't parse JSON [%s] [%s].", this->endpoint.c_str(), response.c_str());
+                    
+                    this->error = "Unable to parse JSON.";
+                    
+                    return false;
                 
                 }
                 
                 cJSON* err = cJSON_GetObjectItem(root, "Error");
                 if (err != 0) {
                 
-                	this->error = "API Error: ";
-                	this->error.append(cJSON_GetObjectItem(err, "msg")->valuestring);
-                	this->error.append(" [" + mangaSlug + "]");
-                	Util::logMsg("%s", this->error.c_str());
-                	
-                	return false;
+                    this->error = "API Error: ";
+                    this->error.append(cJSON_GetObjectItem(err, "msg")->valuestring);
+                    this->error.append(" [" + mangaSlug + "]");
+                    Util::logMsg("%s", this->error.c_str());
+                    
+                    return false;
                 
                 }
                 
-				cJSON* chapters = cJSON_GetObjectItem(root, "Chapters");
+                cJSON* chapters = cJSON_GetObjectItem(root, "Chapters");
 
-				for (int i = 0; i < cJSON_GetArraySize(chapters); i++) {
-								
-					this->chapterList->names.push_back(cJSON_GetObjectItem(cJSON_GetArrayItem(chapters, i), "name")->valuestring);
-					this->chapterList->apiHandles.push_back(cJSON_GetObjectItem(cJSON_GetArrayItem(chapters, i), "apiHandle")->valuestring);
-									
-				}
-				cJSON_Delete(root);
-            	                	
+                for (int i = 0; i < cJSON_GetArraySize(chapters); i++) {
+                                
+                    this->chapterList->names.push_back(cJSON_GetObjectItem(cJSON_GetArrayItem(chapters, i), "name")->valuestring);
+                    this->chapterList->apiHandles.push_back(cJSON_GetObjectItem(cJSON_GetArrayItem(chapters, i), "apiHandle")->valuestring);
+                                    
+                }
+                cJSON_Delete(root);
+                                    
                 return true;
                 
             } else {
@@ -237,11 +237,11 @@ namespace xM {
          */
         ChapterList* MAP::getChapterList() {
         
-        	return this->chapterList;
+            return this->chapterList;
         
         }
-			
-	}
+            
+    }
 
 }
 

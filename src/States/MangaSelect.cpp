@@ -222,6 +222,9 @@ namespace xM {
                                 
             // Draw based on XML
             this->parser.draw();
+
+            if (this->activeDialog == 1)
+                Gfx::drawLoadingOverlay();
                         
         }
                 

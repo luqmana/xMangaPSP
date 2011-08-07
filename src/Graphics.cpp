@@ -30,7 +30,9 @@
 
 // BEGIN Includes
 #include "xM/Gfx/Graphics.h"
+#include "xM/Gfx/Text.h"
 #include "xM/Util/Log.h"
+#include "xM/Util/Timer.h"
 #include "xM/Util/Utils.h"
 
 #include <cstring>
@@ -49,6 +51,16 @@ namespace xM {
          * Memory buffer containing a frame of data.
          */
         void *frameBuffer0;
+
+        /**
+         * The graphics timer.
+         */
+        Util::Timer gfxTimer;
+
+        /**
+         * Used to display text on loading overlay.
+         */
+        Gfx::Text loadingText;
 
         /**
          * Get a pointer to the frame buffer.
@@ -79,6 +91,8 @@ namespace xM {
 
             // A sort of reset
             sceKernelDcacheWritebackAll();
+
+            gfxTimer.start();
 
             frameBuffer0 = 0;
 
@@ -117,6 +131,8 @@ namespace xM {
             sceDisplayWaitVblankStart();
             sceGuDisplay(GU_TRUE);
 
+            // Not really gu related but we gotta load it somewhere
+            loadingText.loadFont(Font::LATIN_SANS_SERIF_REGULAR_SMALL, 1.0f, Gfx::Colour::WHITE, 0, 0, INTRAFONT_ALIGN_CENTER);
 
         }
 
@@ -404,6 +420,25 @@ namespace xM {
             sceGumDrawArray(GU_TRIANGLE_STRIP, GU_TEXTURE_32BITF | GU_COLOR_8888 | GU_VERTEX_32BITF | GU_TRANSFORM_3D, 4, 0, finalQuad);
 
         }
+        
+        /**
+		 * Draws an overlay which indicates something is loading.
+		 */
+		void drawLoadingOverlay() {
+		
+			// Render a semi-transparent black quad covering the whole screen to
+            // make dialogs better visible
+            drawQuad(0, 0, 480, 272, GU_COLOR(0.0f, 0.0f, 0.0f, 0.8f), 0);
+
+            // Draw the rotating squares
+            drawQuad(201, 120, 20, 20, Gfx::Colour::RED, 1.0f * gfxTimer.getDeltaTicks());
+            drawQuad(230, 120, 20, 20, Gfx::Colour::GREEN, -1.0f * gfxTimer.getDeltaTicks());
+            drawQuad(259, 120, 20, 20, Gfx::Colour::BLUE, 1.0f * gfxTimer.getDeltaTicks());
+
+            // and finally the loading text
+            loadingText.draw(240, 158, "Loading...");
+            
+		}
 
     }
 

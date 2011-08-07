@@ -155,7 +155,7 @@ int main(int argc, char **argv) {
         // Render a semi-transparent black quad covering the whole screen to
         // make dialogs better visible
         if (Ui::Dialog::isDialogActive())
-            Gfx::drawQuad(0, 0, 480, 272, GU_COLOR(0.0f, 0.0f, 0.0f, 0.5f), 0);
+            Gfx::drawQuad(0, 0, 480, 272, GU_COLOR(0.0f, 0.0f, 0.0f, 0.75f), 0);
         
         // End frame
         Gfx::endFrame();
