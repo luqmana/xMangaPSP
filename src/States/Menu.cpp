@@ -83,6 +83,9 @@ namespace xM {
             SceKernelMsgPacket hdr = {0};
             this->msg.header = hdr;
             this->msg.returnBox = &this->localBox;
+
+            this->loadingImage.loadFile("ui/images/loadingIcons.png");
+            this->loadingIndex = 0;
                        
 			// Call up the net dialog if not connected
 			if (!Net::isConnected())                        
@@ -285,6 +288,27 @@ namespace xM {
                                 
             // Draw based on XML
             parser.draw();
+
+            if (this->activeDialog != 0) {
+                
+                if (this->loadingIndex > 11)
+                    this->loadingIndex = 0;
+
+                // Render a semi-transparent black quad covering the whole screen to
+                // make dialogs better visible
+                Gfx::drawQuad(0, 0, 480, 272, GU_COLOR(0.0f, 0.0f, 0.0f, 0.5f), 0);
+
+                // Draw BG
+                Gfx::ImageClip bClip = {0, 32, 64, 64};
+                this->loadingImage.draw(208, 104, &bClip);
+
+                // Draw Loading Indicator
+                Gfx::ImageClip aClip = {this->loadingIndex * 32, 0, 32, 32};
+                this->loadingImage.draw(224, 120, &aClip);
+
+                this->loadingIndex++;
+
+            }
                         
         }
                 

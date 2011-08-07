@@ -34,6 +34,7 @@
 #include "xM/Manga/MangaAPI.h"
 #include "xM/Ui/ExtraElements.h"
 #include "xM/Ui/XMLParser.h"
+#include "xM/Gfx/Image.h"
 // END Includes
 
 // BEGIN Defines
@@ -97,6 +98,9 @@ namespace xM {
             
             Manga::APIMessage msg;
             SceUID localBox;
+
+            Gfx::Image loadingImage;
+            int loadingIndex;
 
         };
 
