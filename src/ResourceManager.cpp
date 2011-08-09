@@ -130,7 +130,7 @@ namespace xM {
          * A magic wrapper for the FileManager.
          * 
          * Tries to load a resource from different sources.
-         * (Resource File (resources.zip), PSAR, then FS) (in that order)
+         * (FileSystem, Resource File (resources.zip), PSAR) (in that order)
          * 
          * @param const std::string& file The file.
          * 
@@ -143,19 +143,19 @@ namespace xM {
                 return FileManager::getInstance()->read(file);
                 
             std::string res;
+
+            // Try FS
+            res = FileManager::getInstance()->readFromFS(file);
+            if (res != "")
+                return res;
                             
             // Try ZIP
             res = FileManager::getInstance()->readFromZIP("resources.zip", file);
             if (res != "")
                 return res;
                 
-            // Try PSAR
-            res = FileManager::getInstance()->readFromPSAR(file);
-            if (res != "")
-                return res;
-                
-            // Finally try FS
-            return FileManager::getInstance()->readFromFS(file);
+            // Finally try PSAR
+            return FileManager::getInstance()->readFromPSAR(file);
         
         }
 		    		        					

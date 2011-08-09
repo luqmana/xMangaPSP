@@ -99,7 +99,8 @@ namespace xM {
 		        /**
 		         * A magic wrapper for the FileManager.
 		         * 
-		         * Tries to load a resource from different sources. PSAR, Resource File (resources.zip), FS (in that order)
+		         * Tries to load a resource from different sources.
+		         * (FileSystem, Resource File (resources.zip), PSAR) (in that order)
 		         * 
 		         * @param const std::string& file The file.
 		         * 
