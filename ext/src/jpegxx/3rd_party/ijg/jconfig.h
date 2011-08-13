@@ -33,11 +33,11 @@ extern "C" {
 
 #ifdef JPEG_CJPEG_DJPEG
 
-#define BMP_SUPPORTED		/* BMP image file format */
-#define GIF_SUPPORTED		/* GIF image file format */
-#define PPM_SUPPORTED		/* PBMPLUS PPM/PGM image file format */
+#undef BMP_SUPPORTED		/* BMP image file format */
+#undef GIF_SUPPORTED		/* GIF image file format */
+#undef PPM_SUPPORTED		/* PBMPLUS PPM/PGM image file format */
 #undef RLE_SUPPORTED		/* Utah RLE image file format */
-#define TARGA_SUPPORTED		/* Targa image file format */
+#undef TARGA_SUPPORTED		/* Targa image file format */
 
 #undef TWO_FILE_COMMANDLINE
 #undef NEED_SIGNAL_CATCHER
@@ -45,6 +45,8 @@ extern "C" {
 
 /* Define this if you want percent-done progress reports from cjpeg/djpeg. */
 #undef PROGRESS_REPORT
+
+#define JDCT_DEFAULT  JDCT_IFAST
 
 #endif /* JPEG_CJPEG_DJPEG */
 

@@ -228,7 +228,7 @@ namespace xM {
             this->parser.draw();
 
             if (this->activeDialog == 1)
-                Gfx::drawLoadingOverlay();
+                Gfx::drawLoadingOverlay("Loading chapter list...");
                         
         }
                 

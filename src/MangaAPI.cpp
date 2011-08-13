@@ -253,7 +253,7 @@ namespace xM {
 	        mangaAPIMbx = sceKernelCreateMbx("MangaAPIBox", 0, NULL);
 	        	    
 	        // create the thread
-	        mangaAPIThreadID = sceKernelCreateThread("MangaAPIThread", mangaAPIThread, 0x22, 0x8000, PSP_THREAD_ATTR_USER | PSP_THREAD_ATTR_USBWLAN, NULL);
+	        mangaAPIThreadID = sceKernelCreateThread("MangaAPIThread", mangaAPIThread, 0x15, 0x10000, PSP_THREAD_ATTR_USER | PSP_THREAD_ATTR_USBWLAN, NULL);
 	        
 	        // start it
 	        if (mangaAPIThreadID > 0)

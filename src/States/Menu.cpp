@@ -291,7 +291,7 @@ namespace xM {
             parser.draw();
 
             if (this->activeDialog == 2)
-                Gfx::drawLoadingOverlay();
+                Gfx::drawLoadingOverlay("Loading manga list...");
                                         
         }
                 

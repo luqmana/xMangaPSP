@@ -31,6 +31,7 @@
 // BEGIN Includes
 #include "xM/Engine/InputManager.h"
 #include "xM/Engine/StateManager.h"
+#include "xM/States/ImageView.h"
 #include "xM/States/ChapterSelect.h"
 #include "xM/States/MangaSelect.h"
 #include "xM/Manga/MangaElements.h"
@@ -234,8 +235,11 @@ namespace xM {
                         // Loaded successfully, switch to new state
                         if (rMsg->type == Manga::RequestImage && rMsg->result == true) {
                         
-                            //Engine::StateManager::getInstance()->changeState(new States::ChapterSelect());
-                            //return;
+                            Engine::StateManager::getInstance()->changeState(new States::ImageView());
+                            
+                            this->activeDialog = 0;
+
+                            return;
                         
                         } else if (rMsg->type == Manga::RequestImage && rMsg->result == false) {
                         

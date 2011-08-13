@@ -36,6 +36,7 @@
 #include "xM/Gfx/PicoPNG.h"
 #include "xM/Util/Log.h"
 #include "xM/Util/Utils.h"
+#include <xM/Util/Timer.h>
 
 #include <stdio.h>
 #include <string.h>
@@ -53,6 +54,8 @@
 namespace xM {
 
     namespace Gfx {
+        
+        Util::Timer loadTimer;
     
         /**
          * Return whether the image is swizzled or not.
@@ -89,6 +92,7 @@ namespace xM {
             this->p2Width = mainSegment.p2Width;
             this->p2Height = mainSegment.p2Height;
 
+            loadTimer.start();
             if (!(mainSegment.width > 512 || mainSegment.height > 512)) {
 
                 // No need to create more segments but just pretend there is only one segment
@@ -165,10 +169,13 @@ namespace xM {
 
                     ++i;
 
+                    //sceKernelDelayThread(100);
+
                 } while (i < hFit);
 
 
             }
+            Util::logMsg("segmentizer - %f", loadTimer.getDeltaTicks(true));
             
             return true;
 
@@ -282,26 +289,33 @@ namespace xM {
         		std::istringstream imgBufferStream;
         		imgBufferStream.str(imgBuffer);
         		
+                loadTimer.start();
 				imagexx::raster_details d = jpegxx::read_image(imgBufferStream, std::back_inserter(pixels));
+                Util::logMsg("read_image - %f", loadTimer.getDeltaTicks(true));
 
 				destImg->width = d.width();
 				destImg->height = d.height();
 				
+                loadTimer.start();
 				// Since this is only a 24bit image we need to pad it to 32 bit
 				// so we add an alpha channel with full opacity
-				unsigned int w = 0;			
-				for (unsigned int i = 0; i < pixels.size(); i++) {
-									
-					destImg->pixels.push_back(pixels[i]);						
-					w++;
-					
-					// Add the new alpha after the r,g,b components
-					if (w == 3) {
-						destImg->pixels.push_back(0xFF);
-						w = 0;
-					}
-				
-				}
+				unsigned int w = 0;
+                unsigned int i = 0;
+                do {
+                    
+                    destImg->pixels.push_back(pixels[i]);
+                    ++w;
+
+                    // Add the new alpha after the r,g,b components
+                    if (w == 3) {
+                        destImg->pixels.push_back(0xFF);
+                        w = 0;
+                    }
+
+                    ++i;
+
+                } while (i < pixels.size());
+                Util::logMsg("alphaizer - %f", loadTimer.getDeltaTicks(true));
 				        		        	
         	} else {
         	

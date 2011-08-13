@@ -65,9 +65,10 @@ PSP_MAIN_THREAD_ATTR(PSP_THREAD_ATTR_USER);
 
 /**
  * Set the PSP heap size.
- * Use roughly 15MB as heap
+ * Use everything but 6MB as heap
  */
-PSP_HEAP_SIZE_KB(15360);
+//PSP_HEAP_SIZE_KB(-6144);
+PSP_HEAP_SIZE_KB(-8192);
 
 bool Engine::running = true;
 

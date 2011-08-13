@@ -33,6 +33,7 @@
 #include "xM/Manga/MAP.h"
 #include "xM/Net/Net.h"
 #include "xM/Util/cJSON.h"
+#include "xM/Util/Timer.h"
 #include "xM/Util/Log.h"
 
 #include <string.h>
@@ -371,9 +372,14 @@ namespace xM {
             
             std::string response;
             std::string url = this->endpoint + mangaSlug + "/" + chapterSlug + "/" + imageSlug + "/";
+
+            Util::Timer loadTimer;
+            loadTimer.start();
                                   
             // Attempt to download imagelist
             if (Net::downloadFile(url, response)) {
+
+                Util::logMsg("downloadFile - %f", loadTimer.getDeltaTicks(true));
 
                 unsigned char jCheck[6] = { '{', '"', 'A', 'P', 'I', '"' };
 
@@ -413,11 +419,11 @@ namespace xM {
                     
                 // so probably an image...hopefully
 
-                // clear any old image
                 delete this->mangaImage->img;
 
                 this->mangaImage->img = new Gfx::Image;
 
+                loadTimer.start();
                 if (!this->mangaImage->img->loadData(response)) {
                     
                     this->error = "Image Error: Can't load image.";
@@ -427,6 +433,7 @@ namespace xM {
                     return false;
 
                 }
+                Util::logMsg("loadData - %f", loadTimer.getDeltaTicks(true));
 
                 return true;
 

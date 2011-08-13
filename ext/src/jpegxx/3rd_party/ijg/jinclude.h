@@ -18,6 +18,7 @@
 /* Include auto-config file to find out which system include files we need. */
 
 #include "jconfig.h"		/* auto configuration options */
+#include "jmorecfg.h"
 #define JCONFIG_INCLUDED	/* so that jpeglib.h doesn't do it again */
 
 /*
