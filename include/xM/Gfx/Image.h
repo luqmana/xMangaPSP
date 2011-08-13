@@ -124,6 +124,15 @@ namespace xM {
              * @return bool Success or not?
              */
             bool loadFile(const std::string& file);
+
+            /**
+             * Load an image from memory.
+             *
+             * @param const std::string& imageBuffer The image in memory.
+             * 
+             * @return bool Success or not?
+             */
+            bool loadData(const std::string& imageBuffer);
             
             /**
              * Whether an image is already loaded.

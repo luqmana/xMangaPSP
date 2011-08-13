@@ -186,10 +186,12 @@ namespace xM {
         void drawQuad(float x, float y, float w, float h, unsigned int colourTopLeft,
                 unsigned int colourTopRight, unsigned int colourBottomLeft, unsigned int colourBottomRight, float rotate);
                 
-		/**
-		 * Draws an overlay which indicates something is loading.
-		 */
-		void drawLoadingOverlay();
+	/**
+	 * Draws an overlay which indicates something is loading.
+         * 
+         * @param const std::string&[optional] displayText The text to display.
+	 */
+	void drawLoadingOverlay(const std::string& displayText = "Loading...");
         
     }
 

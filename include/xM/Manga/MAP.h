@@ -46,6 +46,8 @@ namespace xM {
 	    	std::string error;
 	    	MangaList* mangaList;
 	    	ChapterList* chapterList;
+	    	ImageList* imageList;
+	    	MangaImage* mangaImage;
 	    	bool loadedMangaList;
 	    
 	    public:
@@ -109,37 +111,37 @@ namespace xM {
 	        /**
 	         * Load the image list for a specific chapter and manga.
 	         * 
-	         * @param int mangaID The ID of the manga in the MangaList
-	         * @param int chapterID The ID of the chapter in the ChapterList
+	         * @param const std::string& mangaSlug The slug of the manga in the MangaList
+	         * @param const std::string& chapterSlug The slug of the chapter in the ChapterList
 	         * 
 	         * @return bool Success or not.
 	         */
-	        //bool loadImageList(int mangaID, int chapterID);
+	        bool loadImageList(const std::string& mangaSlug, const std::string& chapterSlug);
 	        
 	        /**
 	         * Returns the loaded image list or an empty list.
 	         * 
 	         * @return ImageList The image list.
 	         */
-	        //ImageList getImageList();
+	        ImageList* getImageList();
 	        
 	        /**
 	         * Load the image list for a specific chapter and manga.
 	         * 
-	         * @param int mangaID The ID of the manga in the MangaList
-	         * @param int chapterID The ID of the chapter in the ChapterList
-	         * @param int imageID The ID of the image in the ImageList
+	         * @param const std::string& mangaSlug The slug of the manga in the MangaList
+	         * @param const std::string& chapterSlug The slug of the chapter in the ChapterList
+	         * @param const std::string& imageSlug The slug of the image in the ImageList
 	         * 
 	         * @return bool Success or not.
 	         */
-	        //bool loadImage(int mangaID, int chapterID, int imageID);
+	        bool loadImage(const std::string& mangaSlug, const std::string& chapterSlug, const std::string& imageSlug);
 	        
 	        /**
 	         * Returns the loaded image.
 	         * 
 	         * @return MangaImage The image.
 	         */
-	        //MangaImage getImage();
+	        MangaImage* getImage();
 	    
 	    };
 			

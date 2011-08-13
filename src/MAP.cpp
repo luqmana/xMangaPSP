@@ -29,10 +29,13 @@
 #define _MAP_CPP
 
 // BEGIN Includes
+#include "xM/Gfx/Image.h"
 #include "xM/Manga/MAP.h"
 #include "xM/Net/Net.h"
 #include "xM/Util/cJSON.h"
 #include "xM/Util/Log.h"
+
+#include <string.h>
 // END Includes
 
 namespace xM {
@@ -49,6 +52,8 @@ namespace xM {
             this->endpoint = epoint;
             this->mangaList = new MangaList;
             this->chapterList = new ChapterList;
+            this->imageList = new ImageList;
+            this->mangaImage = new MangaImage;
             this->error = "";
             this->loadedMangaList = false;
         
@@ -61,6 +66,8 @@ namespace xM {
         
             delete this->mangaList;
             delete this->chapterList;
+            delete this->imageList;
+            delete this->mangaImage;
         
         }
         
@@ -124,6 +131,14 @@ namespace xM {
                 }                
                 
                 cJSON* mangas = cJSON_GetObjectItem(root, "Manga");
+                if (!mangas) {
+                    
+                    this->error = "JSON Error: Improperly structured response.";
+                    Util::logMsg("%s", this->error.c_str());
+
+                    return false;
+
+                }
 
                 for (int i = 0; i < cJSON_GetArraySize(mangas); i++) {
                                 
@@ -131,6 +146,7 @@ namespace xM {
                     this->mangaList->apiHandles.push_back(cJSON_GetObjectItem(cJSON_GetArrayItem(mangas, i), "apiHandle")->valuestring);
                                     
                 }
+
                 cJSON_Delete(root);
                                     
                 this->loadedMangaList = true;
@@ -141,7 +157,7 @@ namespace xM {
             
                 Util::logMsg("Can't download [%s] [%s].", this->endpoint.c_str(), response.c_str());
                 
-                this->error = response.c_str();
+                this->error = "Net Error: " + response;
                 
                 return false;
                 
@@ -207,6 +223,15 @@ namespace xM {
                 }
                 
                 cJSON* chapters = cJSON_GetObjectItem(root, "Chapters");
+                if (!chapters) {
+                    
+                    this->error = "JSON Error: Improperly structured response.";
+                    this->error.append(" [" + mangaSlug + "]");
+                    Util::logMsg("%s", this->error.c_str());
+
+                    return false;
+
+                }
 
                 for (int i = 0; i < cJSON_GetArraySize(chapters); i++) {
                                 
@@ -214,6 +239,7 @@ namespace xM {
                     this->chapterList->apiHandles.push_back(cJSON_GetObjectItem(cJSON_GetArrayItem(chapters, i), "apiHandle")->valuestring);
                                     
                 }
+
                 cJSON_Delete(root);
                                     
                 return true;
@@ -222,7 +248,7 @@ namespace xM {
             
                 Util::logMsg("Can't download [%s] [%s].", url.c_str(), response.c_str());
                 
-                this->error = response.c_str();
+                this->error = "Net Error: " + response;
                 
                 return false;
                 
@@ -239,6 +265,192 @@ namespace xM {
         
             return this->chapterList;
         
+        }
+
+        /**
+         * Load the image list for a specific chapter and manga.
+         * 
+         * @param const std::string& mangaSlug The slug of the manga in the MangaList
+         * @param const std::string& chapterSlug The slug of the chapter in the ChapterList
+         * 
+         * @return bool Success or not.
+         */
+        bool MAP::loadImageList(const std::string& mangaSlug, const std::string& chapterSlug) {
+            
+            std::string response;
+            std::string url = this->endpoint + mangaSlug + "/" + chapterSlug + "/";
+                                  
+            // Attempt to download imagelist
+            if (Net::downloadFile(url, response)) {
+                
+                // clear imagelist
+                this->imageList->mangaSlug = mangaSlug;
+                this->imageList->chapterSlug = chapterSlug;
+                this->imageList->images.clear();
+                                                                 
+                // No error, try to parse JSON
+                
+                cJSON* root = cJSON_Parse(response.c_str());
+                
+                if (root == 0) {
+                
+                    Util::logMsg("Can't parse JSON [%s] [%s].", this->endpoint.c_str(), response.c_str());
+                    
+                    this->error = "Unable to parse JSON.";
+                    
+                    return false;
+                
+                }
+                
+                cJSON* err = cJSON_GetObjectItem(root, "Error");
+                if (err != 0) {
+                
+                    this->error = "API Error: ";
+                    this->error.append(cJSON_GetObjectItem(err, "msg")->valuestring);
+                    this->error.append(" [" + mangaSlug + ":" + chapterSlug + "]");
+                    Util::logMsg("%s", this->error.c_str());
+                    
+                    return false;
+                
+                }
+                
+                cJSON* images = cJSON_GetObjectItem(root, "Images");
+                if (!images) {
+                    
+                    this->error = "JSON Error: Improperly structured response.";
+                    this->error.append(" [" + mangaSlug + ":" + chapterSlug + "]");
+                    Util::logMsg("%s", this->error.c_str());
+
+                    return false;
+
+                }
+
+                for (int i = 0; i < cJSON_GetArraySize(images); i++) {
+                                
+                    this->imageList->images.push_back(cJSON_GetObjectItem(cJSON_GetArrayItem(images, i), "image")->valuestring);
+                                    
+                }
+
+                cJSON_Delete(root);
+                                    
+                return true;
+                
+            } else {
+            
+                Util::logMsg("Can't download [%s] [%s].", url.c_str(), response.c_str());
+                
+                this->error = "Net Error: " + response;
+                
+                return false;
+                
+            }
+
+        }
+        
+        /**
+         * Returns the loaded image list or an empty list.
+         * 
+         * @return ImageList The image list.
+         */
+        ImageList* MAP::getImageList() {
+            
+            return this->imageList;
+
+        }
+
+        /**
+         * Load the image list for a specific chapter and manga.
+         * 
+         * @param const std::string& mangaSlug The slug of the manga in the MangaList
+         * @param const std::string& chapterSlug The slug of the chapter in the ChapterList
+         * @param const std::string& imageSlug The slug of the image in the ImageList
+         * 
+         * @return bool Success or not.
+         */
+        bool MAP::loadImage(const std::string& mangaSlug, const std::string& chapterSlug, const std::string& imageSlug) {
+            
+            std::string response;
+            std::string url = this->endpoint + mangaSlug + "/" + chapterSlug + "/" + imageSlug + "/";
+                                  
+            // Attempt to download imagelist
+            if (Net::downloadFile(url, response)) {
+
+                unsigned char jCheck[6] = { '{', '"', 'A', 'P', 'I', '"' };
+
+                // 'Tis a JSON message?
+                if (memcmp(jCheck, &response[0], 6) == 0) {
+                    
+                    cJSON* root = cJSON_Parse(response.c_str());
+                    
+                    if (root == 0) {
+                        
+                        this->error = "Something is just wack yo!";
+                        Util::logMsg("%s", this->error.c_str());
+                    
+                        return false;
+
+                    }
+
+                    cJSON* err = cJSON_GetObjectItem(root, "Error");
+                    if (err != 0) {
+                    
+                        this->error = "API Error: ";
+                        this->error.append(cJSON_GetObjectItem(err, "msg")->valuestring);
+                        this->error.append(" [" + mangaSlug + ":" + chapterSlug + ":" + imageSlug + "]");
+                        Util::logMsg("%s", this->error.c_str());
+                        
+                        return false;
+                    
+                    }
+
+                    this->error = "Format Error: No clue what kinda data we got.";
+                    this->error.append(" [" + mangaSlug + ":" + chapterSlug + ":" + imageSlug + "]");
+                    Util::logMsg("%s", this->error.c_str());
+                    
+                    return false;
+
+                }
+                    
+                // so probably an image...hopefully
+
+                // clear any old image
+                delete this->mangaImage->img;
+
+                this->mangaImage->img = new Gfx::Image;
+
+                if (!this->mangaImage->img->loadData(response)) {
+                    
+                    this->error = "Image Error: Can't load image.";
+                    this->error.append(" [" + mangaSlug + ":" + chapterSlug + ":" + imageSlug + "]");
+                    Util::logMsg("%s", this->error.c_str());
+                    
+                    return false;
+
+                }
+
+                return true;
+
+            } else {
+                
+                Util::logMsg("Can't download [%s] [%s].", url.c_str(), response.c_str());
+                
+                this->error = "Net Error: " + response;
+                
+                return false;
+
+            }
+
+        }
+
+        /**
+         * Returns the loaded image.
+         * 
+         * @return MangaImage The image.
+         */
+        MangaImage* MAP::getImage() {
+            
+            return this->mangaImage;
+
         }
             
     }

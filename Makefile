@@ -154,7 +154,7 @@
 
  # Rule to build bundled imagexx
  $(BUILD_DIR)/imagexx/%.o: $(EXT_SRC_DIR)/imagexx/%.cpp | $(BUILD_DIR)/imagexx
-	$(CXX) $(CXXFLAGS) -c -o $@ $<
+	$(CXX) $(CXXFLAGS) -O3 -ffast-math -c -o $@ $<
  $(BUILD_DIR)/imagexx:
 	mkdir $(BUILD_DIR)/imagexx
 

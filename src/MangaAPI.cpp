@@ -96,7 +96,7 @@ namespace xM {
 				                sMsg->header = hdr;
 				                sMsg->returnBox = &mangaAPIMbx;
 				                sMsg->what = NULL;
-				                sMsg->type = RequestMangaList;
+				                sMsg->type = msg->type;
 				                sMsg->result = true;
 					            sceKernelSendMbx(*msg->returnBox, (void*)sMsg);             	
 	                		
@@ -109,7 +109,7 @@ namespace xM {
 				                sMsg->header = hdr;
 				                sMsg->returnBox = &mangaAPIMbx;
 				                sMsg->what = (void*)new std::string(mapImp->getError());
-				                sMsg->type = RequestMangaList;
+				                sMsg->type = msg->type;
 				                sMsg->result = false;
 					            sceKernelSendMbx(*msg->returnBox, (void*)sMsg);
 	                		
@@ -128,7 +128,7 @@ namespace xM {
 				                sMsg->header = hdr;
 				                sMsg->returnBox = &mangaAPIMbx;
 				                sMsg->what = NULL;
-				                sMsg->type = RequestChapterList;
+				                sMsg->type = msg->type;
 				                sMsg->result = true;
 					            sceKernelSendMbx(*msg->returnBox, (void*)sMsg);             	
 	                		
@@ -141,7 +141,7 @@ namespace xM {
 				                sMsg->header = hdr;
 				                sMsg->returnBox = &mangaAPIMbx;
 				                sMsg->what = (void*)new std::string(mapImp->getError());
-				                sMsg->type = RequestChapterList;
+				                sMsg->type = msg->type;
 				                sMsg->result = false;
 					            sceKernelSendMbx(*msg->returnBox, (void*)sMsg);
 	                		
@@ -152,7 +152,71 @@ namespace xM {
 	                		break;
 	                		
 						case RequestImageList:
+
+							if (mapImp->loadImageList(mapImp->getChapterList()->mangaSlug, *(std::string*)msg->what)) {
+								                		
+	                			printf("Image list loaded.\n");
+	                			
+	                			sMsg = new APIMessage;
+	                			SceKernelMsgPacket hdr = {0};            
+				                sMsg->header = hdr;
+				                sMsg->returnBox = &mangaAPIMbx;
+				                sMsg->what = NULL;
+				                sMsg->type = msg->type;
+				                sMsg->result = true;
+					            sceKernelSendMbx(*msg->returnBox, (void*)sMsg);             	
+	                		
+	                		} else {
+	                		
+	                			printf("Can't load [%s].\n", mapImp->getError().c_str());
+	                			
+	                			sMsg = new APIMessage;
+	                			SceKernelMsgPacket hdr = {0};            
+				                sMsg->header = hdr;
+				                sMsg->returnBox = &mangaAPIMbx;
+				                sMsg->what = (void*)new std::string(mapImp->getError());
+				                sMsg->type = msg->type;
+				                sMsg->result = false;
+					            sceKernelSendMbx(*msg->returnBox, (void*)sMsg);
+	                		
+	                		}
+	                		
+	                		delete (std::string*)msg->what;
+	                	
+	                		break;
+							
 						case RequestImage:
+
+							if (mapImp->loadImage(mapImp->getImageList()->mangaSlug, 
+											mapImp->getImageList()->chapterSlug, *(std::string*)msg->what)) {
+								                		
+	                			printf("Image loaded.\n");
+	                			
+	                			sMsg = new APIMessage;
+	                			SceKernelMsgPacket hdr = {0};            
+				                sMsg->header = hdr;
+				                sMsg->returnBox = &mangaAPIMbx;
+				                sMsg->what = NULL;
+				                sMsg->type = msg->type;
+				                sMsg->result = true;
+					            sceKernelSendMbx(*msg->returnBox, (void*)sMsg);             	
+	                		
+	                		} else {
+	                		
+	                			printf("Can't load [%s].\n", mapImp->getError().c_str());
+	                			
+	                			sMsg = new APIMessage;
+	                			SceKernelMsgPacket hdr = {0};            
+				                sMsg->header = hdr;
+				                sMsg->returnBox = &mangaAPIMbx;
+				                sMsg->what = (void*)new std::string(mapImp->getError());
+				                sMsg->type = msg->type;
+				                sMsg->result = false;
+					            sceKernelSendMbx(*msg->returnBox, (void*)sMsg);
+	                		
+	                		}
+	                		
+	                		delete (std::string*)msg->what;
 	                	
 	                		break;
 	                

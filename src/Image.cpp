@@ -66,33 +66,21 @@ namespace xM {
         }
 
         /**
-         * Load an image from a file.
+         * Load an image from memory.
          *
-         * @param const std::string& file File to load from.
-         *
+         * @param const std::string& imageBuffer The image in memory.
+         * 
          * @return bool Success or not?
          */
-        bool Image::loadFile(const std::string& file) {
-
-            if (__xM_DEBUG)
-                Util::logMsg("Image::loadFile — %s", file.c_str());
-
-            this->reset();
-
-			// Load the image from wherever (FS, cache, PSAR, zip)
-            std::string imageBuffer = Engine::ResourceManager::getInstance()->getRes(file);      
-            if (imageBuffer == "")
-                return false;
+        bool Image::loadData(const std::string& imageBuffer) {
             
             // Holds the big picture    
             ImageSegment mainSegment;
      
-     		// Load image (could be PNG, JPEG, etc) otherwise get out
-     		if (!this->loadImage(imageBuffer, &mainSegment))
-     			return false;
-     		                 
-            imageBuffer.clear();
-
+            // Load image (could be PNG, JPEG, etc) otherwise get out
+            if (!this->loadImage(imageBuffer, &mainSegment))
+                return false;
+                             
             mainSegment.p2Width = Util::nextPow2(mainSegment.width);
             mainSegment.p2Height = Util::nextPow2(mainSegment.height);
 
@@ -183,6 +171,29 @@ namespace xM {
             }
             
             return true;
+
+        }
+
+        /**
+         * Load an image from a file.
+         *
+         * @param const std::string& file File to load from.
+         *
+         * @return bool Success or not?
+         */
+        bool Image::loadFile(const std::string& file) {
+
+            if (__xM_DEBUG)
+                Util::logMsg("Image::loadFile — %s", file.c_str());
+
+            this->reset();
+
+			// Load the image from wherever (FS, cache, PSAR, zip)
+            std::string imageBuffer = Engine::ResourceManager::getInstance()->getRes(file);      
+            if (imageBuffer == "")
+                return false;
+            
+            return this->loadData(imageBuffer);
 
         }
         

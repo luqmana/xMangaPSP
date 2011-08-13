@@ -121,7 +121,7 @@ namespace xM {
 			// Get pointer to input manager
             Engine::InputManager* iM = Engine::InputManager::getInstance();
             
-#ifdef __xM_DEBUG            
+#if __xM_DEBUG
             // DEBUG: Reload XML on-the-fly            
             if (iM->pressed(PSP_CTRL_LTRIGGER)) {
             
@@ -131,19 +131,23 @@ namespace xM {
             }
 #endif
             
-            // Handle scrolling up/down
-            if (iM->pressed(PSP_CTRL_DOWN))
-                this->selected += 1;
-            else if (iM->pressed(PSP_CTRL_UP))
-                this->selected -= 1;
-                
-            // User made a selection, indicate that
-            if (iM->pressed(PSP_CTRL_CROSS))
-                this->doAction = true;
-                
-            // Leave state
-            if (iM->pressed(PSP_CTRL_CIRCLE))
-            	Engine::StateManager::getInstance()->changeState(new States::MangaSelect());
+            if (this->activeDialog == 0) {
+
+                // Handle scrolling up/down
+                if (iM->pressed(PSP_CTRL_DOWN))
+                    this->selected += 1;
+                else if (iM->pressed(PSP_CTRL_UP))
+                    this->selected -= 1;
+                    
+                // User made a selection, indicate that
+                if (iM->pressed(PSP_CTRL_CROSS))
+                    this->doAction = true;
+                    
+                // Leave state
+                if (iM->pressed(PSP_CTRL_CIRCLE))
+                	Engine::StateManager::getInstance()->changeState(new States::MangaSelect());
+
+            }
             
         }
 
@@ -172,15 +176,15 @@ namespace xM {
             		if (this->doAction) {
             
             			// Send the image list request
-				        /*this->msg->type = Manga::RequestImageList;
-				        this->msg->what = (void*)new std::string(this->mangaList.apiHandles[selected]);
+				        this->msg.type = Manga::RequestImageList;
+				        this->msg.what = (void*)new std::string(this->chapterList.apiHandles[selected]);
 				        sceKernelSendMbx(Manga::mangaAPIMbx, (void*)&this->msg);
 				    
 				        // not really a dialog
 				        // but allows some control
 				        this->activeDialog = 1;			
             			
-						this->doAction = false;*/
+						this->doAction = false;
 				
 					}
             	
@@ -189,27 +193,63 @@ namespace xM {
 				case 1:
 				
 					// There's a response in the mailbox!
-            		/*if (rMsg != NULL) {
+            		if (rMsg != NULL) {
                             
                         // Loaded successfully, switch to new state
-		            	if (rMsg->type == Manga::RequestChapterList && rMsg->result == true) {
+		            	if (rMsg->type == Manga::RequestImageList && rMsg->result == true) {
 		            	
-		            		Engine::StateManager::getInstance()->changeState(new States::ChapterSelect());
-		            		return;
+                            // Now that the image list is loaded, we load the first image!
+
+                            // Send the image list request
+                            this->msg.type = Manga::RequestImage;
+                            this->msg.what = (void*)new std::string(Manga::mapImp->getImageList()->images[0]);
+                            sceKernelSendMbx(Manga::mangaAPIMbx, (void*)&this->msg);
+                        
+                            // not really a dialog
+                            // but allows some control
+                            this->activeDialog = 2;
+
+		            		//Engine::StateManager::getInstance()->changeState(new States::ChapterSelect());
+		            		//return;
 		            	
-		            	} else if (rMsg->type == Manga::RequestChapterList && rMsg->result == false) {
+		            	} else if (rMsg->type == Manga::RequestImageList && rMsg->result == false) {
 		            	
 		            		// Something failed, display error message                	
 		            		Ui::Dialog::msg(*(std::string*)rMsg->what);                	
 		            		delete (std::string*)rMsg->what;
+
+                            this->activeDialog = 0;
 		            		
 		            	}
-		            	
-		                this->activeDialog = 0;
-		                
-					}*/
+		            			                
+					}
 					
 					break;
+
+                case 2:
+                
+                    // There's a response in the mailbox!
+                    if (rMsg != NULL) {
+                            
+                        // Loaded successfully, switch to new state
+                        if (rMsg->type == Manga::RequestImage && rMsg->result == true) {
+                        
+                            //Engine::StateManager::getInstance()->changeState(new States::ChapterSelect());
+                            //return;
+                        
+                        } else if (rMsg->type == Manga::RequestImage && rMsg->result == false) {
+                        
+                            // Something failed, display error message                  
+                            Ui::Dialog::msg(*(std::string*)rMsg->what);                 
+                            delete (std::string*)rMsg->what;
+
+                            this->activeDialog = 0;
+                            
+                        }
+                                                
+                    }
+                    
+                    break;
             
             }
                                         	        	        	        
@@ -224,7 +264,9 @@ namespace xM {
             this->parser.draw();
 
             if (this->activeDialog == 1)
-                Gfx::drawLoadingOverlay();
+                Gfx::drawLoadingOverlay("Loading image list...");
+            else if (this->activeDialog == 2)
+                Gfx::drawLoadingOverlay("Loading image...");
                         
         }
                 

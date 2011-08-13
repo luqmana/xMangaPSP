@@ -47,8 +47,16 @@ namespace xM {
 			// Register the XML UI parsers
             this->parser.registerCustomElementHandler("bouncyBox", &this->extraElements);
             
-            // Parse the required UI file
+            // About XML file is special in that it's
+            // loaded from any location ONLY during 
+            // testing, otherwise it's loaded from the
+            // PSAR. All other states do not have this
+            // restriction.
+#if __xM_DEBUG            
             this->parser.parseFile("ui/about.xml");
+#else
+            this->parser.parseFile("PSAR@ui/about.xml");
+#endif
                                                 
         }
 
@@ -72,7 +80,16 @@ namespace xM {
         void About::resume(void) {
 
 			// Reload XML ui
+            // About XML file is special in that it's
+            // loaded from any location ONLY during 
+            // testing, otherwise it's loaded from the
+            // PSAR. All other states do not have this
+            // restriction.
+#if __xM_DEBUG            
 			this->parser.parseFile("ui/about.xml");
+#else
+            this->parser.parseFile("PSAR@ui/about.xml");
+#endif
 
         }
 
@@ -84,11 +101,17 @@ namespace xM {
 			// Get pointer to input manager
             Engine::InputManager* iM = Engine::InputManager::getInstance();
             
-#ifdef __xM_DEBUG            
+#if __xM_DEBUG
             // DEBUG: Reload XML on-the-fly            
             if (iM->pressed(PSP_CTRL_LTRIGGER)) {
             
                 Util::logMsg("Reloading XML ui file.");
+
+                // About XML file is special in that it's
+                // loaded from any location ONLY during 
+                // testing, otherwise it's loaded from the
+                // PSAR. All other states do not have this
+                // restriction.
                 this->parser.parseFile("ui/about.xml");    
             
             }

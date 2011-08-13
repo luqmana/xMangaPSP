@@ -423,20 +423,22 @@ namespace xM {
         
         /**
 		 * Draws an overlay which indicates something is loading.
+         *
+         * @param const std::string&[optional] displayText The text to display.
 		 */
-		void drawLoadingOverlay() {
+		void drawLoadingOverlay(const std::string& displayText) {
 		
 			// Render a semi-transparent black quad covering the whole screen to
             // make dialogs better visible
             drawQuad(0, 0, 480, 272, GU_COLOR(0.0f, 0.0f, 0.0f, 0.8f), 0);
 
             // Draw the rotating squares
-            drawQuad(201, 120, 20, 20, Gfx::Colour::RED, 1.0f * gfxTimer.getDeltaTicks());
-            drawQuad(230, 120, 20, 20, Gfx::Colour::GREEN, -1.0f * gfxTimer.getDeltaTicks());
-            drawQuad(259, 120, 20, 20, Gfx::Colour::BLUE, 1.0f * gfxTimer.getDeltaTicks());
+            drawQuad(201, 120, 20, 20, Gfx::Colour::RED, 2.0f * gfxTimer.getDeltaTicks());
+            drawQuad(230, 120, 20, 20, Gfx::Colour::GREEN, -2.0f * gfxTimer.getDeltaTicks());
+            drawQuad(259, 120, 20, 20, Gfx::Colour::BLUE, 2.0f * gfxTimer.getDeltaTicks());
 
             // and finally the loading text
-            loadingText.draw(240, 158, "Loading...");
+            loadingText.draw(240, 158, displayText.c_str());
             
 		}
 

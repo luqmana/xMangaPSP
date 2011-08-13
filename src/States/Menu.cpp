@@ -125,7 +125,7 @@ namespace xM {
         	// Get pointer to input manager
             Engine::InputManager* iM = Engine::InputManager::getInstance();
             
-#ifdef __xM_DEBUG
+#if __xM_DEBUG
 			// DEBUG: Go to Test State
 			if (iM->pressed(PSP_CTRL_LTRIGGER) && iM->pressed(PSP_CTRL_RTRIGGER)) {
 			
@@ -142,16 +142,20 @@ namespace xM {
             
             }
 #endif
+      
+            if (this->activeDialog == 0) {
             
-            // Handle scrolling up/down
-            if (iM->pressed(PSP_CTRL_DOWN))
-                this->selected += 1;
-            else if (iM->pressed(PSP_CTRL_UP))
-                this->selected -= 1;
-                
-            // User made a selection, indicate that
-            if (iM->pressed(PSP_CTRL_CROSS))
-                this->doAction = true;
+                // Handle scrolling up/down
+                if (iM->pressed(PSP_CTRL_DOWN))
+                    this->selected += 1;
+                else if (iM->pressed(PSP_CTRL_UP))
+                    this->selected -= 1;
+                    
+                // User made a selection, indicate that
+                if (iM->pressed(PSP_CTRL_CROSS))
+                    this->doAction = true;
+
+            }
                             
         }
 

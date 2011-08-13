@@ -59,6 +59,8 @@
 #define _zzip_plugin_io_handlers struct zzip_plugin_io
 #endif
 
+#define PSAR_OFFSET_LOC 0x24
+
 // END Defines
 
 namespace xM {
@@ -84,7 +86,7 @@ namespace xM {
             }
             
             // Seek to header to find the position of the PSAR
-            sceIoLseek(fD, 0x24, PSP_SEEK_SET);
+            sceIoLseek(fD, PSAR_OFFSET_LOC, PSP_SEEK_SET);
                         
             // Read in offset
             sceIoRead(fD, &psarOffset, sizeof(unsigned int));

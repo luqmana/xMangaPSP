@@ -33,6 +33,7 @@
 // BEGIN Includes
 #include <vector>
 #include <string>
+#include <xM/Gfx/Image.h>
 // END Includes
 
 namespace xM {
@@ -55,6 +56,23 @@ namespace xM {
 			std::vector<std::string> apiHandles;
 
 		} ChapterList;
+
+		// Image list
+		typedef struct {
+
+			std::string mangaSlug;
+			std::string chapterSlug;
+			std::vector<std::string> images;
+
+		} ImageList;
+
+		// Manga Image
+		typedef struct {
+			
+			int index;
+			Gfx::Image* img;
+
+		} MangaImage;
 			
 	}
 
