@@ -109,9 +109,14 @@ namespace xM {
                 return true;
         
             std::string response;
+
+            Util::Timer loadTimer;
+            loadTimer.start();
                                   
             // Attempt to download mangalist
             if (Net::downloadFile(this->endpoint, response)) {
+
+                Util::logMsg("downloadFile - %f", loadTimer.getDeltaTicks(true));
                                                           
                 // clear mangalist
                 this->mangaList->names.clear();
@@ -119,7 +124,11 @@ namespace xM {
                                                                  
                 // No error, try to parse JSON
                 
+                loadTimer.start();
+
                 cJSON* root = cJSON_Parse(response.c_str());
+
+                Util::logMsg("Parse JSON - %f", loadTimer.getDeltaTicks(true));
                 
                 if (root == 0) {
                 
@@ -141,12 +150,21 @@ namespace xM {
 
                 }
 
-                for (int i = 0; i < cJSON_GetArraySize(mangas); i++) {
+                loadTimer.start();
+
+                int size = cJSON_GetArraySize(mangas);
+
+                this->mangaList->names.reserve(size);
+                this->mangaList->apiHandles.reserve(size);
+
+                for (int i = 0; i < size; i++) {
                                 
                     this->mangaList->names.push_back(cJSON_GetObjectItem(cJSON_GetArrayItem(mangas, i), "name")->valuestring);
                     this->mangaList->apiHandles.push_back(cJSON_GetObjectItem(cJSON_GetArrayItem(mangas, i), "apiHandle")->valuestring);
                                     
                 }
+
+                Util::logMsg("Populate list - %f", loadTimer.getDeltaTicks(true));
 
                 cJSON_Delete(root);
                                     
@@ -188,9 +206,14 @@ namespace xM {
                 
             std::string response;
             std::string url = this->endpoint + mangaSlug + "/";
+
+            Util::Timer loadTimer;
+            loadTimer.start();
                                   
             // Attempt to download chapterlist
             if (Net::downloadFile(url, response)) {
+
+                Util::logMsg("downloadFile - %f", loadTimer.getDeltaTicks(true));
                                                           
                 // clear chapterlist
                 this->chapterList->mangaSlug = mangaSlug;
@@ -199,7 +222,11 @@ namespace xM {
                                                                  
                 // No error, try to parse JSON
                 
+                loadTimer.start();
+
                 cJSON* root = cJSON_Parse(response.c_str());
+
+                Util::logMsg("Parse JSON - %f", loadTimer.getDeltaTicks(true));
                 
                 if (root == 0) {
                 
@@ -234,12 +261,21 @@ namespace xM {
 
                 }
 
-                for (int i = 0; i < cJSON_GetArraySize(chapters); i++) {
+                loadTimer.start();
+
+                int size = cJSON_GetArraySize(chapters);
+
+                this->chapterList->names.reserve(size);
+                this->chapterList->apiHandles.reserve(size);
+
+                for (int i = 0; i < size; i++) {
                                 
                     this->chapterList->names.push_back(cJSON_GetObjectItem(cJSON_GetArrayItem(chapters, i), "name")->valuestring);
                     this->chapterList->apiHandles.push_back(cJSON_GetObjectItem(cJSON_GetArrayItem(chapters, i), "apiHandle")->valuestring);
                                     
                 }
+
+                Util::logMsg("Populate list - %f", loadTimer.getDeltaTicks(true));
 
                 cJSON_Delete(root);
                                     
@@ -280,9 +316,14 @@ namespace xM {
             
             std::string response;
             std::string url = this->endpoint + mangaSlug + "/" + chapterSlug + "/";
+
+            Util::Timer loadTimer;
+            loadTimer.start();
                                   
             // Attempt to download imagelist
             if (Net::downloadFile(url, response)) {
+
+                Util::logMsg("downloadFile - %f", loadTimer.getDeltaTicks(true));
                 
                 // clear imagelist
                 this->imageList->mangaSlug = mangaSlug;
@@ -291,7 +332,11 @@ namespace xM {
                                                                  
                 // No error, try to parse JSON
                 
+                loadTimer.start();
+
                 cJSON* root = cJSON_Parse(response.c_str());
+
+                Util::logMsg("Parse JSON - %f", loadTimer.getDeltaTicks(true));
                 
                 if (root == 0) {
                 
@@ -326,11 +371,16 @@ namespace xM {
 
                 }
 
-                for (int i = 0; i < cJSON_GetArraySize(images); i++) {
-                                
+                loadTimer.start();
+
+                int size = cJSON_GetArraySize(images);
+
+                this->imageList->images.reserve(size);
+
+                for (int i = 0; i < size; i++)
                     this->imageList->images.push_back(cJSON_GetObjectItem(cJSON_GetArrayItem(images, i), "image")->valuestring);
-                                    
-                }
+
+                Util::logMsg("Populate list - %f", loadTimer.getDeltaTicks(true));
 
                 cJSON_Delete(root);
                                     
@@ -434,6 +484,16 @@ namespace xM {
 
                 }
                 Util::logMsg("loadData - %f", loadTimer.getDeltaTicks(true));
+
+                if (!this->mangaImage->img->isLoaded()) {
+                    
+                    this->error = "Image Error: Can't load image.";
+                    this->error.append(" [" + mangaSlug + ":" + chapterSlug + ":" + imageSlug + "]");
+                    Util::logMsg("%s", this->error.c_str());
+                    
+                    return false;
+                    
+                }
 
                 return true;
 

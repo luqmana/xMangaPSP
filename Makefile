@@ -139,6 +139,10 @@
  # Rule to build PicoPNG with optimization
  $(BUILD_DIR)/PicoPNG.o: $(SRC_DIR)/PicoPNG.cpp
 	$(CXX) $(CXXFLAGS) -O3 -G4 -ffast-math -c -o $@ $<
+
+ # Rule to build image class with optimization
+ $(BUILD_DIR)/Image.o: $(SRC_DIR)/Image.cpp
+	$(CXX) $(CXXFLAGS) -O3 -G4 -ffast-math -c -o $@ $<
 	
  # Rule to build bundled TinyXML
  $(BUILD_DIR)/tinyxml/%.o: $(EXT_SRC_DIR)/tinyxml/%.cpp | $(BUILD_DIR)/tinyxml
@@ -148,7 +152,7 @@
 	
  # Rule to build bundled intraFont-G
  $(BUILD_DIR)/intraFontG/%.o: $(EXT_SRC_DIR)/intraFontG/%.c | $(BUILD_DIR)/intraFontG
-	$(CC) $(CFLAGS) -c -o $@ $<
+	$(CC) $(CFLAGS) -O3 -ffast-math -c -o $@ $<
  $(BUILD_DIR)/intraFontG:
 	mkdir $(BUILD_DIR)/intraFontG
 

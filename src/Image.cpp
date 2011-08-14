@@ -297,6 +297,10 @@ namespace xM {
 				destImg->height = d.height();
 				
                 loadTimer.start();
+                destImg->pixels.reserve(destImg->width * destImg->height * 4);
+                Util::logMsg("reserve - [%d] %f", destImg->width * destImg->height * 4, loadTimer.getDeltaTicks(true));
+
+                loadTimer.start();
 				// Since this is only a 24bit image we need to pad it to 32 bit
 				// so we add an alpha channel with full opacity
 				unsigned int w = 0;
@@ -316,6 +320,8 @@ namespace xM {
 
                 } while (i < pixels.size());
                 Util::logMsg("alphaizer - %f", loadTimer.getDeltaTicks(true));
+
+                pixels.clear();
 				        		        	
         	} else {
         	
