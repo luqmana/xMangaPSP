@@ -58,7 +58,7 @@ namespace xM {
 
         class Image {
         private:
-            std::vector<ImageSegment> segments;
+            std::vector<ImageSegment*> segments;
             bool swizzled;
             
             /**
@@ -150,6 +150,16 @@ namespace xM {
              * Reset
              */
             void reset();
+
+            /**
+             * This function does the actual rendering and works on a per-segment basis.
+             * 
+             * @param float x X position to render to.
+             * @param float y Y position to render to.
+             * @param const ImageClip* clip Src blitting region.
+             * @param const unsigned int seg Which segment to render.
+             */
+            void render(float x, float y, const ImageClip* clip, const unsigned int seg);
 
             /**
              * Render an image onto the screen.

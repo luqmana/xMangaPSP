@@ -78,27 +78,27 @@ namespace xM {
         bool Image::loadData(const std::string& imageBuffer) {
             
             // Holds the big picture    
-            ImageSegment mainSegment;
+            ImageSegment* mainSegment = new ImageSegment;
      
             // Load image (could be PNG, JPEG, etc) otherwise get out
-            if (!this->loadImage(imageBuffer, &mainSegment))
+            if (!this->loadImage(imageBuffer, mainSegment))
                 return false;
                              
-            mainSegment.p2Width = Util::nextPow2(mainSegment.width);
-            mainSegment.p2Height = Util::nextPow2(mainSegment.height);
+            mainSegment->p2Width = Util::nextPow2(mainSegment->width);
+            mainSegment->p2Height = Util::nextPow2(mainSegment->height);
 
-            this->width = mainSegment.width;
-            this->height = mainSegment.height;
-            this->p2Width = mainSegment.p2Width;
-            this->p2Height = mainSegment.p2Height;
+            this->width = mainSegment->width;
+            this->height = mainSegment->height;
+            this->p2Width = mainSegment->p2Width;
+            this->p2Height = mainSegment->p2Height;
 
             loadTimer.start();
-            if (!(mainSegment.width > 512 || mainSegment.height > 512)) {
+            if (!(mainSegment->width > 512 || mainSegment->height > 512)) {
 
                 // No need to create more segments but just pretend there is only one segment
 
-                mainSegment.x = 0;
-                mainSegment.y = 0;
+                mainSegment->x = 0;
+                mainSegment->y = 0;
 
                 this->segments.push_back(mainSegment);
 
@@ -107,8 +107,8 @@ namespace xM {
                 // Okay, we need to create segments since the image is too large
 
                 // First we figure out roughly how many segments of 512x512 we need
-                int wFit = ceil((float) mainSegment.width / 512);
-                int hFit = ceil((float) mainSegment.height / 512);
+                int wFit = ceil((float) mainSegment->width / 512);
+                int hFit = ceil((float) mainSegment->height / 512);
 
                 int i = 0;
 
@@ -118,48 +118,34 @@ namespace xM {
 
                     do {
 
-                        ImageSegment segment;
+                        ImageSegment* segment = new ImageSegment;
 
                         // Handle case for final segment which might not be 512px
                         if (k == (wFit - 1))
-                            segment.width = mainSegment.width - (512 * (wFit - 1));
+                            segment->width = mainSegment->width - (512 * (wFit - 1));
                         else
-                            segment.width = 512;
+                            segment->width = 512;
 
-                        segment.p2Width = Util::nextPow2(segment.width);
+                        segment->p2Width = Util::nextPow2(segment->width);
 
                         // Handle case for final segment which might not be 512px
                         if (i == (hFit - 1))
-                            segment.height = mainSegment.height - (512 * (hFit - 1));
+                            segment->height = mainSegment->height - (512 * (hFit - 1));
                         else
-                            segment.height = 512;
+                            segment->height = 512;
 
-                        segment.p2Height = Util::nextPow2(segment.height);
+                        segment->p2Height = Util::nextPow2(segment->height);
 
                         // Calculate coordinate of segment in terms of the whole image
-                        segment.x = 512 * k;
-                        segment.y = 512 * i;
+                        segment->x = 512 * k;
+                        segment->y = 512 * i;
 
                         // Reserve enough size                        
-                        segment.pixels.resize(segment.width * segment.height * sizeof (uint32_t));
+                        segment->pixels.reserve(segment->width * segment->height * sizeof (uint32_t));
 
-                        unsigned int y = segment.y;
-
-                        do {
-
-                            unsigned int x = segment.x;
-
-                            do {
-
-                                memcpy(&segment.pixels[0] + ((y - segment.y) * segment.width * 4) + ((x - segment.x) * 4), &mainSegment.pixels[0] + ((y + segment.y) * mainSegment.width * 4) + ((x + segment.x) * 4), 4);
-
-                                ++x;
-
-                            } while (x < (segment.width + segment.x));
-                            
-                            ++y;
-
-                        } while (y < (segment.height + segment.y));
+                        for (unsigned int line = segment->y; line < (segment->y + segment->height); ++line)
+                            memcpy(&segment->pixels[0] + ((line - segment->y) * segment->width * 4),
+                                    &mainSegment->pixels[0] + ((line + segment->y) * mainSegment->width * 4) + (segment->x * 4), 4 * segment->width);
 
                         this->segments.push_back(segment);
 
@@ -352,8 +338,14 @@ namespace xM {
          */
         void Image::reset() {
 
-            if (this->segments.size() != 0)
+            if (this->segments.size() != 0) {
+
+                for (unsigned int i = 0; i < this->segments.size(); ++i)
+                    delete this->segments[i];
+
                 this->segments.clear();
+
+            }
 
             this->width = 0;
             this->height = 0;
@@ -376,14 +368,14 @@ namespace xM {
             for (unsigned int r = 0; r < this->segments.size(); ++r) {
 
                 unsigned int i, j;
-                unsigned int rowblocks = (this->segments[r].width * sizeof (u32) / 16);
-                long size = this->segments[r].width * this->segments[r].height * 8;
+                unsigned int rowblocks = (this->segments[r]->width * sizeof (u32) / 16);
+                long size = this->segments[r]->width * this->segments[r]->height * 8;
 
                 unsigned char* out = (unsigned char*) malloc(size * sizeof (unsigned char));
 
-                for (j = 0; j < this->segments[r].height; ++j) {
+                for (j = 0; j < this->segments[r]->height; ++j) {
 
-                    for (i = 0; i < this->segments[r].width * sizeof (u32); ++i) {
+                    for (i = 0; i < this->segments[r]->width * sizeof (u32); ++i) {
 
                         unsigned int blockx = i / 16;
                         unsigned int blocky = j / 8;
@@ -393,15 +385,15 @@ namespace xM {
                         unsigned int blockIndex = blockx + (blocky * rowblocks);
                         unsigned int blockAddress = blockIndex * 16 * 8;
 
-                        out[blockAddress + x + y * 16] = this->segments[r].pixels[i + j * this->segments[r].width * sizeof (uint32_t)];
+                        out[blockAddress + x + y * 16] = this->segments[r]->pixels[i + j * this->segments[r]->width * sizeof (uint32_t)];
 
                     }
 
                 }
 
                 // Copy swizzled data
-                this->segments[r].pixels.resize(size);
-                memcpy(&this->segments[r].pixels[0], out, size);
+                this->segments[r]->pixels.resize(size);
+                memcpy(&this->segments[r]->pixels[0], out, size);
 
                 // Free temporary
                 free(out);
@@ -410,6 +402,70 @@ namespace xM {
 
             // Flip bool
             this->swizzled = true;
+
+        }
+
+        /**
+         * This function does the actual rendering and works on a per-segment basis.
+         * 
+         * @param float x X position to render to.
+         * @param float y Y position to render to.
+         * @param const ImageClip* clip Src blitting region.
+         * @param const unsigned int seg Which segment to render.
+         */
+        void Image::render(float x, float y, const ImageClip* clip, const unsigned int seg) {
+            
+            if (seg > (this->segments.size() - 1))
+                return;
+
+            unsigned int w, h;
+            int offsetX, offsetY;
+
+            // Bleh, don't feel like implementing clipping for the WHOLE image
+            // so do clipping for first segment
+            // TODO: fix that...
+            if (seg == 0 && clip != NULL) {
+                
+                w = (clip->width == 0) ? this->segments[0]->width : clip->width;
+                h = (clip->height == 0) ? this->segments[0]->height : clip->height;
+
+                offsetX = clip->x;
+                offsetY = clip->y;
+
+            } else {
+                
+                w = this->segments[seg]->width;
+                h = this->segments[seg]->height;
+
+                offsetX = 0;
+                offsetY = 0;
+
+            }
+
+            // Apply texture
+            sceGuTexImage(0, this->segments[seg]->p2Width, this->segments[seg]->p2Height, this->segments[seg]->width, &this->segments[seg]->pixels[0]);
+
+            Vertex2 image[2] = {
+                { // Top-Left point
+                    (offsetX / (float)this->segments[seg]->p2Width), (offsetY / (float)this->segments[seg]->p2Height),
+                    x, y, 0.0f
+                },
+                { // Bottom-Right point
+                    ((offsetX + w) / (float)this->segments[seg]->p2Width), ((offsetY + h) / (float)this->segments[seg]->p2Height),
+                    x + w, y + h, 0.0f
+                }
+            };
+
+            sceGumMatrixMode(GU_MODEL);
+            sceGumLoadIdentity();
+
+            Vertex2* finalImage = (Vertex2*) sceGuGetMemory(sizeof(Vertex2) * 2);
+            memcpy(finalImage, image, sizeof(Vertex2) * 2);
+            
+            sceKernelDcacheWritebackAll();
+
+            // Draw the quad
+            sceGumDrawArray(GU_SPRITES, GU_TEXTURE_32BITF | GU_VERTEX_32BITF, 2, 0, finalImage);
 
         }
 
@@ -425,27 +481,6 @@ namespace xM {
 			if (this->segments.size() == 0)
 				return;
 
-            unsigned int w, h;
-            int offsetX, offsetY;
-
-            if (clip != NULL) {
-
-                w = (clip->width == 0) ? this->segments[0].width : clip->width;
-                h = (clip->height == 0) ? this->segments[0].height : clip->height;
-
-                offsetX = clip->x;
-                offsetY = clip->y;
-
-            } else {
-
-                w = this->segments[0].width;
-                h = this->segments[0].height;
-
-                offsetX = 0;
-                offsetY = 0;
-
-            }
-            
             // Enable 2D textures
             sceGuEnable(GU_TEXTURE_2D);
 
@@ -455,30 +490,14 @@ namespace xM {
             sceGuTexScale(1.0f, 1.0f);
             sceGuTexOffset(0.0f, 0.0f);
 
-            // Apply texture
-            sceGuTexImage(0, this->segments[0].p2Width, this->segments[0].p2Height, this->segments[0].width, &this->segments[0].pixels[0]);
+            for (unsigned int k = 0; k < this->segments.size(); ++k) {
+                
+                if (k == 2)
+                    break;
 
-            Vertex2 image[2] = {
-                { // Top-Left point
-                    (offsetX / (float)this->segments[0].p2Width), (offsetY / (float)this->segments[0].p2Height),
-                    x, y, 0.0f
-                },
-                { // Bottom-Right point
-                    ((offsetX + w) / (float)this->segments[0].p2Width), ((offsetY + h) / (float)this->segments[0].p2Height),
-                    x + w, y + h, 0.0f
-                }
-            };
+                this->render(x + this->segments[k]->x, y + this->segments[k]->y, clip, k);
 
-            sceGumMatrixMode(GU_MODEL);
-            sceGumLoadIdentity();
-
-            Vertex2* finalImage = (Vertex2*) sceGuGetMemory(sizeof(Vertex2) * 2);
-            memcpy(finalImage, image, sizeof(Vertex2) * 2);
-            
-            sceKernelDcacheWritebackAll();
-
-            // Draw the quad
-            sceGumDrawArray(GU_SPRITES, GU_TEXTURE_32BITF | GU_VERTEX_32BITF, 2, 0, finalImage);
+            }
 
             // Disable again
             sceGuDisable(GU_TEXTURE_2D);
