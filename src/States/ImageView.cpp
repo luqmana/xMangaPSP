@@ -103,13 +103,13 @@ namespace xM {
 
                 // Handle moving
                 if (iM->pressed(PSP_CTRL_DOWN))
-                    this->y -= 10;
+                    this->y -= 30;
                 else if (iM->pressed(PSP_CTRL_UP))
-                    this->y += 10;
+                    this->y += 30;
                 else if (iM->pressed(PSP_CTRL_LEFT))
-                    this->x += 10;
+                    this->x += 30;
                 else if (iM->pressed(PSP_CTRL_RIGHT))
-                    this->x -= 10;
+                    this->x -= 30;
                     
                 // Leave state
                 if (iM->pressed(PSP_CTRL_CIRCLE))
@@ -123,6 +123,18 @@ namespace xM {
          * Now do something with the data we got from events and what not.
          */
         void ImageView::handleLogic(void) {
+
+            if (this->x > 0)
+                this->x = 0;
+
+            if (this->y > 0)
+                this->y = 0;
+
+            if (this->x < (signed)(-this->image.img->width) + 480)
+                this->x = -this->image.img->width + 480;
+
+            if (this->y < (signed)(-this->image.img->height) + 272)
+                this->y = -this->image.img->height + 272;
         
         	//Check for any new messages in mailbox
             Manga::APIMessage* rMsg = NULL;
