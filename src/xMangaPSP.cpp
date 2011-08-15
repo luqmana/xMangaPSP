@@ -143,15 +143,7 @@ int main(int argc, char **argv) {
         // Toggle stats
         if (__xM_DEBUG && inputManager->pressed(PSP_CTRL_RTRIGGER))
             showFPSMEM = !showFPSMEM;
-        
-        // Show some stats
-        if (showFPSMEM) {
-            
-            Util::MEM();
-            Util::FPS();
-            
-        }
-        
+                
         // Render a semi-transparent black quad covering the whole screen to
         // make dialogs better visible
         if (Ui::Dialog::isDialogActive())
@@ -163,6 +155,14 @@ int main(int argc, char **argv) {
         // Draw any active dialogs
         if (Ui::Dialog::isDialogActive())            
             Ui::Dialog::renderDialogs();
+
+        // Show some stats
+        if (showFPSMEM) {
+            
+            Util::MEM();
+            Util::FPS();
+            
+        }
         
         // V-Sync and swap buffers
         Gfx::syncAndSwap();

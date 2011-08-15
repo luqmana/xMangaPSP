@@ -143,8 +143,8 @@ namespace xM {
                         // Reserve enough size                        
                         segment->pixels.reserve(segment->width * segment->height * sizeof (uint32_t));
 
-                        for (unsigned int line = segment->y; line < (segment->y + segment->height); ++line)
-                            memcpy(&segment->pixels[0] + ((line - segment->y) * segment->width * 4),
+                        for (unsigned int line = 0; line < (segment->height); ++line)
+                            memcpy(&segment->pixels[0] + (line * segment->width * 4),
                                     &mainSegment->pixels[0] + ((line + segment->y) * mainSegment->width * 4) + (segment->x * 4), 4 * segment->width);
 
                         this->segments.push_back(segment);
@@ -492,9 +492,6 @@ namespace xM {
 
             for (unsigned int k = 0; k < this->segments.size(); ++k) {
                 
-                if (k == 2)
-                    break;
-
                 this->render(x + this->segments[k]->x, y + this->segments[k]->y, clip, k);
 
             }

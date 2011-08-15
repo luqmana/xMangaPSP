@@ -150,6 +150,9 @@ namespace xM {
                 
                 // Set write buffer
                 curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
+
+                // Set timeout to 15 seconds
+                curl_easy_setopt(curl, CURLOPT_TIMEOUT, 15);
                 
                 // Perform request
                 res = curl_easy_perform(curl);
