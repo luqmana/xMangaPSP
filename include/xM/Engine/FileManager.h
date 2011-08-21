@@ -45,7 +45,7 @@
 
 namespace xM {
 
-	namespace Engine {
+    namespace Engine {
 	
 		class FileManager {
 		
@@ -54,27 +54,22 @@ namespace xM {
                 /**
                  * This will be a singleton class so no need for a public constructor.
                  */
-                FileManager(void) { };
+                FileManager(void);
                                             		
-		    public:
+            public:
 		    
-		        /**
-                 * The singleton instance.
-                 */
-                static FileManager* fMInstance;
+	           /**
+                * The singleton instance.
+                */
+               static FileManager* fMInstance;
 		    
-		        /**
-		         * Get an instance of the class.
-		         * 
-		         * @return FileManager* Singleton instance.
-		         */
-		        static FileManager* getInstance(void);
-		        
-		        /**
-                 * Set up some stuff.
-                 */
-                void init(void);
-                
+	        /**
+	         * Get an instance of the class.
+	         * 
+	         * @return FileManager* Singleton instance.
+	         */
+	        static FileManager* getInstance(void);
+		                        
                 /**
                  * Magic read function!
                  * 
@@ -90,7 +85,7 @@ namespace xM {
                  */
                 std::string read(const std::string& file);
 		        
-		        /**
+		/**
                  * Read a file in from the PSAR archive (zip file) in the EBOOT.
                  * 
                  * @param const std::string& file The file within the PSAR.

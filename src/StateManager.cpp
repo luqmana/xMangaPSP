@@ -54,18 +54,9 @@ namespace xM {
         }
 
         /**
-         * Start up code.
+         * Destructor
          */
-        void StateManager::init(void) {
-
-
-
-        }
-
-        /**
-         * Clean up code.
-         */
-        void StateManager::cleanUp(void) {
+        StateManager::~StateManager(void) {
 
             // Loop through all states
             while (!this->states.empty()) {

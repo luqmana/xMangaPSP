@@ -336,7 +336,7 @@ namespace xM {
                 nDialogData.base.fontThread     =   0x12;
                 nDialogData.base.soundThread    =   0x10;
                 
-                nDialogData.action = PSP_NETCONF_ACTION_CONNECTAP;
+                nDialogData.action = PSP_NETCONF_ACTION_CONNECTAP_LASTUSED;
                 
                 struct pspUtilityNetconfAdhoc adhocParam;
                 memset(&adhocParam, 0, sizeof(adhocParam));

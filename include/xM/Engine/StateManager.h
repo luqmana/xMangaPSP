@@ -58,6 +58,11 @@ namespace xM {
                 std::vector<States::Base*> states;
 		
 		    public:
+
+		    	/**
+		    	 * Destructor.
+		    	 */
+		    	~StateManager();
 		    
 		        /**
                  * The singleton instance.
@@ -70,17 +75,7 @@ namespace xM {
 		         * @return StateManager* Singleton instance.
 		         */
 		        static StateManager* getInstance(void);
-		    
-		        /**
-		         * Start up code.
-		         */
-		        void init(void);
-		        
-		        /**
-		         * Clean up code.
-		         */
-		        void cleanUp(void);
-		        
+		    		        
 		        /**
 		         * Go to a new state. Delete previous state, allowing it to cleanup.
 		         * 
