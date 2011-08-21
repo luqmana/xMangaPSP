@@ -48,7 +48,7 @@
 
 #include <pspiofilemgr.h>
 
-#include "libjpeg/jpeglib.h"
+#include <jpeglib.h>
 // END Includes
 
 namespace xM {
@@ -275,14 +275,6 @@ namespace xM {
 				cinfo.err = jpeg_std_error(&jerr);
 
 				unsigned int loc = 0;
-
-                if (setjmp(jerr.setjmp_buffer)) {
-
-                    jpeg_destroy_decompress(&cinfo);
-                    
-                    return false;
-
-                }
 
 				// Initialize JPEG decompression object
 				jpeg_create_decompress(&cinfo);
