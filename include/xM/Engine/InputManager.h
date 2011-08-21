@@ -51,7 +51,7 @@ namespace xM {
                 /**
                  * This will be a singleton class so no need for a public constructor.
                  */
-                InputManager(void) { };
+                InputManager(void);
                 
                 /**
                  * Holds the button input.
@@ -77,12 +77,7 @@ namespace xM {
 		         * @return InputManager* Singleton instance.
 		         */
 		        static InputManager* getInstance(void);
-		    
-		        /**
-		         * Start up code.
-		         */
-		        void init(void);
-		        
+		    		        
 		        /**
 		         * Reads input.
 		         */

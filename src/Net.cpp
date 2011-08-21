@@ -56,9 +56,9 @@ namespace xM {
             sceUtilityLoadNetModule(PSP_NET_MODULE_INET);
 
             // mem, thrd priority, stack, thread priority, stack
-            sceNetInit(128 * 1024, 42, 4 * 1024, 42, 4 * 1024);
+            sceNetInit(0x20000, 0x20, 0x1000, 0x20, 0x1000);
             sceNetInetInit();
-            sceNetApctlInit(0x8000, 48);
+            sceNetApctlInit(0x1600, 0x42);
 		
 		}
 		

@@ -73,11 +73,6 @@ namespace xM {
 		        static ResourceManager* getInstance(void);
 		        
 		        /**
-                 * Set up some stuff.
-                 */
-                void init(void);
-		        
-		        /**
 		         * Returns a cached image. If not cached, loads it.
 		         * 
 		         * @param const std::string& image The image.

@@ -67,7 +67,7 @@ PSP_MAIN_THREAD_ATTR(PSP_THREAD_ATTR_USER);
  * Set the PSP heap size.
  * Use about 15MB as heap
  */
-PSP_HEAP_SIZE_KB(1024 * 16);
+PSP_HEAP_SIZE_KB(1024 * 22);
 
 bool Engine::running = true;
 
@@ -91,18 +91,9 @@ int main(int argc, char **argv) {
     
     // Initiate the Manga API Handler
     Manga::initMangaAPIThread();
-    
-    // Initiate the FileManager
-    Engine::FileManager* fileManager = Engine::FileManager::getInstance();
-    fileManager->init();
-    
-    // Initiate the ResourceManager
-    Engine::ResourceManager* resourceManager = Engine::ResourceManager::getInstance();
-    resourceManager->init();
-    
+        
     // Initiate the InputManager
     Engine::InputManager* inputManager = Engine::InputManager::getInstance();
-    inputManager->init();
     
     // Initiate the StateManager and set the initial state
     Engine::StateManager* stateManager = Engine::StateManager::getInstance();
@@ -171,9 +162,6 @@ int main(int argc, char **argv) {
     
     // Close any outstanding dialogs
     Ui::Dialog::abortDialogs();
-    
-    // Let the states clean up
-    stateManager->cleanUp();
 
     // Delete pointer to singleton StateManager
     delete Engine::StateManager::sMInstance;

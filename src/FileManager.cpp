@@ -146,6 +146,21 @@ namespace xM {
         FileManager* FileManager::fMInstance = NULL;
 
         /**
+         * This will be a singleton class so no need for a public constructor.
+         */
+        FileManager::FileManager(void) {
+            
+            zzip_init_io(&psarZipHandlers, 0);
+            psarZipHandlers.fd.open = &psarZipOpen;
+            psarZipHandlers.fd.close = &psarZipClose;
+            psarZipHandlers.fd.read = &psarZipRead;
+            psarZipHandlers.fd.seeks = &psarZipSeek;
+            psarZipHandlers.fd.filesize = &psarZipFilesize;
+            psarZipHandlers.fd.write = &psarZipWrite;
+
+        }
+
+        /**
          * Get an instance of the class.
          * 
          * @return FileManager* Singleton instance.
@@ -158,21 +173,6 @@ namespace xM {
 
             return fMInstance;
 
-        }
-        
-        /**
-         * Set up some stuff.
-         */
-        void FileManager::init(void) {
-        
-            zzip_init_io (&psarZipHandlers, 0);
-            psarZipHandlers.fd.open = &psarZipOpen;
-            psarZipHandlers.fd.close = &psarZipClose;
-            psarZipHandlers.fd.read = &psarZipRead;
-            psarZipHandlers.fd.seeks = &psarZipSeek;
-            psarZipHandlers.fd.filesize = &psarZipFilesize;
-            psarZipHandlers.fd.write = &psarZipWrite;
-        
         }
         
         /**

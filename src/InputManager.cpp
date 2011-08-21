@@ -39,6 +39,17 @@ namespace xM {
         InputManager* InputManager::iMInstance = NULL;
 
         /**
+         * Constructor.
+         */
+        InputManager::InputManager() {
+            
+            sceCtrlSetSamplingCycle(1);
+            sceCtrlSetSamplingMode(PSP_CTRL_MODE_ANALOG);
+            repeat = false;
+
+        }
+
+        /**
          * Get an instance of the class.
          * 
          * @return InputManager* Singleton instance.
@@ -50,17 +61,6 @@ namespace xM {
                 iMInstance = new InputManager();
 
             return iMInstance;
-
-        }
-
-        /**
-         * Start up code.
-         */
-        void InputManager::init(void) {
-
-            sceCtrlSetSamplingCycle(1);
-            sceCtrlSetSamplingMode(PSP_CTRL_MODE_ANALOG);
-            repeat = false;
 
         }
         

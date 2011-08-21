@@ -36,7 +36,7 @@
 #include "xM/Gfx/PicoPNG.h"
 #include "xM/Util/Log.h"
 #include "xM/Util/Utils.h"
-#include <xM/Util/Timer.h>
+#include "xM/Util/Timer.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -48,7 +48,7 @@
 
 #include <pspiofilemgr.h>
 
-#include <jpegxx/read.hpp>
+#include "libjpeg/jpeglib.h"
 // END Includes
 
 namespace xM {
@@ -261,53 +261,85 @@ namespace xM {
         		// well, what dya know? It's a PNG! Rejoice!
         		
         		// Decode the png
-            	int r = decodePNG(destImg->pixels, destImg->width, destImg->height, (const unsigned char*) imgBuffer.c_str(), imgBuffer.size(), true);
+            	int r = decodePNG(destImg->pixels, destImg->width, destImg->height, (const unsigned char*)imgBuffer.c_str(), imgBuffer.size(), true);
             	
             	if (r != 0)
             		return false;
+
+            	return true;
         		
         	} else if (this->isJPEG(imgBuffer)) {
-        	
-        		// a JPEG! Oh joy!        		
-        		std::vector<unsigned char> pixels;
-        		
-        		// Use a stream to pass the image to jpegxx
-        		std::istringstream imgBufferStream;
-        		imgBufferStream.str(imgBuffer);
-        		
-                loadTimer.start();
-				imagexx::raster_details d = jpegxx::read_image(imgBufferStream, std::back_inserter(pixels));
-                Util::logMsg("read_image - %f", loadTimer.getDeltaTicks(true));
 
-				destImg->width = d.width();
-				destImg->height = d.height();
-				
-                loadTimer.start();
-                destImg->pixels.reserve(destImg->width * destImg->height * 4);
-                Util::logMsg("reserve - [%d] %f", destImg->width * destImg->height * 4, loadTimer.getDeltaTicks(true));
+				struct jpeg_decompress_struct cinfo;
+				struct jpeg_error_mgr jerr;
+				cinfo.err = jpeg_std_error(&jerr);
 
-                loadTimer.start();
-				// Since this is only a 24bit image we need to pad it to 32 bit
-				// so we add an alpha channel with full opacity
-				unsigned int w = 0;
-                unsigned int i = 0;
-                do {
+				unsigned int loc = 0;
+
+                if (setjmp(jerr.setjmp_buffer)) {
+
+                    jpeg_destroy_decompress(&cinfo);
                     
-                    destImg->pixels.push_back(pixels[i]);
-                    ++w;
+                    return false;
 
-                    // Add the new alpha after the r,g,b components
-                    if (w == 3) {
-                        destImg->pixels.push_back(0xFF);
-                        w = 0;
+                }
+
+				// Initialize JPEG decompression object
+				jpeg_create_decompress(&cinfo);
+
+				// Specify data source (our buffer in this case)
+				jpeg_mem_src(&cinfo, (unsigned char*)imgBuffer.c_str(), imgBuffer.size());
+
+				// Read in jpeg parameters
+				jpeg_read_header(&cinfo, true);
+
+				// Start decompressor
+				jpeg_start_decompress(&cinfo);
+
+				// Set the width, height and allocate enough space
+				destImg->width = cinfo.output_width;
+				destImg->height = cinfo.output_height;
+
+				unsigned int sz = destImg->width * destImg->height * 4;
+				
+				destImg->pixels.reserve(sz);
+
+				unsigned int stride = cinfo.output_width * cinfo.output_components;
+				unsigned char* line = (unsigned char*) malloc(stride);
+		
+				loadTimer.start();
+				// Read in image
+				while (cinfo.output_scanline < cinfo.output_height) {
+					
+					// read!
+					jpeg_read_scanlines(&cinfo, &line, 1);
+
+                    // Add an alpha component for every pixel
+                    int l = 0;
+                    for (loc = 0; loc < stride; loc++) {
+                        
+                        destImg->pixels.push_back(line[loc]);
+                        l++;
+
+                        if (l == 3) {
+                            
+                            destImg->pixels.push_back(0xFF);
+                            l = 0;
+
+                        }
+
+
                     }
+					
+				}
+				Util::logMsg("read_image - %f", loadTimer.getDeltaTicks(true));
 
-                    ++i;
-
-                } while (i < pixels.size());
-                Util::logMsg("alphaizer - %f", loadTimer.getDeltaTicks(true));
-
-                pixels.clear();
+				// Cleanup
+				jpeg_finish_decompress(&cinfo);
+				jpeg_destroy_decompress(&cinfo);
+				free(line);
+        	
+                return true;
 				        		        	
         	} else {
         	
@@ -318,7 +350,7 @@ namespace xM {
         	
         	}
         	        
-        	return true;
+        	return false;
         
         }
         

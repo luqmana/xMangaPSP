@@ -56,16 +56,7 @@ namespace xM {
             return rMInstance;
         
         }
-        
-        /**
-         * Set up some stuff.
-         */
-        void ResourceManager::init(void) {
-        
                 
-        
-        }
-        
         /**
          * Returns a cached image. If not cached, loads it.
          * 
