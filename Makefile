@@ -80,14 +80,14 @@ LIBS = -lcurl -ljpeg -lzzip -lz -lpspgum -lpspgu -lm -lpsprtc -lpspsdk -lstdc++
 
 # Compiler Flags
 CFLAGS = -Wall $(COMPILER_DEFINES) -falign-functions=64
-CXXFLAGS = $(CFLAGS) #-fno-rtti
+CXXFLAGS = $(CFLAGS) -fno-rtti -fno-exceptions
 ASFLAGS =
 
 # Enable the debug options
 ifeq ($(DEBUG), 1)
 CFLAGS += -g -G4
 else
-CFLAGS += -O3 -G4 -ffast-math -s
+CFLAGS += -O3 -G4 -ffast-math
 endif
 
 # Linker Flags

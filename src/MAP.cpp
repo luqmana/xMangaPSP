@@ -495,6 +495,10 @@ namespace xM {
                     
                 }
 
+                loadTimer.start();
+                this->mangaImage->img->swizzle();
+                Util::logMsg("swizzle - %f", loadTimer.getDeltaTicks(true));
+
                 return true;
 
             } else {

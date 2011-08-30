@@ -393,7 +393,7 @@ namespace xM {
 
                 unsigned int i, j;
                 unsigned int rowblocks = (this->segments[r]->width * sizeof (u32) / 16);
-                long size = this->segments[r]->width * this->segments[r]->height * 8;
+                long size = this->segments[r]->width * this->segments[r]->height * 4;
 
                 unsigned char* out = (unsigned char*) malloc(size * sizeof (unsigned char));
 
@@ -416,7 +416,7 @@ namespace xM {
                 }
 
                 // Copy swizzled data
-                this->segments[r]->pixels.resize(size);
+                this->segments[r]->pixels.reserve(size);
                 memcpy(&this->segments[r]->pixels[0], out, size);
 
                 // Free temporary

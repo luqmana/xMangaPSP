@@ -33,6 +33,9 @@
 #include "xM/Manga/MangaAPI.h"
 #include "xM/Net/Net.h"
 #include "xM/Util/Log.h"
+
+#include <string.h>
+#include <unistd.h>
 // END Includes
 
 namespace xM {
@@ -42,11 +45,23 @@ namespace xM {
 	    SceUID mangaAPIThreadID = -1;
 	    SceUID mangaAPIMbx;
 	    MAP* mapImp = NULL;
+
+	    char threadWDir[MAXPATHLEN];
 				    
 	    /**
 	     * The manga api thread function.
 	     */
 	    int mangaAPIThread(SceSize args, void *argp) {
+
+	    	// Change to the right working dir
+	    	int d = strlen(threadWDir);
+	    	if (threadWDir[d-1] != '/') {
+	    		
+	    		threadWDir[d] = '/';
+	    		threadWDir[d+1] = '\0';
+
+	    	}
+	    	chdir(threadWDir);
 	    	    
             APIMessage* msg = NULL;
             APIMessage* sMsg = NULL;
@@ -89,7 +104,7 @@ namespace xM {
 	                	
 	                		if (mapImp->loadMangaList()) {
 	                		
-	                			printf("Manga list loaded.\n");
+	                			Util::logMsg("Manga list loaded.\n");
 	                			
 	                			sMsg = new APIMessage;
 	                			SceKernelMsgPacket hdr = {0};            
@@ -102,7 +117,7 @@ namespace xM {
 	                		
 	                		} else {
 	                		
-	                			printf("Can't load [%s].\n", mapImp->getError().c_str());
+	                			Util::logMsg("Can't load [%s].\n", mapImp->getError().c_str());
 	                			
 	                			sMsg = new APIMessage;
 	                			SceKernelMsgPacket hdr = {0};            
@@ -121,7 +136,7 @@ namespace xM {
 	                	
 	                		if (mapImp->loadChapterList(*(std::string*)msg->what)) {
 	                		
-	                			printf("Chapter list loaded.\n");
+	                			Util::logMsg("Chapter list loaded.\n");
 	                			
 	                			sMsg = new APIMessage;
 	                			SceKernelMsgPacket hdr = {0};            
@@ -134,7 +149,7 @@ namespace xM {
 	                		
 	                		} else {
 	                		
-	                			printf("Can't load [%s].\n", mapImp->getError().c_str());
+	                			Util::logMsg("Can't load [%s].\n", mapImp->getError().c_str());
 	                			
 	                			sMsg = new APIMessage;
 	                			SceKernelMsgPacket hdr = {0};            
@@ -155,7 +170,7 @@ namespace xM {
 
 							if (mapImp->loadImageList(mapImp->getChapterList()->mangaSlug, *(std::string*)msg->what)) {
 								                		
-	                			printf("Image list loaded.\n");
+	                			Util::logMsg("Image list loaded.\n");
 	                			
 	                			sMsg = new APIMessage;
 	                			SceKernelMsgPacket hdr = {0};            
@@ -168,7 +183,7 @@ namespace xM {
 	                		
 	                		} else {
 	                		
-	                			printf("Can't load [%s].\n", mapImp->getError().c_str());
+	                			Util::logMsg("Can't load [%s].\n", mapImp->getError().c_str());
 	                			
 	                			sMsg = new APIMessage;
 	                			SceKernelMsgPacket hdr = {0};            
@@ -190,7 +205,7 @@ namespace xM {
 							if (mapImp->loadImage(mapImp->getImageList()->mangaSlug, 
 											mapImp->getImageList()->chapterSlug, *(std::string*)msg->what)) {
 								                		
-	                			printf("Image loaded.\n");
+	                			Util::logMsg("Image loaded.\n");
 	                			
 	                			sMsg = new APIMessage;
 	                			SceKernelMsgPacket hdr = {0};            
@@ -203,7 +218,7 @@ namespace xM {
 	                		
 	                		} else {
 	                		
-	                			printf("Can't load [%s].\n", mapImp->getError().c_str());
+	                			Util::logMsg("Can't load [%s].\n", mapImp->getError().c_str());
 	                			
 	                			sMsg = new APIMessage;
 	                			SceKernelMsgPacket hdr = {0};            
@@ -249,13 +264,16 @@ namespace xM {
 		 */
 	    void initMangaAPIThread() {
 	    
-	        // create message box
+	        // Create message box
 	        mangaAPIMbx = sceKernelCreateMbx("MangaAPIBox", 0, NULL);
 	        	    
-	        // create the thread
+	        // Create the thread
 	        mangaAPIThreadID = sceKernelCreateThread("MangaAPIThread", mangaAPIThread, 0x15, 0x10000, PSP_THREAD_ATTR_USER | PSP_THREAD_ATTR_USBWLAN, NULL);
+
+	        // Store the cwd
+	        getcwd(threadWDir, sizeof(threadWDir));
 	        
-	        // start it
+	        // Start it
 	        if (mangaAPIThreadID > 0)
 	            sceKernelStartThread(mangaAPIThreadID, 0, NULL);
 	            
