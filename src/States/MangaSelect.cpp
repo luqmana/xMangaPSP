@@ -178,6 +178,7 @@ namespace xM {
             			// Send the chapter list request
 				        this->msg.type = Manga::RequestChapterList;
 				        this->msg.what = (void*)new std::string(this->mangaList.apiHandles[selected]);
+                        this->msg.id = selected;
 				        sceKernelSendMbx(Manga::mangaAPIMbx, (void*)&this->msg);
 				    
 				        // not really a dialog

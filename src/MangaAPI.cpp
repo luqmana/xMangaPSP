@@ -111,6 +111,7 @@ namespace xM {
 				                sMsg->header = hdr;
 				                sMsg->returnBox = &mangaAPIMbx;
 				                sMsg->what = NULL;
+				                sMsg->id = -1;
 				                sMsg->type = msg->type;
 				                sMsg->result = true;
 					            sceKernelSendMbx(*msg->returnBox, (void*)sMsg);             	
@@ -124,6 +125,7 @@ namespace xM {
 				                sMsg->header = hdr;
 				                sMsg->returnBox = &mangaAPIMbx;
 				                sMsg->what = (void*)new std::string(mapImp->getError());
+				                sMsg->id = -1;
 				                sMsg->type = msg->type;
 				                sMsg->result = false;
 					            sceKernelSendMbx(*msg->returnBox, (void*)sMsg);
@@ -143,6 +145,7 @@ namespace xM {
 				                sMsg->header = hdr;
 				                sMsg->returnBox = &mangaAPIMbx;
 				                sMsg->what = NULL;
+				                sMsg->id = -1;
 				                sMsg->type = msg->type;
 				                sMsg->result = true;
 					            sceKernelSendMbx(*msg->returnBox, (void*)sMsg);             	
@@ -156,6 +159,7 @@ namespace xM {
 				                sMsg->header = hdr;
 				                sMsg->returnBox = &mangaAPIMbx;
 				                sMsg->what = (void*)new std::string(mapImp->getError());
+				                sMsg->id = -1;
 				                sMsg->type = msg->type;
 				                sMsg->result = false;
 					            sceKernelSendMbx(*msg->returnBox, (void*)sMsg);
@@ -177,6 +181,7 @@ namespace xM {
 				                sMsg->header = hdr;
 				                sMsg->returnBox = &mangaAPIMbx;
 				                sMsg->what = NULL;
+				                sMsg->id = -1;
 				                sMsg->type = msg->type;
 				                sMsg->result = true;
 					            sceKernelSendMbx(*msg->returnBox, (void*)sMsg);             	
@@ -190,6 +195,7 @@ namespace xM {
 				                sMsg->header = hdr;
 				                sMsg->returnBox = &mangaAPIMbx;
 				                sMsg->what = (void*)new std::string(mapImp->getError());
+				                sMsg->id = -1;
 				                sMsg->type = msg->type;
 				                sMsg->result = false;
 					            sceKernelSendMbx(*msg->returnBox, (void*)sMsg);
@@ -203,7 +209,7 @@ namespace xM {
 						case RequestImage:
 
 							if (mapImp->loadImage(mapImp->getImageList()->mangaSlug, 
-											mapImp->getImageList()->chapterSlug, *(std::string*)msg->what)) {
+											mapImp->getImageList()->chapterSlug, *(std::string*)msg->what, msg->id)) {
 								                		
 	                			Util::logMsg("Image loaded.\n");
 	                			
@@ -212,6 +218,7 @@ namespace xM {
 				                sMsg->header = hdr;
 				                sMsg->returnBox = &mangaAPIMbx;
 				                sMsg->what = NULL;
+				                sMsg->id = -1;
 				                sMsg->type = msg->type;
 				                sMsg->result = true;
 					            sceKernelSendMbx(*msg->returnBox, (void*)sMsg);             	
@@ -225,6 +232,7 @@ namespace xM {
 				                sMsg->header = hdr;
 				                sMsg->returnBox = &mangaAPIMbx;
 				                sMsg->what = (void*)new std::string(mapImp->getError());
+				                sMsg->id = -1;
 				                sMsg->type = msg->type;
 				                sMsg->result = false;
 					            sceKernelSendMbx(*msg->returnBox, (void*)sMsg);

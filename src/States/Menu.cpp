@@ -226,6 +226,7 @@ namespace xM {
 						    	                    
 						    	// Send the manga list request
 						        this->msg.type = Manga::RequestMangaList;
+                                this->msg.id = -1;
 						        sceKernelSendMbx(Manga::mangaAPIMbx, (void*)&this->msg);
 						    
 						        // not really a dialog

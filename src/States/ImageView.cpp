@@ -104,11 +104,11 @@ namespace xM {
                 // Handle moving
                 if (iM->pressed(PSP_CTRL_DOWN))
                     this->y -= 30;
-                else if (iM->pressed(PSP_CTRL_UP))
+                if (iM->pressed(PSP_CTRL_UP))
                     this->y += 30;
-                else if (iM->pressed(PSP_CTRL_LEFT))
+                if (iM->pressed(PSP_CTRL_LEFT))
                     this->x += 30;
-                else if (iM->pressed(PSP_CTRL_RIGHT))
+                if (iM->pressed(PSP_CTRL_RIGHT))
                     this->x -= 30;
                     
                 // Leave state

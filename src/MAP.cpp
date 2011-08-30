@@ -415,16 +415,19 @@ namespace xM {
          * @param const std::string& mangaSlug The slug of the manga in the MangaList
          * @param const std::string& chapterSlug The slug of the chapter in the ChapterList
          * @param const std::string& imageSlug The slug of the image in the ImageList
+         * @param int id Image id.
          * 
          * @return bool Success or not.
          */
-        bool MAP::loadImage(const std::string& mangaSlug, const std::string& chapterSlug, const std::string& imageSlug) {
+        bool MAP::loadImage(const std::string& mangaSlug, const std::string& chapterSlug, const std::string& imageSlug, int id) {
             
             std::string response;
             std::string url = this->endpoint + mangaSlug + "/" + chapterSlug + "/" + imageSlug + "/";
 
             Util::Timer loadTimer;
             loadTimer.start();
+
+            this->mangaImage->index = id;
                                   
             // Attempt to download imagelist
             if (Net::downloadFile(url, response)) {
