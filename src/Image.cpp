@@ -102,6 +102,10 @@ namespace xM {
 
                 this->segments.push_back(mainSegment);
 
+                Util::logMsg("segmentizer - %f", loadTimer.getDeltaTicks(true));
+
+                return true;
+
             } else {
 
                 // Okay, we need to create segments since the image is too large
@@ -161,6 +165,9 @@ namespace xM {
 
 
             }
+
+            delete mainSegment;
+
             Util::logMsg("segmentizer - %f", loadTimer.getDeltaTicks(true));
             
             return true;

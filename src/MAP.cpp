@@ -489,6 +489,8 @@ namespace xM {
                 }
                 Util::logMsg("loadData - %f", loadTimer.getDeltaTicks(true));
 
+                response.clear();
+
                 if (!this->mangaImage->img->isLoaded()) {
                     
                     this->error = "Image Error: Can't load image.";
