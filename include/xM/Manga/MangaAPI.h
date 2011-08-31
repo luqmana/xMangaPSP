@@ -57,7 +57,7 @@ namespace xM {
             SceUID* returnBox;
             RequestType type;
             void* what;
-            int id;
+            int index;
             bool result;
             
         };

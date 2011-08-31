@@ -113,10 +113,11 @@ namespace xM {
 	         * 
 	         * @param const std::string& mangaSlug The slug of the manga in the MangaList
 	         * @param const std::string& chapterSlug The slug of the chapter in the ChapterList
+	         * @param int index Chapter index.
 	         * 
 	         * @return bool Success or not.
 	         */
-	        bool loadImageList(const std::string& mangaSlug, const std::string& chapterSlug);
+	        bool loadImageList(const std::string& mangaSlug, const std::string& chapterSlug, int index);
 	        
 	        /**
 	         * Returns the loaded image list or an empty list.
@@ -131,11 +132,11 @@ namespace xM {
 	         * @param const std::string& mangaSlug The slug of the manga in the MangaList
 	         * @param const std::string& chapterSlug The slug of the chapter in the ChapterList
 	         * @param const std::string& imageSlug The slug of the image in the ImageList
-	         * @param int id Image id.
+	         * @param int index Image index.
 	         * 
 	         * @return bool Success or not.
 	         */
-	        bool loadImage(const std::string& mangaSlug, const std::string& chapterSlug, const std::string& imageSlug, int id);
+	        bool loadImage(const std::string& mangaSlug, const std::string& chapterSlug, const std::string& imageSlug, int index);
 	        
 	        /**
 	         * Returns the loaded image.

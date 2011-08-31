@@ -164,9 +164,29 @@ namespace xM {
             
             			if (this->action == 1) {
 
-                            if ((unsigned int)this->image->index >= Manga::mapImp->getImageList()->images.size()) {
+                            if ((unsigned int)this->image->index == (Manga::mapImp->getImageList()->images.size() - 1)) {
                                 
                                 // argh...load next list
+                                // Need to make sure next chapter exists first
+                                if ((unsigned int)Manga::mapImp->getImageList()->index < (Manga::mapImp->getChapterList()->names.size() - 1)) {
+                                    
+                                    // Need to load next image list
+                                    int index = Manga::mapImp->getImageList()->index + 1;
+                                    // Send the image list request
+                                    this->msg.type = Manga::RequestImageList;
+                                    this->msg.what = (void*)new std::string(Manga::mapImp->getChapterList()->apiHandles[index]);
+                                    this->msg.index = index;
+                                    sceKernelSendMbx(Manga::mangaAPIMbx, (void*)&this->msg);
+
+                                    this->activeDialog = 3;
+
+                                } else {
+
+                                    // No more chapters after this                                    
+                                    Ui::Dialog::msg("No chapter after this has been released!\nSorry~ Check back later!");
+                                    this->activeDialog = 0;
+
+                                }
 
                             } else {
 
@@ -174,7 +194,7 @@ namespace xM {
                    
                                 this->msg.type = Manga::RequestImage;
                                 this->msg.what = (void*)new std::string(Manga::mapImp->getImageList()->images[this->image->index + 1]);
-                                this->msg.id = this->image->index + 1;
+                                this->msg.index = this->image->index + 1;
                                 sceKernelSendMbx(Manga::mangaAPIMbx, (void*)&this->msg);
 
                                 this->activeDialog = 1;
@@ -189,13 +209,34 @@ namespace xM {
                                 
                                 // argh...load prev list
 
+                                // Need to make sure prev chapter exists first
+                                if (Manga::mapImp->getImageList()->index > 0) {
+                                    
+                                    // Need to load next image list
+                                    int index = Manga::mapImp->getImageList()->index - 1;
+                                    // Send the image list request
+                                    this->msg.type = Manga::RequestImageList;
+                                    this->msg.what = (void*)new std::string(Manga::mapImp->getChapterList()->apiHandles[index]);
+                                    this->msg.index = index;
+                                    sceKernelSendMbx(Manga::mangaAPIMbx, (void*)&this->msg);
+
+                                    this->activeDialog = 4;
+
+                                } else {
+
+                                    // No more chapters before this                                    
+                                    Ui::Dialog::msg("This is the first chapter, you can't go back!\nSilly reader~");
+                                    this->activeDialog = 0;
+
+                                }
+
                             } else {
 
                                 // the easy case
                    
                                 this->msg.type = Manga::RequestImage;
                                 this->msg.what = (void*)new std::string(Manga::mapImp->getImageList()->images[this->image->index - 1]);
-                                this->msg.id = this->image->index - 1;
+                                this->msg.index = this->image->index - 1;
                                 sceKernelSendMbx(Manga::mangaAPIMbx, (void*)&this->msg);
 
                                 this->activeDialog = 2;
@@ -214,6 +255,8 @@ namespace xM {
 
                 case 1:
                 case 2:
+                case 5:
+                case 6:
 
                     // There's a response in the mailbox!
                     if (rMsg != NULL) {
@@ -235,7 +278,89 @@ namespace xM {
                             Ui::Dialog::msg(*(std::string*)rMsg->what);                 
                             delete (std::string*)rMsg->what;
 
+                            if (this->activeDialog == 5 || this->activeDialog == 6) {
+                                
+                                //Engine::StateManager::getInstance()->changeState(new States::ImageSelect());
+                                printf("Fail...\n");
+                                return;
+
+                            }
+
                             this->activeDialog = 0;
+                            
+                        }
+                                                
+                    }
+
+                    break;
+
+                case 3:
+
+                    // There's a response in the mailbox!
+                    if (rMsg != NULL) {
+                            
+                        // Loaded successfully, switch to new image
+                        if (rMsg->type == Manga::RequestImageList && rMsg->result == true) {
+                              
+                            // Now that the image list is loaded, we load the first image!
+
+                            // Send the image request
+                            this->msg.type = Manga::RequestImage;
+                            this->msg.index = 0;
+                            this->msg.what = (void*)new std::string(Manga::mapImp->getImageList()->images[this->msg.index]);
+                            sceKernelSendMbx(Manga::mangaAPIMbx, (void*)&this->msg);
+
+                            this->activeDialog = 5;
+                        
+                        } else if (rMsg->type == Manga::RequestImageList && rMsg->result == false) {
+                        
+                            // Something failed, display error message                  
+                            Ui::Dialog::msg(*(std::string*)rMsg->what);                 
+                            delete (std::string*)rMsg->what;
+
+                            this->activeDialog = 0;
+
+                            // Change to chapter select
+                            Engine::StateManager::getInstance()->changeState(new States::ChapterSelect());
+                            printf("Fail...\n");
+                            return;
+                            
+                        }
+                                                
+                    }
+
+                    break;
+
+                case 4:
+
+                    // There's a response in the mailbox!
+                    if (rMsg != NULL) {
+                            
+                        // Loaded successfully, switch to new image
+                        if (rMsg->type == Manga::RequestImageList && rMsg->result == true) {
+                              
+                            // Now that the image list is loaded, we load the last image!
+
+                            // Send the image request
+                            this->msg.type = Manga::RequestImage;
+                            this->msg.index = Manga::mapImp->getImageList()->images.size() - 1;
+                            this->msg.what = (void*)new std::string(Manga::mapImp->getImageList()->images[this->msg.index]);
+                            sceKernelSendMbx(Manga::mangaAPIMbx, (void*)&this->msg);
+
+                            this->activeDialog = 6;
+                        
+                        } else if (rMsg->type == Manga::RequestImageList && rMsg->result == false) {
+                        
+                            // Something failed, display error message                  
+                            Ui::Dialog::msg(*(std::string*)rMsg->what);                 
+                            delete (std::string*)rMsg->what;
+
+                            this->activeDialog = 0;
+
+                            // Change to chapter select
+                            Engine::StateManager::getInstance()->changeState(new States::ChapterSelect());
+                            printf("Fail...\n");
+                            return;
                             
                         }
                                                 
@@ -251,13 +376,17 @@ namespace xM {
          * Done with the logic? Draw what's needed then.
          */
         void ImageView::draw(void) {
-                      
-            if (this->activeDialog == 1)
+                 
+            if (this->activeDialog == 0)
+                this->image->img->draw(this->x, this->y);     
+            else if (this->activeDialog == 1 || this->activeDialog == 5)
                 Gfx::drawLoadingOverlay("Loading next image...");
-            else if (this->activeDialog == 2)
+            else if (this->activeDialog == 2 || this->activeDialog == 6)
                 Gfx::drawLoadingOverlay("Loading prev image...");
-            else
-                this->image->img->draw(this->x, this->y);
+            else if (this->activeDialog == 3)
+                Gfx::drawLoadingOverlay("Loading next chapter's imagelist...");
+            else if (this->activeDialog == 4)
+                Gfx::drawLoadingOverlay("Loading prev chapter's imagelist...");
                         
         }
                 

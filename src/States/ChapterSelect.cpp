@@ -179,7 +179,7 @@ namespace xM {
             			// Send the image list request
 				        this->msg.type = Manga::RequestImageList;
 				        this->msg.what = (void*)new std::string(this->chapterList.apiHandles[selected]);
-                        this->msg.id = selected;
+                        this->msg.index = selected;
 				        sceKernelSendMbx(Manga::mangaAPIMbx, (void*)&this->msg);
 				    
 				        // not really a dialog
@@ -205,15 +205,12 @@ namespace xM {
                             // Send the image request
                             this->msg.type = Manga::RequestImage;
                             this->msg.what = (void*)new std::string(Manga::mapImp->getImageList()->images[0]);
-                            this->msg.id = 0;
+                            this->msg.index = 0;
                             sceKernelSendMbx(Manga::mangaAPIMbx, (void*)&this->msg);
                         
                             // not really a dialog
                             // but allows some control
                             this->activeDialog = 2;
-
-		            		//Engine::StateManager::getInstance()->changeState(new States::ChapterSelect());
-		            		//return;
 		            	
 		            	} else if (rMsg->type == Manga::RequestImageList && rMsg->result == false) {
 		            	

@@ -60,6 +60,7 @@ namespace xM {
 		// Image list
 		typedef struct {
 
+			int index;
 			std::string mangaSlug;
 			std::string chapterSlug;
 			std::vector<std::string> images;

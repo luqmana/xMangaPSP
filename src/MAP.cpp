@@ -309,10 +309,11 @@ namespace xM {
          * 
          * @param const std::string& mangaSlug The slug of the manga in the MangaList
          * @param const std::string& chapterSlug The slug of the chapter in the ChapterList
+         * @param int index Chapter index.
          * 
          * @return bool Success or not.
          */
-        bool MAP::loadImageList(const std::string& mangaSlug, const std::string& chapterSlug) {
+        bool MAP::loadImageList(const std::string& mangaSlug, const std::string& chapterSlug, int index) {
             
             std::string response;
             std::string url = this->endpoint + mangaSlug + "/" + chapterSlug + "/";
@@ -383,6 +384,10 @@ namespace xM {
                 Util::logMsg("Populate list - %f", loadTimer.getDeltaTicks(true));
 
                 cJSON_Delete(root);
+
+                this->imageList->index = index;
+
+                printf("Index: %d\n", index);
                                     
                 return true;
                 
@@ -415,11 +420,11 @@ namespace xM {
          * @param const std::string& mangaSlug The slug of the manga in the MangaList
          * @param const std::string& chapterSlug The slug of the chapter in the ChapterList
          * @param const std::string& imageSlug The slug of the image in the ImageList
-         * @param int id Image id.
+         * @param int index Image index.
          * 
          * @return bool Success or not.
          */
-        bool MAP::loadImage(const std::string& mangaSlug, const std::string& chapterSlug, const std::string& imageSlug, int id) {
+        bool MAP::loadImage(const std::string& mangaSlug, const std::string& chapterSlug, const std::string& imageSlug, int index) {
             
             std::string response;
             std::string url = this->endpoint + mangaSlug + "/" + chapterSlug + "/" + imageSlug + "/";
@@ -473,9 +478,9 @@ namespace xM {
                 delete this->mangaImage->img;
 
                 this->mangaImage->img = new Gfx::Image;
-                this->mangaImage->index = id;
+                this->mangaImage->index = index;
 
-                printf("ID: %d\n", id);
+                printf("Index: %d\n", index);
 
                 loadTimer.start();
                 if (!this->mangaImage->img->loadData(response)) {
