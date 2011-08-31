@@ -405,7 +405,7 @@ namespace xM {
                 unsigned int width = this->segments[r]->width;
                 unsigned int height = this->segments[r]->height;
                 unsigned int i, j;
-                unsigned int rowblocks = (width * sizeof(unsigned int) / 16);
+                unsigned int rowblocks = (width * sizeof(u32) / 16);
                 long size = width * height * sizeof (int);
 
                 unsigned char* out = (unsigned char*) malloc(size * sizeof(unsigned char));
@@ -413,7 +413,7 @@ namespace xM {
 
                 for (j = 0; j < height; ++j) {
 
-                    for (i = 0; i < width * sizeof(unsigned int); ++i) {
+                    for (i = 0; i < width * sizeof(u32); ++i) {
 
                         unsigned int blockx = i / 16;
                         unsigned int blocky = j / 8;
@@ -423,13 +423,14 @@ namespace xM {
                         unsigned int blockIndex = blockx + ((blocky) * rowblocks);
                         unsigned int blockAddress = blockIndex * 16 * 8;
 
-                        out[blockAddress + x + y * 16] = in[i + j * width * sizeof(unsigned int)];
+                        out[blockAddress + x + y * 16] = in[i + j * width * sizeof(uint32_t)];
 
                     }
 
                 }
 
                 // Copy swizzled data
+                this->segments[r]->pixels.clear();
                 this->segments[r]->pixels.reserve(size);
                 memcpy(&this->segments[r]->pixels[0], out, size);
 
