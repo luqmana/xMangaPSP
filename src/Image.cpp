@@ -364,8 +364,12 @@ namespace xM {
 
             if (this->segments.size() != 0) {
 
-                for (unsigned int i = 0; i < this->segments.size(); ++i)
+                for (unsigned int i = 0; i < this->segments.size(); ++i) {
+
+                    this->segments[i]->pixels.clear();
                     delete this->segments[i];
+
+                }
 
                 this->segments.clear();
 
@@ -391,25 +395,28 @@ namespace xM {
 
             for (unsigned int r = 0; r < this->segments.size(); ++r) {
 
+                unsigned int width = this->segments[r]->width;
+                unsigned int height = this->segments[r]->height;
                 unsigned int i, j;
-                unsigned int rowblocks = (this->segments[r]->width * sizeof (u32) / 16);
-                long size = this->segments[r]->width * this->segments[r]->height * 4;
+                unsigned int rowblocks = (width * sizeof(unsigned int) / 16);
+                long size = width * height * sizeof (int);
 
-                unsigned char* out = (unsigned char*) malloc(size * sizeof (unsigned char));
+                unsigned char* out = (unsigned char*) malloc(size * sizeof(unsigned char));
+                const unsigned char* in = &this->segments[r]->pixels[0];
 
-                for (j = 0; j < this->segments[r]->height; ++j) {
+                for (j = 0; j < height; ++j) {
 
-                    for (i = 0; i < this->segments[r]->width * sizeof (u32); ++i) {
+                    for (i = 0; i < width * sizeof(unsigned int); ++i) {
 
                         unsigned int blockx = i / 16;
                         unsigned int blocky = j / 8;
 
                         unsigned int x = (i - blockx * 16);
                         unsigned int y = (j - blocky * 8);
-                        unsigned int blockIndex = blockx + (blocky * rowblocks);
+                        unsigned int blockIndex = blockx + ((blocky) * rowblocks);
                         unsigned int blockAddress = blockIndex * 16 * 8;
 
-                        out[blockAddress + x + y * 16] = this->segments[r]->pixels[i + j * this->segments[r]->width * sizeof (uint32_t)];
+                        out[blockAddress + x + y * 16] = in[i + j * width * sizeof(unsigned int)];
 
                     }
 

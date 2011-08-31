@@ -67,7 +67,7 @@ PSP_MAIN_THREAD_ATTR(PSP_THREAD_ATTR_USER);
  * Set the PSP heap size.
  * Use about 15MB as heap
  */
-PSP_HEAP_SIZE_KB(1024 * 15);
+PSP_HEAP_SIZE_KB(1024 * 20);
 
 bool Engine::running = true;
 
@@ -132,7 +132,7 @@ int main(int argc, char **argv) {
         stateManager->draw();
                 
         // Toggle stats
-        if (__xM_DEBUG && inputManager->pressed(PSP_CTRL_RTRIGGER))
+        if (__xM_DEBUG && inputManager->pressed(PSP_CTRL_SELECT))
             showFPSMEM = !showFPSMEM;
                 
         // Render a semi-transparent black quad covering the whole screen to

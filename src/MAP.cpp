@@ -426,8 +426,6 @@ namespace xM {
 
             Util::Timer loadTimer;
             loadTimer.start();
-
-            this->mangaImage->index = id;
                                   
             // Attempt to download imagelist
             if (Net::downloadFile(url, response)) {
@@ -475,6 +473,9 @@ namespace xM {
                 delete this->mangaImage->img;
 
                 this->mangaImage->img = new Gfx::Image;
+                this->mangaImage->index = id;
+
+                printf("ID: %d\n", id);
 
                 loadTimer.start();
                 if (!this->mangaImage->img->loadData(response)) {
@@ -498,9 +499,11 @@ namespace xM {
                     
                 }
 
+                /*
                 loadTimer.start();
                 this->mangaImage->img->swizzle();
                 Util::logMsg("swizzle - %f", loadTimer.getDeltaTicks(true));
+                //*/
 
                 return true;
 

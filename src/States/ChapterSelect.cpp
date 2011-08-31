@@ -197,12 +197,12 @@ namespace xM {
 					// There's a response in the mailbox!
             		if (rMsg != NULL) {
                             
-                        // Loaded successfully, switch to new state
+                        // Loaded successfully
 		            	if (rMsg->type == Manga::RequestImageList && rMsg->result == true) {
 		            	
                             // Now that the image list is loaded, we load the first image!
 
-                            // Send the image list request
+                            // Send the image request
                             this->msg.type = Manga::RequestImage;
                             this->msg.what = (void*)new std::string(Manga::mapImp->getImageList()->images[0]);
                             this->msg.id = 0;

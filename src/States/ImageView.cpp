@@ -58,9 +58,10 @@ namespace xM {
         
         	// init/reset some vars
             this->doAction = false;
+            this->action = 0;
             this->activeDialog = 0;
             this->x = this->y = 0;
-            this->image = *Manga::mapImp->getImage();      
+            this->image = Manga::mapImp->getImage();      
                                                 
             // Create our local mailbox
             this->localBox = sceKernelCreateMbx("ImageViewStateBox", 0, NULL);
@@ -110,6 +111,19 @@ namespace xM {
                     this->x += 30;
                 if (iM->pressed(PSP_CTRL_RIGHT))
                     this->x -= 30;
+
+                // Navigating to next/prev image
+                if (iM->pressed(PSP_CTRL_RTRIGGER)) {
+
+                    this->doAction = true;
+                    this->action = 1; // 1 = Next image
+
+                } else if (iM->pressed(PSP_CTRL_LTRIGGER)) {
+
+                    this->doAction = true;
+                    this->action = 2; // 2 = Prev image
+
+                }
                     
                 // Leave state
                 if (iM->pressed(PSP_CTRL_CIRCLE))
@@ -130,11 +144,11 @@ namespace xM {
             if (this->y > 0)
                 this->y = 0;
 
-            if (this->x < (signed)(-this->image.img->width) + 480)
-                this->x = -this->image.img->width + 480;
+            if (this->x < (signed)(-this->image->img->width) + 480)
+                this->x = -this->image->img->width + 480;
 
-            if (this->y < (signed)(-this->image.img->height) + 272)
-                this->y = -this->image.img->height + 272;
+            if (this->y < (signed)(-this->image->img->height) + 272)
+                this->y = -this->image->img->height + 272;
         
         	//Check for any new messages in mailbox
             Manga::APIMessage* rMsg = NULL;
@@ -148,11 +162,86 @@ namespace xM {
             	
             		if (this->doAction) {
             
-            			
+            			if (this->action == 1) {
+
+                            if ((unsigned int)this->image->index >= Manga::mapImp->getImageList()->images.size()) {
+                                
+                                // argh...load next list
+
+                            } else {
+
+                                // the easy case
+                   
+                                this->msg.type = Manga::RequestImage;
+                                this->msg.what = (void*)new std::string(Manga::mapImp->getImageList()->images[this->image->index + 1]);
+                                this->msg.id = this->image->index + 1;
+                                sceKernelSendMbx(Manga::mangaAPIMbx, (void*)&this->msg);
+
+                                this->activeDialog = 1;
+
+                            }
+
+                            this->action = 0;
+                            
+                        } else if (this->action == 2) {
+
+                            if ((unsigned int)this->image->index == 0) {
+                                
+                                // argh...load prev list
+
+                            } else {
+
+                                // the easy case
+                   
+                                this->msg.type = Manga::RequestImage;
+                                this->msg.what = (void*)new std::string(Manga::mapImp->getImageList()->images[this->image->index - 1]);
+                                this->msg.id = this->image->index - 1;
+                                sceKernelSendMbx(Manga::mangaAPIMbx, (void*)&this->msg);
+
+                                this->activeDialog = 2;
+
+                            }
+
+                            this->action = 0;
+                            
+                        }
+
+                        this->doAction = 0;
 				
 					}
             	
 					break;
+
+                case 1:
+                case 2:
+
+                    // There's a response in the mailbox!
+                    if (rMsg != NULL) {
+                            
+                        // Loaded successfully, switch to new image
+                        if (rMsg->type == Manga::RequestImage && rMsg->result == true) {
+                              
+                            printf("W00!t‽\n");
+
+                            // Reset vars
+                            this->x = this->y = 0;
+                            this->activeDialog = 0;
+
+                            return;
+                        
+                        } else if (rMsg->type == Manga::RequestImage && rMsg->result == false) {
+                        
+                            // Something failed, display error message                  
+                            Ui::Dialog::msg(*(std::string*)rMsg->what);                 
+                            delete (std::string*)rMsg->what;
+
+                            this->activeDialog = 0;
+                            
+                        }
+                                                
+                    }
+
+                    break;
 					            
             }
                                         	        	        	        
@@ -162,8 +251,13 @@ namespace xM {
          * Done with the logic? Draw what's needed then.
          */
         void ImageView::draw(void) {
-                                
-            this->image.img->draw(this->x, this->y);
+                      
+            if (this->activeDialog == 1)
+                Gfx::drawLoadingOverlay("Loading next image...");
+            else if (this->activeDialog == 2)
+                Gfx::drawLoadingOverlay("Loading prev image...");
+            else
+                this->image->img->draw(this->x, this->y);
                         
         }
                 

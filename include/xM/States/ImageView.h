@@ -86,13 +86,14 @@ namespace xM {
             Ui::XMLParser parser;
                                     
             bool doAction;
+            int action;
             
             int activeDialog;
             
             xM::Manga::APIMessage msg;
             SceUID localBox;
 
-            Manga::MangaImage image;
+            Manga::MangaImage* image;
 
             int x, y;
 
