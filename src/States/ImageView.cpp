@@ -60,8 +60,12 @@ namespace xM {
             this->doAction = false;
             this->action = 0;
             this->activeDialog = 0;
-            this->x = this->y = 0;
-            this->image = Manga::mapImp->getImage();      
+            this->y = 0;
+            this->image = Manga::mapImp->getImage();
+
+            // Aligns to the right since that's how most manga is read (RTL)
+            // @TODO: Make this an option?
+            this->x = -this->image->img->width + 480;
                                                 
             // Create our local mailbox
             this->localBox = sceKernelCreateMbx("ImageViewStateBox", 0, NULL);
@@ -225,7 +229,7 @@ namespace xM {
                                 } else {
 
                                     // No more chapters before this                                    
-                                    Ui::Dialog::msg("This is the first chapter, you can't go back!\nSilly reader~");
+                                    Ui::Dialog::msg("This is the first chapter. There is no chapter before this!\nSilly reader~ Press O to go back instead.");
                                     this->activeDialog = 0;
 
                                 }
@@ -267,7 +271,10 @@ namespace xM {
                             printf("W00!t‽\n");
 
                             // Reset vars
-                            this->x = this->y = 0;
+                            this->y = 0;
+                            // Aligns to the right since that's how most manga is read (RTL)
+                            // @TODO: Make this an option?
+                            this->x = -this->image->img->width + 480;
                             this->activeDialog = 0;
 
                             return;
@@ -377,9 +384,10 @@ namespace xM {
          */
         void ImageView::draw(void) {
                  
-            if (this->activeDialog == 0)
+            //if (this->activeDialog == 0)
                 this->image->img->draw(this->x, this->y);     
-            else if (this->activeDialog == 1 || this->activeDialog == 5)
+            
+            if (this->activeDialog == 1 || this->activeDialog == 5)
                 Gfx::drawLoadingOverlay("Loading next image...");
             else if (this->activeDialog == 2 || this->activeDialog == 6)
                 Gfx::drawLoadingOverlay("Loading prev image...");
