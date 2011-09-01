@@ -1,20 +1,22 @@
 <window name="About" type="main">
     
-    <!--<bouncyBox colour="red" />
+    <bouncyBox colour="red" />
     <bouncyBox x="480" colour="blue" />
     <bouncyBox y="272" colour="green" />
-    <bouncyBox x="480" y="272" colour="gray" />-->
-    <image src="anima.png" x="0" y="0" />
-    <!-- Background
+    <bouncyBox x="480" y="272" colour="gray" />
+    <!--<image src="anima.png" x="0" y="0" />-->
+    <!-- Background -->
     <quad x="0" y="0" width="480" height="272" colour="235,234,235,200" />
     
     <quad x="0" y="0" width="480" height="30" colour="black,200" />
-    <text x="240" y="20" font="{LATIN_SANS_SERIF_BOLD}" align="center" size="1.0" colour="red" shadowColour="90,0,0" value="Testing Page xD~" />-->
-    <!--<image whence="online" x="475" y="3" align="right" src="wifi.png" />
+    <text x="240" y="20" font="{LATIN_SANS_SERIF_BOLD}" align="center" size="1.0" colour="red" shadowColour="90,0,0" value="Testing Page xD~" />
+    
+    <image x="340" y="45" src="test6.jpg" cache="false" />
+    <image x="30" y="45" src="test.png" cache="false" />
 	
 	<text x="118" y="120" font="{LATIN_SANS_SERIF_REGULAR_SMALL}" align="right" size="1.0" colour="black" value="via code -> " />
 	
 	<text x="120" y="140" font="{LATIN_SANS_SERIF_REGULAR}" align="left" size="1.0" colour="red" shadowColour="green" value="Bra bra blah!~" scroll="left" />
-	<text x="118" y="140" font="{LATIN_SANS_SERIF_REGULAR_SMALL}" align="right" size="1.0" colour="black" value="via XML -> " />-->
+	<text x="118" y="140" font="{LATIN_SANS_SERIF_REGULAR_SMALL}" align="right" size="1.0" colour="black" value="via XML -> " />
 
 </window>

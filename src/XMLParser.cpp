@@ -524,7 +524,15 @@ namespace xM {
                     
                 } else {
                 
-                    uiElement->image = Engine::ResourceManager::getInstance()->getImage(xmlElement->Attribute("src"));
+                    if (strcmp(xmlElement->Attribute("cache"), "false") == 0) {
+                        
+                        uiElement->image = new Gfx::Image();
+            
+                        if (!uiElement->image->loadFile(xmlElement->Attribute("src")))
+                            uiElement->image = NULL;
+
+                    } else
+                        uiElement->image = Engine::ResourceManager::getInstance()->getImage(xmlElement->Attribute("src"));
                     
                     if (uiElement->image == NULL) {
                     

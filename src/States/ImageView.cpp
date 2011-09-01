@@ -65,7 +65,10 @@ namespace xM {
 
             // Aligns to the right since that's how most manga is read (RTL)
             // @TODO: Make this an option?
-            this->x = -this->image->img->width + 480;
+            if (this->image->img->width > 480)
+                this->x = -this->image->img->width + 480;
+            else
+                this->x = 0;
                                                 
             // Create our local mailbox
             this->localBox = sceKernelCreateMbx("ImageViewStateBox", 0, NULL);
@@ -274,7 +277,11 @@ namespace xM {
                             this->y = 0;
                             // Aligns to the right since that's how most manga is read (RTL)
                             // @TODO: Make this an option?
-                            this->x = -this->image->img->width + 480;
+                            if (this->image->img->width > 480)
+                                this->x = -this->image->img->width + 480;
+                            else
+                                this->x = 0;
+
                             this->activeDialog = 0;
 
                             return;

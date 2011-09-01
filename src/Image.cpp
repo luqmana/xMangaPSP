@@ -93,7 +93,9 @@ namespace xM {
             this->p2Height = mainSegment->p2Height;
 
             loadTimer.start();
-            if (!(mainSegment->width > 512 || mainSegment->height > 512)) {
+            if (mainSegment->width < 512 && mainSegment->height < 512) {
+
+                printf("Image info: w: %d h: %d w2: %d h2: %d\n", this->width, this->height, this->p2Width, this->p2Height);
 
                 // No need to create more segments but just pretend there is only one segment
 
