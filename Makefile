@@ -30,12 +30,18 @@ EXT_LIB_DIR = $(EXT_DIR)/lib
 EXT_INC_DIR = $(EXT_DIR)/include
 RES_DIR = resources
 
+PSAR_PAK = $(BUILD_DIR)/resources.zip
+
+# Resources to pack into psar
+RESOURCES = $(wildcard $(RES_DIR)/ui/*.xml)
+RESOURCES := $(patsubst $(RES_DIR)/ui/%.xml, ui/%.xml, $(RESOURCES))
+
 # Targets
 TARGET = $(BUILD_DIR)/xMangaPSP
 EXTRA_TARGETS = $(BUILD_DIR)/EBOOT.PBP
 
 # Other files to be deleted when clean is called
-EXTRA_CLEAN = 
+EXTRA_CLEAN = $(PSAR_PAK)
 
 # States
 STATES += $(wildcard $(SRC_DIR)/States/*.cpp)
@@ -114,11 +120,11 @@ PSP_EBOOT           = $(BUILD_DIR)/EBOOT.PBP
 PSP_EBOOT_TITLE     = xMangaPSP v$(MAJOR_VERSION).$(MINOR_VERSION)$(EXTRA_VERSION)
 PSP_EBOOT_SFO       = $(BUILD_DIR)/PARAM.SFO # A sort of description file, generated compile time
 PSP_EBOOT_ICON      = NULL # Main Program Icon      144 x 80
-PSP_EBOOT_ICON1     = NULL # Animated Program Icon  144 x 80
+PSP_EBOOT_ICON1     = #$(RES_DIR)/eboot/ICON1.PMF # Animated Program Icon  144 x 80
 PSP_EBOOT_UNKPNG    = NULL # Overlay Image          310 x 180
 PSP_EBOOT_PIC1      = NULL # Background             480 x 272
 PSP_EBOOT_SND0      = NULL # Background music
-#PSP_EBOOT_PSAR 	= $(RES_DIR)/psar.zip# A data file. Store whatever in here.
+PSP_EBOOT_PSAR 	    = $(PSAR_PAK) # A data file. Store whatever in here.
   
 # Get the base makefile
 include $(PSPSDK)/lib/build.mak
@@ -167,3 +173,6 @@ $(TARGET).elf: $(OBJS) $(EXT_LIB_OBJS) $(EXPORT_OBJ)
 
 cleanext: 
 	-rm -f $(EXT_LIB_OBJS)
+
+psar:
+	-cd $(RES_DIR); rm ../$(PSAR_PAK); zip ../$(PSAR_PAK) $(RESOURCES)

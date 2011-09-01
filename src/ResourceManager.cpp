@@ -133,7 +133,7 @@ namespace xM {
             if (file.find("@") != std::string::npos)
                 return FileManager::getInstance()->read(file);
                 
-            std::string res;
+            std::string res = "";
 
             // Try FS
             res = FileManager::getInstance()->readFromFS(file);
@@ -144,7 +144,7 @@ namespace xM {
             res = FileManager::getInstance()->readFromZIP("resources.zip", file);
             if (res != "")
                 return res;
-                
+
             // Finally try PSAR
             return FileManager::getInstance()->readFromPSAR(file);
         

@@ -390,7 +390,7 @@ namespace xM {
                 if (__xM_DEBUG)
                     Util::logMsg("FileManager::readFromFS — Unable to open file. [%s]", file.c_str());
 
-                return false;
+                return "";
 
             }
 

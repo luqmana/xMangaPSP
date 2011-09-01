@@ -618,7 +618,7 @@ namespace xM {
             this->uiXMLFile = new TiXmlDocument();
 
             this->file = xFile;
-
+            
             if (!this->uiXMLFile->Parse(Engine::ResourceManager::getInstance()->getRes(this->file).c_str())) {
 
                 if (__xM_DEBUG)
@@ -627,7 +627,7 @@ namespace xM {
                 return;
 
             }
-
+            
             // Get the root node
             TiXmlNode* root = this->uiXMLFile->RootElement();
             if (root == NULL) {
