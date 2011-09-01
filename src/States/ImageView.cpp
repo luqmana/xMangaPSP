@@ -271,8 +271,6 @@ namespace xM {
                         // Loaded successfully, switch to new image
                         if (rMsg->type == Manga::RequestImage && rMsg->result == true) {
                               
-                            printf("W00!t‽\n");
-
                             // Reset vars
                             this->y = 0;
                             // Aligns to the right since that's how most manga is read (RTL)
@@ -295,7 +293,6 @@ namespace xM {
                             if (this->activeDialog == 5 || this->activeDialog == 6) {
                                 
                                 //Engine::StateManager::getInstance()->changeState(new States::ImageSelect());
-                                printf("Fail...\n");
                                 return;
 
                             }
@@ -336,7 +333,6 @@ namespace xM {
 
                             // Change to chapter select
                             Engine::StateManager::getInstance()->changeState(new States::ChapterSelect());
-                            printf("Fail...\n");
                             return;
                             
                         }
@@ -373,7 +369,6 @@ namespace xM {
 
                             // Change to chapter select
                             Engine::StateManager::getInstance()->changeState(new States::ChapterSelect());
-                            printf("Fail...\n");
                             return;
                             
                         }

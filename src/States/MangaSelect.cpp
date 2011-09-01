@@ -138,7 +138,7 @@ namespace xM {
             
 #if __xM_DEBUG
             // DEBUG: Reload XML on-the-fly            
-            if (iM->pressed(PSP_CTRL_LTRIGGER)) {
+            if (iM->pressed(PSP_CTRL_START)) {
             
                 Util::logMsg("Reloading XML ui file.");
                 this->parser.parseFile("ui/manga.xml");    
@@ -153,6 +153,10 @@ namespace xM {
                     this->selected += 1;
                 else if (iM->pressed(PSP_CTRL_UP))
                     this->selected -= 1;
+                else if (iM->pressed(PSP_CTRL_RTRIGGER))
+                    this->selected = this->vMangaList.size() - 1;
+                else if (iM->pressed(PSP_CTRL_LTRIGGER))
+                    this->selected = 0;
                 else if (iM->pressed(PSP_CTRL_RIGHT)) {
 
                     this->navSel += 1;
@@ -234,11 +238,19 @@ namespace xM {
             	case 0:
             	
             		if (this->doAction) {
+
+                        // First need to find the real index
+                        // 'selected' is not to be trusted as it relates to the alphabetical lists
+                        int rIndex;
+                        for (unsigned int i = 0; i < this->mangaList.names.size(); i++) {
+                            if (this->mangaList.names[i] == this->vMangaList[selected])
+                                rIndex = i;
+                        }
             
             			// Send the chapter list request
 				        this->msg.type = Manga::RequestChapterList;
-				        this->msg.what = (void*)new std::string(this->mangaList.apiHandles[selected]);
-                        this->msg.index = selected;
+				        this->msg.what = (void*)new std::string(this->mangaList.apiHandles[rIndex]);
+                        this->msg.index = rIndex;
 				        sceKernelSendMbx(Manga::mangaAPIMbx, (void*)&this->msg);
 				    
 				        // not really a dialog

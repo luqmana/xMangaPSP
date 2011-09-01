@@ -135,7 +135,7 @@ namespace xM {
 			}
             
             // DEBUG: Reload XML on-the-fly            
-            if (iM->pressed(PSP_CTRL_LTRIGGER)) {
+            if (iM->pressed(PSP_CTRL_START)) {
             
                 Util::logMsg("Reloading XML ui file.");
                 this->parser.parseFile("ui/menu.xml");    

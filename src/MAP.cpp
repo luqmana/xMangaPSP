@@ -387,8 +387,6 @@ namespace xM {
                 cJSON_Delete(root);
 
                 this->imageList->index = index;
-
-                printf("Index: %d\n", index);
                                     
                 return true;
                 
@@ -480,8 +478,6 @@ namespace xM {
 
                 this->mangaImage->img = new Gfx::Image;
                 this->mangaImage->index = index;
-
-                printf("Index: %d\n", index);
 
                 loadTimer.start();
                 if (!this->mangaImage->img->loadData(response)) {

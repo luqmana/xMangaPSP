@@ -124,7 +124,7 @@ namespace xM {
             
 #if __xM_DEBUG
             // DEBUG: Reload XML on-the-fly            
-            if (iM->pressed(PSP_CTRL_LTRIGGER)) {
+            if (iM->pressed(PSP_CTRL_START)) {
             
                 Util::logMsg("Reloading XML ui file.");
                 this->parser.parseFile("ui/chapter.xml");    
@@ -139,6 +139,10 @@ namespace xM {
                     this->selected += 1;
                 else if (iM->pressed(PSP_CTRL_UP))
                     this->selected -= 1;
+                else if (iM->pressed(PSP_CTRL_RTRIGGER))
+                    this->selected = this->chapterList.names.size() - 1;
+                else if (iM->pressed(PSP_CTRL_LTRIGGER))
+                    this->selected = 0;
                     
                 // User made a selection, indicate that
                 if (iM->pressed(PSP_CTRL_CROSS))

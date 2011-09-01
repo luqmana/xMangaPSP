@@ -103,7 +103,7 @@ namespace xM {
             
 #if __xM_DEBUG
             // DEBUG: Reload XML on-the-fly            
-            if (iM->pressed(PSP_CTRL_LTRIGGER)) {
+            if (iM->pressed(PSP_CTRL_START)) {
             
                 Util::logMsg("Reloading XML ui file.");
 
