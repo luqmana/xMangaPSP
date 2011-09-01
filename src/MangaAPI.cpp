@@ -286,8 +286,7 @@ namespace xM {
 	        if (mangaAPIThreadID > 0)
 	            sceKernelStartThread(mangaAPIThreadID, 0, NULL);
 	            
-	        //mapImp = new MAP("http://omp.leonex.co.cc/api/");
-	        mapImp = new MAP("http://192.168.2.5/~omp-t/api/");
+	        mapImp = new MAP("http://omp.leonex.co.cc/api/");
 	    
 	    }
 	    

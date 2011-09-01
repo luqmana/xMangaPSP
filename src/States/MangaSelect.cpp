@@ -59,16 +59,30 @@ namespace xM {
         
         	// init/reset some vars
             this->doAction = false;
+            this->navChange = true; // Set to true initially to populate the list
             this->activeDialog = 0;
             this->selected = 0;
+            this->navSel = 0;
             this->mangaList = *Manga::mapImp->getMangaList();      
+
+            this->nList.reserve(27);
+            this->nList.push_back("#");
+            for (int c = 65; c < 91; c++) {
+
+                std::string u(1, (char)c);
+                this->nList.push_back(u);
+
+            }
                         
-			// setup the list element
-            this->lInfo.selected = &this->selected;
-            this->lInfo.list = &this->mangaList.names;
+			// setup the list elements
+            this->mLInfo.selected = &this->selected;
+            this->mLInfo.list = &this->vMangaList;
+            this->nLInfo.selected = &this->navSel;
+            this->nLInfo.list = &this->nList;
 
 			// Register the XML UI parsers
-            this->parser.registerCustomElementHandler("list", &this->extraElements, (void*)&this->lInfo);
+            this->parser.registerCustomElementHandler("mangalist", &this->extraElements, (void*)&this->mLInfo);
+            this->parser.registerCustomElementHandler("navlist", &this->extraElements, (void*)&this->nLInfo);
             this->parser.registerCustomElementHandler("bouncyBox", &this->extraElements);
             
             this->parser.addTextSubstitute("mangaCount", Util::toString(this->mangaList.names.size()));
@@ -93,7 +107,8 @@ namespace xM {
 
 			sceKernelDeleteMbx(this->localBox);
 
-            this->parser.deRegisterCustomElementHandler("list");
+            this->parser.deRegisterCustomElementHandler("mangalist");
+            this->parser.deRegisterCustomElementHandler("navlist");
             this->parser.deRegisterCustomElementHandler("bouncyBox");
                                     
         }
@@ -133,11 +148,22 @@ namespace xM {
             
             if (this->activeDialog == 0) {
 
-                // Handle scrolling up/down
+                // Handle scrolling up/down/left/right
                 if (iM->pressed(PSP_CTRL_DOWN))
                     this->selected += 1;
                 else if (iM->pressed(PSP_CTRL_UP))
                     this->selected -= 1;
+                else if (iM->pressed(PSP_CTRL_RIGHT)) {
+
+                    this->navSel += 1;
+                    this->navChange = true;
+
+                } else if (iM->pressed(PSP_CTRL_LEFT)) {
+
+                    this->navSel -= 1;
+                    this->navChange = true;
+
+                }
                     
                 // User made a selection, indicate that
                 if (iM->pressed(PSP_CTRL_CROSS))
@@ -163,9 +189,43 @@ namespace xM {
 	        // BEGIN Menu Traversing Logic
 	        if ((signed int)this->selected < 0)
                 this->selected = 0;
-            if (this->selected > (this->mangaList.names.size() - 1))
-                this->selected = this->mangaList.names.size() - 1;
+            if (this->selected > (this->vMangaList.size() - 1))
+                this->selected = this->vMangaList.size() - 1;
+            if ((signed int)this->navSel < 0)
+                this->navSel = 0;
+            if (this->navSel > (this->nList.size() - 1))
+                this->navSel = this->nList.size() - 1;
             // END Menu Traversing Logic
+
+            if (this->navChange) {
+                
+                // Clear current and reset selected
+                this->vMangaList.clear();
+                this->selected = 0;
+
+                char l = (this->nList[this->navSel].data())[0];
+
+                for (unsigned int i = 0; i < this->mangaList.names.size(); i++) {
+                    
+                    int k = (int)(this->mangaList.names[i].data())[0];
+                    
+                    if (l == '#') {
+
+                        if (k < 65 || (k > 90 && k < 97) || k > 122)
+                            this->vMangaList.push_back(this->mangaList.names[i]);
+
+                    } else {
+                        
+                        if ((int)l == k || ((int)l + 32) == k)
+                            this->vMangaList.push_back(this->mangaList.names[i]);
+
+                    }
+
+                }
+
+                this->navChange = false;
+
+            }
             
             // Handle any active requests
             switch (this->activeDialog) {

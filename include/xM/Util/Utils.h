@@ -68,6 +68,25 @@ namespace xM {
         void tokenize(const std::string& str, std::vector<std::string>& tokens, const std::string& delimiters);
 
         /**
+         * Check whether one string has a specified ending.
+         * From: http://stackoverflow.com/questions/874134/find-if-string-endswith-another-string-c
+         * 
+         * @param const std::string& fullString The string to check.
+         * @param const std::string& ending The ending to check with.
+         *
+         * @return bool
+         */
+        inline bool hasEnding(const std::string& fullString, const std::string& ending) {
+
+            if (fullString.length() >= ending.length())
+                return (0 == fullString.compare(fullString.length() - ending.length(), ending.length(), ending));
+            else
+                return false;
+
+        }
+
+
+        /**
          * Calculates the next power of two for a given number.
          *
          * @param int j Number to 'convert'

@@ -86,14 +86,18 @@ namespace xM {
 
             Ui::XMLParser parser;
             Ui::ExtraElements extraElements;
-            Ui::ListInfo lInfo;
+
+            Ui::ListInfo mLInfo; // manga list
+            Ui::ListInfo nLInfo; // navigation list
                         
-            bool doAction;
+            bool doAction, navChange;
             
             int activeDialog;
             
-            unsigned int selected;
+            unsigned int selected, navSel;
             Manga::MangaList mangaList;
+            std::vector<std::string> vMangaList;
+            std::vector<std::string> nList;
             
             xM::Manga::APIMessage msg;
             SceUID localBox;

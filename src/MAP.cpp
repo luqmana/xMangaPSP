@@ -35,6 +35,7 @@
 #include "xM/Util/cJSON.h"
 #include "xM/Util/Timer.h"
 #include "xM/Util/Log.h"
+#include "xM/Engine/ResourceManager.h"
 
 #include <string.h>
 // END Includes

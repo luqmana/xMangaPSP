@@ -66,7 +66,7 @@ namespace xM {
                 customElement->offsetX = (rand() % 4 + 1);
                 customElement->offsetY = (rand() % 4 + 1);
             
-            } else if (customElement->name == "list") {
+            } else if (Util::hasEnding(customElement->name, "list")) {
             
                 if (data != NULL) {
                 
@@ -135,7 +135,7 @@ namespace xM {
                 parser->renderElement(customElement);
                 customElement->type = Ui::CUSTOM;
             
-            } else if (customElement->name == "list") {
+            } else if (Util::hasEnding(customElement->name, "list")) {
                                     
                 unsigned int minList, maxList, maxItems;
                 minList = customElement->width;
