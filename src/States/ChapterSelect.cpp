@@ -107,12 +107,7 @@ namespace xM {
         /**
          * Resume state.
          */
-        void ChapterSelect::resume(void) {
-
-			// Reload XML ui
-			this->parser.parseFile("ui/chapter.xml");
-			
-        }
+        void ChapterSelect::resume(void) { }
 
         /**
          * Poll for input, read event state etc
@@ -150,7 +145,7 @@ namespace xM {
                     
                 // Leave state
                 if (iM->pressed(PSP_CTRL_CIRCLE))
-                	Engine::StateManager::getInstance()->changeState(new States::MangaSelect());
+                	Engine::StateManager::getInstance()->popState();
 
             }
             
@@ -238,7 +233,7 @@ namespace xM {
                         // Loaded successfully, switch to new state
                         if (rMsg->type == Manga::RequestImage && rMsg->result == true) {
                         
-                            Engine::StateManager::getInstance()->changeState(new States::ImageView());
+                            Engine::StateManager::getInstance()->pushState(new States::ImageView());
                             
                             this->activeDialog = 0;
 

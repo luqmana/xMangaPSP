@@ -61,6 +61,18 @@ namespace xM {
             this->loadFont(font, size, colour, shadowColour, loadOps, styleOps, rotation);    
         
         }
+
+        /**
+         * Constructor.
+         *
+         * @param Fonts font The font to load.
+         * @param unsigned int colour Text colour.
+         */
+        Text::Text(const std::string& font, float size, unsigned int colour, unsigned int shadowColour, unsigned int loadOps, unsigned int styleOps, float rotation) {
+        
+            this->loadFont(font, size, colour, shadowColour, loadOps, styleOps, rotation);    
+        
+        }
         
         /**
          * Destructor.
@@ -155,6 +167,45 @@ namespace xM {
             
             // Load the font
             this->font = new intraFont(*f);
+                        
+            if (!this->font) {
+            
+                if (__xM_DEBUG)
+                    Util::logMsg("Text::loadFont — Unable to load font.");
+                    
+                this->font = NULL;
+            
+                return;
+                
+            }
+            
+            intraFontSetStyle(this->font, size, colour, shadowColour, rotation, styleOps);
+            intraFontSetEncoding(this->font, INTRAFONT_STRING_UTF8);
+                    
+        }
+
+        /**
+         * Unloads the current font (if loaded) and loads new font.
+         * Previous settings such as colour, shadow colour etc are lost.
+         *
+         * @param Fonts font Font to load.
+         */
+        void Text::loadFont(const std::string& font, float size, unsigned int colour, unsigned int shadowColour, unsigned int loadOps, unsigned int styleOps, float rotation) {
+                                                   
+            intraFont* f = Engine::ResourceManager::getInstance()->getFont(font.c_str(), loadOps);
+            
+            if (!f || f == NULL) {
+            
+                if (__xM_DEBUG)
+                    Util::logMsg("Text::loadFont — Unable to load font from resource manager [%s].", font.c_str());
+                
+                return;
+                
+            }
+            
+            // Load the font
+            //this->font = new intraFont(*f);
+            this->font = f;
                         
             if (!this->font) {
             
@@ -279,9 +330,57 @@ namespace xM {
                 intraFontSetAltFont(this->font, altFont);
                 
             this->altFonts.push_back(altFont);
-            
-            
+                    
+        }
+
+        /**
+         * Loads an alternate font.
+         * Can be called multiple times.
+         *
+         * @param Fonts font Font to load.
+         */
+        void Text::loadAltFont(const std::string& font, float size, unsigned int colour, unsigned int shadowColour, unsigned int loadOps, unsigned int styleOps, float rotation) {
         
+            std::stringstream file;
+            
+            intraFont* altFont;
+                           
+            intraFont* f = Engine::ResourceManager::getInstance()->getFont(font.c_str(), loadOps);
+            
+            if (!f || f == NULL) {
+            
+                if (__xM_DEBUG)
+                    Util::logMsg("Text::loadAltFont — Unable to load font from resource manager [%s].", font.c_str());
+                
+                return;
+                
+            }
+            
+            // Load the font
+            //altFont = new intraFont(*f);
+            altFont = f;
+                        
+            if (!altFont) {
+            
+                if (__xM_DEBUG)
+                    Util::logMsg("Text::loadAltFont — Unable to load font.");
+                    
+                altFont = NULL;
+            
+                return;
+                
+            }
+            
+            intraFontSetStyle(altFont, size, colour, shadowColour, rotation, styleOps);
+            intraFontSetEncoding(altFont, INTRAFONT_STRING_UTF8);
+            
+            if (this->altFonts.size() > 0)
+                intraFontSetAltFont(this->altFonts.back(), altFont);
+            else
+                intraFontSetAltFont(this->font, altFont);
+                
+            this->altFonts.push_back(altFont);
+            
         }
         
         /**

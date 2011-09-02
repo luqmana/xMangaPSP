@@ -393,7 +393,7 @@ namespace xM {
 
                     } else {
 
-                        // @TODO: Attempt to load via path
+                        uiElement->font.loadFont(font, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps, uiElement->rotate);
 
                     }
                     
@@ -497,7 +497,7 @@ namespace xM {
 
                         } else {
 
-                            // @TODO: Attempt to load via path
+                            uiElement->font.loadAltFont(altFont, uiElement->size, uiElement->colour, uiElement->shadowColour, 0, fontStyleOps, uiElement->rotate);
 
                         }
                                                 

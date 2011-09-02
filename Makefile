@@ -34,7 +34,8 @@ PSAR_PAK = $(BUILD_DIR)/resources.zip
 
 # Resources to pack into psar
 RESOURCES = $(wildcard $(RES_DIR)/ui/*.xml)
-RESOURCES := $(patsubst $(RES_DIR)/ui/%.xml, ui/%.xml, $(RESOURCES))
+RESOURCES := $(RESOURCES) $(wildcard $(RES_DIR)/fonts/*.pgf)
+RESOURCES := $(patsubst $(RES_DIR)/%, %, $(RESOURCES))
 
 # Targets
 TARGET = $(BUILD_DIR)/xMangaPSP
@@ -68,9 +69,10 @@ EXT_LIB_OBJS += $(patsubst %.cpp, $(BUILD_DIR)/%.o, $(filter %.cpp, $(EXT_SRC_CP
 EXT_LIB_OBJS += $(patsubst %.c, $(BUILD_DIR)/%.o, $(filter %.c, $(EXT_SRC_C)))
 
 # Defines
-MAJOR_VERSION = 1
-MINOR_VERSION = 0
-EXTRA_VERSION = 
+MAJOR_VERSION = 0
+MINOR_VERSION = 1
+EXTRA_VERSION = a2
+VERSION_STRING= v$(MAJOR_VERSION).$(MINOR_VERSION) $(EXTRA_VERSION)
 API_VERSION   = 5
 
 # Debug mode
@@ -117,7 +119,7 @@ USE_USER_LIBS = 1
   
 # EBOOT.PBP Variables
 PSP_EBOOT           = $(BUILD_DIR)/EBOOT.PBP
-PSP_EBOOT_TITLE     = xMangaPSP v$(MAJOR_VERSION).$(MINOR_VERSION)$(EXTRA_VERSION)
+PSP_EBOOT_TITLE     = xMangaPSP $(VERSION_STRING)
 PSP_EBOOT_SFO       = $(BUILD_DIR)/PARAM.SFO # A sort of description file, generated compile time
 PSP_EBOOT_ICON      = NULL # Main Program Icon      144 x 80
 PSP_EBOOT_ICON1     = #$(RES_DIR)/eboot/ICON1.PMF # Animated Program Icon  144 x 80

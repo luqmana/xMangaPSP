@@ -121,12 +121,7 @@ namespace xM {
         /**
          * Resume state.
          */
-        void MangaSelect::resume(void) {
-
-			// Reload XML ui
-			this->parser.parseFile("ui/manga.xml");
-			
-        }
+        void MangaSelect::resume(void) { }
 
         /**
          * Poll for input, read event state etc
@@ -271,7 +266,8 @@ namespace xM {
                         // Loaded successfully, switch to new state
 		            	if (rMsg->type == Manga::RequestChapterList && rMsg->result == true) {
 		            	
-		            		Engine::StateManager::getInstance()->changeState(new States::ChapterSelect());
+		            		Engine::StateManager::getInstance()->pushState(new States::ChapterSelect());
+                            this->activeDialog = 0;
 		            		return;
 		            	
 		            	} else if (rMsg->type == Manga::RequestChapterList && rMsg->result == false) {

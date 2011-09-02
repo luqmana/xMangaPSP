@@ -380,7 +380,7 @@ namespace xM {
          * @return std::string The contents of the file.
          */
         std::string FileManager::readFromFS(const std::string& file) {
-        
+
             std::string out;
             
             SceUID fD = sceIoOpen(file.c_str(), PSP_O_RDONLY, 0777);

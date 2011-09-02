@@ -134,7 +134,7 @@ namespace xM {
                     
                 // Leave state
                 if (iM->pressed(PSP_CTRL_CIRCLE))
-                	Engine::StateManager::getInstance()->changeState(new States::ChapterSelect());
+                	Engine::StateManager::getInstance()->popState();
 
             }
             
@@ -332,7 +332,7 @@ namespace xM {
                             this->activeDialog = 0;
 
                             // Change to chapter select
-                            Engine::StateManager::getInstance()->changeState(new States::ChapterSelect());
+                            Engine::StateManager::getInstance()->popState();
                             return;
                             
                         }
@@ -368,7 +368,7 @@ namespace xM {
                             this->activeDialog = 0;
 
                             // Change to chapter select
-                            Engine::StateManager::getInstance()->changeState(new States::ChapterSelect());
+                            Engine::StateManager::getInstance()->popState();
                             return;
                             
                         }

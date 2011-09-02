@@ -98,6 +98,14 @@ namespace xM {
              * @param unsigned int colour Text colour.
              */
             Text(Font::Fonts font, float size, unsigned int colour, unsigned int shadowColour, unsigned int loadOps = 0, unsigned int styleOps = 0, float rotation = 0.0f);
+
+            /**
+             * Constructor.
+             *
+             * @param Fonts font The font to load.
+             * @param unsigned int colour Text colour.
+             */
+            Text(const std::string& font, float size, unsigned int colour, unsigned int shadowColour, unsigned int loadOps = 0, unsigned int styleOps = 0, float rotation = 0.0f);
             
             /**
              * Destructor.
@@ -111,6 +119,14 @@ namespace xM {
              * @param Fonts font Font to load.
              */
             void loadFont(Font::Fonts font, float size, unsigned int colour, unsigned int shadowColour, unsigned int loadOps = 0, unsigned int styleOps = 0, float rotation = 0.0f);
+
+            /**
+             * Unloads the current font (if loaded) and loads new font.
+             * Previous settings such as colour, shadow colour etc are lost.
+             *
+             * @param Fonts font Font to load.
+             */
+            void loadFont(const std::string& font, float size, unsigned int colour, unsigned int shadowColour, unsigned int loadOps = 0, unsigned int styleOps = 0, float rotation = 0.0f);
             
             /**
              * Loads an alternate font.
@@ -119,6 +135,14 @@ namespace xM {
              * @param Fonts font Font to load.
              */
             void loadAltFont(Font::Fonts font, float size, unsigned int colour, unsigned int shadowColour, unsigned int loadOps = 0, unsigned int styleOps = 0, float rotation = 0.0f);
+
+            /**
+             * Loads an alternate font.
+             * Can be called multiple times.
+             *
+             * @param Fonts font Font to load.
+             */
+            void loadAltFont(const std::string& font, float size, unsigned int colour, unsigned int shadowColour, unsigned int loadOps = 0, unsigned int styleOps = 0, float rotation = 0.0f);
             
             /**
              * Draw the text beginning at position (x, y).

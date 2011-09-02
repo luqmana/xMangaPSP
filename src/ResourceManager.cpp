@@ -106,7 +106,8 @@ namespace xM {
                 return fonts.find(key)->second;
                 
             // Not cached :(
-            intraFont* iFont = intraFontLoad(font.c_str(), loadOps);
+            std::string buffer = this->getRes(font);
+            intraFont* iFont = intraFontLoadMem(font.c_str(), buffer.c_str(), buffer.size(), loadOps);
             
             if (!iFont)
                 return NULL;
