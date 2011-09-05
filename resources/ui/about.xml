@@ -34,6 +34,6 @@
     <text x="240" y="252" font="{LATIN_SANS_SERIF_ITALIC_SMALL}" align="center" size="1.0" colour="red" value="Happy Manga Reading!" />
         
     <text x="455" y="261" font="{LATIN_SERIF_REGULAR_SMALL}" align="right" size="1.0" colour="73,73,73" value="Back - " />
-    <text x="475" y="264" font="{SYMBOLS}" align="right" size="1.0" colour="23,23,23" value="" />
+    <text x="475" y="264" font="fonts/arib.pgf" align="right" size="1.0" colour="23,23,23" value="" />
                     
 </window>

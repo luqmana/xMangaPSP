@@ -181,11 +181,21 @@ namespace xM {
                                 
                                 customElement->children[k]->x = x;
                                 customElement->children[k]->y = y;
+                                std::string format = customElement->children[k]->text;
                                 
-                                if (customElement->children[k]->type == Ui::TEXT)
-                                    customElement->children[k]->text = itemText;
+                                if (customElement->children[k]->type == Ui::TEXT) {
+
+                                    const size_t pos = customElement->children[k]->text.find("[]");
+                                    if (pos == std::string::npos)
+                                        customElement->children[k]->text = itemText;
+                                    else
+                                        customElement->children[k]->text.replace(pos, 2, itemText);
+
+                                }
                                 
                                 parser->renderElement(customElement->children[k]);
+
+                                customElement->children[k]->text = format;
                                     
                             }
                             	            
@@ -199,11 +209,21 @@ namespace xM {
                             
                                 customElement->children[k]->x = x;
                                 customElement->children[k]->y = y;
+                                std::string format = customElement->children[k]->text;
                                 
-                                if (customElement->children[k]->type == Ui::TEXT)
-                                    customElement->children[k]->text = itemText;
+                                if (customElement->children[k]->type == Ui::TEXT) {
+                                    
+                                    const size_t pos = customElement->children[k]->text.find("[]");
+                                    if (pos == std::string::npos)
+                                        customElement->children[k]->text = itemText;
+                                    else
+                                        customElement->children[k]->text.replace(pos, 2, itemText);
+
+                                }
                                 
                                 parser->renderElement(customElement->children[k]);
+
+                                customElement->children[k]->text = format;
                             
                             }
                             	            

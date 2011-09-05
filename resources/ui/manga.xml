@@ -30,7 +30,7 @@
     
     </mangalist>
 
-    <navlist x="100" y="261" offsetX="20" offsetY="0" maxItems="15">
+    <navlist x="150" y="261" offsetX="20" offsetY="0" maxItems="10">
         
         <text whence="active" font="{LATIN_SANS_SERIF_REGULAR_SMALL}" align="center" size="1.0" colour="red" value="[]" />
         <text whence="inactive" font="{LATIN_SANS_SERIF_REGULAR_SMALL}" align="center" size="1.0" colour="36,36,36" value="[]" />
@@ -39,10 +39,10 @@
 
 
     
-    <text x="5" y="265" font="{SYMBOLS}" align="left" size="1.0" colour="23,23,23" value="" />
+    <text x="5" y="265" font="fonts/arib.pgf" align="left" size="1.0" colour="23,23,23" value="" />
     <text x="25" y="261" font="{LATIN_SERIF_REGULAR_SMALL}" align="left" size="1.0" colour="73,73,73" value="- Select" />
     
     <text x="455" y="261" font="{LATIN_SERIF_REGULAR_SMALL}" align="right" size="1.0" colour="73,73,73" value="Back - " />
-    <text x="475" y="264" font="{SYMBOLS}" align="right" size="1.0" colour="23,23,23" value="" />
+    <text x="475" y="264" font="fonts/arib.pgf" align="right" size="1.0" colour="23,23,23" value="" />
             
 </window>

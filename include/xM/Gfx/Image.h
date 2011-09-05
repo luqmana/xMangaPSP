@@ -52,7 +52,7 @@ namespace xM {
             int x, y;
             unsigned int width, height;
             unsigned int p2Width, p2Height;
-            std::vector<unsigned char> pixels;
+            unsigned char* pixels;
 
         } ImageSegment;
 

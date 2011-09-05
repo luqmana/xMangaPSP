@@ -66,11 +66,32 @@ namespace xM {
             this->mangaList = *Manga::mapImp->getMangaList();      
 
             this->nList.reserve(27);
-            this->nList.push_back("#");
-            for (int c = 65; c < 91; c++) {
+            this->nList.push_back("All");
+            for (int c = 64; c < 91; c++) {
 
                 std::string u(1, (char)c);
-                this->nList.push_back(u);
+
+                for (unsigned int i = 0; i < this->mangaList.names.size(); i++) {
+                    
+                    int k = (int)(this->mangaList.names[i].data())[0];
+
+                    if (c == 64 && this->nList.size() == 1) {
+                        
+                        if (k < 65 || (k > 90 && k < 97) || k > 122)
+                            this->nList.push_back("#");
+
+                    } else {
+                    
+                        if (c == k || (c + 32) == k) {
+
+                            this->nList.push_back(u);
+                            break;
+
+                        }
+
+                    }
+
+                }
 
             }
                         
@@ -204,19 +225,25 @@ namespace xM {
 
                 char l = (this->nList[this->navSel].data())[0];
 
-                for (unsigned int i = 0; i < this->mangaList.names.size(); i++) {
-                    
-                    int k = (int)(this->mangaList.names[i].data())[0];
-                    
-                    if (l == '#') {
+                if (this->nList[this->navSel] == "All")
+                    this->vMangaList.assign(this->mangaList.names.begin(), this->mangaList.names.end());
+                else {
 
-                        if (k < 65 || (k > 90 && k < 97) || k > 122)
-                            this->vMangaList.push_back(this->mangaList.names[i]);
-
-                    } else {
+                    for (unsigned int i = 0; i < this->mangaList.names.size(); i++) {
                         
-                        if ((int)l == k || ((int)l + 32) == k)
-                            this->vMangaList.push_back(this->mangaList.names[i]);
+                        int k = (int)(this->mangaList.names[i].data())[0];
+                        
+                        if (l == '#') {
+
+                            if (k < 65 || (k > 90 && k < 97) || k > 122)
+                                this->vMangaList.push_back(this->mangaList.names[i]);
+
+                        } else {
+                            
+                            if ((int)l == k || ((int)l + 32) == k)
+                                this->vMangaList.push_back(this->mangaList.names[i]);
+
+                        }
 
                     }
 

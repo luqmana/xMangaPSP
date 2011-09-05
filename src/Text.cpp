@@ -204,8 +204,7 @@ namespace xM {
             }
             
             // Load the font
-            //this->font = new intraFont(*f);
-            this->font = f;
+            this->font = new intraFont(*f);
                         
             if (!this->font) {
             
@@ -357,8 +356,7 @@ namespace xM {
             }
             
             // Load the font
-            //altFont = new intraFont(*f);
-            altFont = f;
+            altFont = new intraFont(*f);
                         
             if (!altFont) {
             

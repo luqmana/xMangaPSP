@@ -34,6 +34,7 @@
 #include "xM/States/About.h"
 #include "xM/States/MangaSelect.h"
 #include "xM/States/Menu.h"
+#include "xM/States/Options.h"
 #include "xM/Net/Net.h"
 #include "xM/Ui/Dialogs.h"
 #include "xM/Util/Log.h"
@@ -110,12 +111,7 @@ namespace xM {
         /**
          * Resume state.
          */
-        void Menu::resume(void) {
-
-			// Reload XML ui
-			this->parser.parseFile("ui/menu.xml");
-
-        }
+        void Menu::resume(void) { }
 
         /**
          * Poll for input, read event state etc
@@ -243,7 +239,10 @@ namespace xM {
 						    
 						        break;
 						        
+                            // Options
 						    case 3:
+
+                                Engine::StateManager::getInstance()->pushState(new States::Options());
 						    
 						        break;
 						     

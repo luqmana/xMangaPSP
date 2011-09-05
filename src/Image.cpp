@@ -33,7 +33,6 @@
 #include "xM/Engine/ResourceManager.h"
 #include "xM/Gfx/Graphics.h"
 #include "xM/Gfx/Image.h"
-#include "xM/Gfx/PicoPNG.h"
 #include "xM/Util/Log.h"
 #include "xM/Util/Utils.h"
 #include "xM/Util/Timer.h"
@@ -49,6 +48,8 @@
 #include <pspiofilemgr.h>
 
 #include <jpeglib.h>
+
+#include "LodePNG/LodePNG.h"
 // END Includes
 
 namespace xM {
@@ -145,11 +146,11 @@ namespace xM {
                         segment->y = 512 * i;
 
                         // Reserve enough size                        
-                        segment->pixels.reserve(segment->width * segment->height * sizeof (uint32_t));
+                        segment->pixels = (unsigned char*) memalign(16, segment->width * segment->height * 4);
 
                         for (unsigned int line = 0; line < (segment->height); ++line)
-                            memcpy(&segment->pixels[0] + (line * segment->width * 4),
-                                    &mainSegment->pixels[0] + ((line + segment->y) * mainSegment->width * 4) + (segment->x * 4), 4 * segment->width);
+                            memcpy(segment->pixels + (line * segment->width * 4),
+                                    mainSegment->pixels + ((line + segment->y) * mainSegment->width * 4) + (segment->x * 4), 4 * segment->width);
 
                         this->segments.push_back(segment);
 
@@ -268,7 +269,7 @@ namespace xM {
         		// well, what dya know? It's a PNG! Rejoice!
         		
         		// Decode the png
-            	int r = decodePNG(destImg->pixels, destImg->width, destImg->height, (const unsigned char*)imgBuffer.c_str(), imgBuffer.size(), true);
+                int r = LodePNG_decode32(&destImg->pixels, &destImg->width, &destImg->height, (const unsigned char*)imgBuffer.c_str(), imgBuffer.size());
             	
             	if (r != 0)
             		return false;
@@ -301,10 +302,11 @@ namespace xM {
 
 				unsigned int sz = destImg->width * destImg->height * 4;
 				
-				destImg->pixels.reserve(sz);
+                destImg->pixels = (unsigned char*) memalign(16, sz);
 
 				unsigned int stride = cinfo.output_width * cinfo.output_components;
 				unsigned char* line = (unsigned char*) malloc(stride);
+                unsigned int pos = 0;
 		
 				loadTimer.start();
 				// Read in image
@@ -317,12 +319,14 @@ namespace xM {
                     int l = 0;
                     for (loc = 0; loc < stride; loc++) {
                         
-                        destImg->pixels.push_back(line[loc]);
+                        destImg->pixels[pos] = line[loc];
+                        pos += sizeof(unsigned char);
                         l++;
 
                         if (l == 3) {
                             
-                            destImg->pixels.push_back(0xFF);
+                            destImg->pixels[pos] = 0xFF;
+                            pos += sizeof(unsigned char);
                             l = 0;
 
                         }
@@ -373,7 +377,7 @@ namespace xM {
 
                 for (unsigned int i = 0; i < this->segments.size(); ++i) {
 
-                    this->segments[i]->pixels.clear();
+                    free(this->segments[i]->pixels);
                     delete this->segments[i];
 
                 }
@@ -402,40 +406,52 @@ namespace xM {
 
             for (unsigned int r = 0; r < this->segments.size(); ++r) {
 
-                unsigned int width = this->segments[r]->width;
-                unsigned int height = this->segments[r]->height;
-                unsigned int i, j;
-                unsigned int rowblocks = (width * sizeof(u32) / 16);
-                long size = width * height * sizeof (int);
+                int width = this->segments[r]->width;
+                int height = this->segments[r]->height;
 
-                unsigned char* out = (unsigned char*) malloc(size * sizeof(unsigned char));
-                const unsigned char* in = &this->segments[r]->pixels[0];
+                unsigned char* swiz = (unsigned char*) malloc(width * height * 4);
 
-                for (j = 0; j < height; ++j) {
+                unsigned int blockX, blockY;
+                unsigned int j;
 
-                    for (i = 0; i < width * sizeof(u32); ++i) {
+                unsigned int widthBlocks = (width / 16);
+                unsigned int heightBlocks = (height / 8);
 
-                        unsigned int blockx = i / 16;
-                        unsigned int blocky = j / 8;
+                unsigned int srcPitch = (width - 16) / 4;
+                unsigned int srcRow = width * 8;
 
-                        unsigned int x = (i - blockx * 16);
-                        unsigned int y = (j - blocky * 8);
-                        unsigned int blockIndex = blockx + ((blocky) * rowblocks);
-                        unsigned int blockAddress = blockIndex * 16 * 8;
+                const unsigned char* ySrc = this->segments[r]->pixels;
+                unsigned int* dst = (unsigned int*) swiz;
 
-                        out[blockAddress + x + y * 16] = in[i + j * width * sizeof(uint32_t)];
+                for (blockY = 0; blockY < heightBlocks; ++blockY) {
+
+                    const unsigned char* xSrc = ySrc;
+
+                    for (blockX = 0; blockX < widthBlocks; ++blockX) {
+
+                        const unsigned int* src = (unsigned int*) xSrc;
+
+                        for (j = 0; j < 8; ++j) {
+
+                            *(dst++) = *(src++);
+                            *(dst++) = *(src++);
+                            *(dst++) = *(src++);
+                            *(dst++) = *(src++);
+                            src += srcPitch;
+
+                        }
+
+                        xSrc += 16;
 
                     }
 
+                    ySrc += srcRow;
+
                 }
 
-                // Copy swizzled data
-                this->segments[r]->pixels.clear();
-                this->segments[r]->pixels.reserve(size);
-                memcpy(&this->segments[r]->pixels[0], out, size);
-
-                // Free temporary
-                free(out);
+                // Set new swizzled data
+                free(this->segments[r]->pixels);
+                this->segments[r]->pixels = swiz;
 
             }
 
@@ -482,7 +498,7 @@ namespace xM {
             }
 
             // Apply texture
-            sceGuTexImage(0, this->segments[seg]->p2Width, this->segments[seg]->p2Height, this->segments[seg]->width, &this->segments[seg]->pixels[0]);
+            sceGuTexImage(0, this->segments[seg]->p2Width, this->segments[seg]->p2Height, this->segments[seg]->width, this->segments[seg]->pixels);
 
             Vertex2 image[2] = {
                 { // Top-Left point

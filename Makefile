@@ -49,13 +49,16 @@ STATES += $(wildcard $(SRC_DIR)/States/*.cpp)
 STATES := $(patsubst $(SRC_DIR)/States/%.cpp, %.cpp, $(STATES))
 
 # Source files
-SRC_CPP  = xMangaPSP.cpp Callbacks.cpp Graphics.cpp Dialogs.cpp Stats.cpp Utils.cpp Timer.cpp FileManager.cpp InputManager.cpp ResourceManager.cpp StateManager.cpp Image.cpp Log.cpp PicoPNG.cpp Text.cpp XMLParser.cpp Net.cpp ExtraElements.cpp MangaAPI.cpp MAP.cpp
+SRC_CPP  = $(wildcard $(SRC_DIR)/*.cpp)
 SRC_CPP += $(STATES)
-SRC_C    = cJSON.c
+SRC_C    = $(wildcard $(SRC_DIR)/*.c)
+SRC_CPP := $(patsubst $(SRC_DIR)/%.cpp, %.cpp, $(SRC_CPP))
+SRC_C   := $(patsubst $(SRC_DIR)/%.c, %.c, $(SRC_C))
 
 # External Libs Source Files
 EXT_SRC_CPP += $(wildcard $(EXT_SRC_DIR)/tinyxml/*.cpp)
 EXT_SRC_C   += $(wildcard $(EXT_SRC_DIR)/intraFontG/*.c)
+EXT_SRC_C   += $(wildcard $(EXT_SRC_DIR)/LodePNG/*.c)
 
 EXT_SRC_CPP := $(patsubst $(EXT_SRC_DIR)/%.cpp, %.cpp, $(EXT_SRC_CPP))
 EXT_SRC_C   := $(patsubst $(EXT_SRC_DIR)/%.c, %.c, $(EXT_SRC_C))
@@ -126,7 +129,11 @@ PSP_EBOOT_ICON1     = #$(RES_DIR)/eboot/ICON1.PMF # Animated Program Icon  144 x
 PSP_EBOOT_UNKPNG    = NULL # Overlay Image          310 x 180
 PSP_EBOOT_PIC1      = NULL # Background             480 x 272
 PSP_EBOOT_SND0      = NULL # Background music
+ifeq ($(DEBUG), 1)
+PSP_EBOOT_PSAR 	    = NULL
+else
 PSP_EBOOT_PSAR 	    = $(PSAR_PAK) # A data file. Store whatever in here.
+endif
   
 # Get the base makefile
 include $(PSPSDK)/lib/build.mak
@@ -143,13 +150,15 @@ $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
 $(BUILD_DIR)/%.o: $(SRC_DIR)/States/%.cpp
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
 	
-# Rule to build PicoPNG with optimization
-$(BUILD_DIR)/PicoPNG.o: $(SRC_DIR)/PicoPNG.cpp
-	$(CXX) $(CXXFLAGS) -O3 -G4 -ffast-math -c -o $@ $<
+# Rule to build bundled LodePNG with optimization
+$(BUILD_DIR)/LodePNG/LodePNG.o: $(EXT_SRC_DIR)/LodePNG/LodePNG.c | $(BUILD_DIR)/LodePNG
+	$(CXX) $(CXXFLAGS) -I$(EXT_INC_DIR)/LodePNG/ -O3 -G4 -ffast-math -c -o $@ $<
+$(BUILD_DIR)/LodePNG:
+	mkdir $(BUILD_DIR)/LodePNG
 
 # Rule to build image class with optimization
-$(BUILD_DIR)/Image.o: $(SRC_DIR)/Image.cpp
-	$(CXX) $(CXXFLAGS) -O3 -G4 -ffast-math -c -o $@ $<
+#$(BUILD_DIR)/Image.o: $(SRC_DIR)/Image.cpp
+#	$(CXX) $(CXXFLAGS) -O3 -G4 -ffast-math -c -o $@ $<
 
 # Rule to build xml parser class with optimization as well an extra definition
 $(BUILD_DIR)/XMLParser.o: $(SRC_DIR)/XMLParser.cpp
