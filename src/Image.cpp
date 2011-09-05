@@ -146,7 +146,8 @@ namespace xM {
                         segment->y = 512 * i;
 
                         // Reserve enough size                        
-                        segment->pixels = (unsigned char*) memalign(16, segment->width * segment->height * 4);
+                        //segment->pixels = (unsigned char*) memalign(16, segment->width * segment->height * 4);
+                        segment->pixels = (unsigned char*) malloc(segment->width * segment->height * 4);
 
                         for (unsigned int line = 0; line < (segment->height); ++line)
                             memcpy(segment->pixels + (line * segment->width * 4),
@@ -160,13 +161,12 @@ namespace xM {
 
                     ++i;
 
-                    //sceKernelDelayThread(100);
-
                 } while (i < hFit);
 
 
             }
 
+            free(mainSegment->pixels);
             delete mainSegment;
 
             Util::logMsg("segmentizer - %f", loadTimer.getDeltaTicks(true));
@@ -302,7 +302,8 @@ namespace xM {
 
 				unsigned int sz = destImg->width * destImg->height * 4;
 				
-                destImg->pixels = (unsigned char*) memalign(16, sz);
+                //destImg->pixels = (unsigned char*) memalign(16, sz);
+                destImg->pixels = (unsigned char*) malloc(sz);
 
 				unsigned int stride = cinfo.output_width * cinfo.output_components;
 				unsigned char* line = (unsigned char*) malloc(stride);
