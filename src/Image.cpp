@@ -408,18 +408,19 @@ namespace xM {
             for (unsigned int r = 0; r < this->segments.size(); ++r) {
 
                 int width = this->segments[r]->width;
-                int height = this->segments[r]->height;
+                int byteWidth = width * 4;
+                int height = this->segments[r]->p2Height;
 
                 unsigned char* swiz = (unsigned char*) malloc(width * height * 4);
 
                 unsigned int blockX, blockY;
                 unsigned int j;
 
-                unsigned int widthBlocks = (width / 16);
+                unsigned int widthBlocks = (byteWidth / 16);
                 unsigned int heightBlocks = (height / 8);
 
-                unsigned int srcPitch = (width - 16) / 4;
-                unsigned int srcRow = width * 8;
+                unsigned int srcPitch = (byteWidth - 16) / 4;
+                unsigned int srcRow = byteWidth * 8;
 
                 const unsigned char* ySrc = this->segments[r]->pixels;
                 unsigned int* dst = (unsigned int*) swiz;
@@ -453,6 +454,7 @@ namespace xM {
                 // Set new swizzled data
                 free(this->segments[r]->pixels);
                 this->segments[r]->pixels = swiz;
+                sceKernelDcacheWritebackRange(this->segments[r]->pixels, width * height * 4);
 
             }
 

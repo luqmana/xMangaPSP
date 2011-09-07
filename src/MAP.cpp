@@ -503,7 +503,7 @@ namespace xM {
                     
                 }
 
-                /* Swizzling not functioning well, so disabled till further notice
+                //* Swizzling not functioning well, so disabled till further notice
                 loadTimer.start();
                 this->mangaImage->img->swizzle();
                 Util::logMsg("swizzle - %f", loadTimer.getDeltaTicks(true));

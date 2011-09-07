@@ -151,11 +151,15 @@ namespace xM {
             if (this->y > 0)
                 this->y = 0;
 
-            if (this->x < (signed)(-this->image->img->width) + 480)
+            if ((this->image->img->width > 480) && this->x < (signed)(-this->image->img->width) + 480)
                 this->x = -this->image->img->width + 480;
+            else if (this->image->img->width <= 480 && this->x < 0)
+                this->x = 0;
 
-            if (this->y < (signed)(-this->image->img->height) + 272)
+            if ((this->image->img->height > 272) && this->y < (signed)(-this->image->img->height) + 272)
                 this->y = -this->image->img->height + 272;
+            else if (this->image->img->height <= 272 && this->y < 0)
+                this->y = 0;
         
         	//Check for any new messages in mailbox
             Manga::APIMessage* rMsg = NULL;

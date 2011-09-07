@@ -87,7 +87,7 @@ COMPILER_DEFINES = -D_MAJOR_VERSION=$(MAJOR_VERSION) -D_MINOR_VERSION=$(MINOR_VE
 INCDIR = $(SRC_DIR) $(INC_DIR) $(EXT_SRC_DIR) $(EXT_INC_DIR) $(PSPDEV)/psp/include/
 
 # Libraries
-LIBS = -lcurl -ljpeg -lzzip -lz -lpspgum -lpspgu -lm -lpsprtc -lpspsdk -lstdc++
+LIBS = -lpspssl -lpsphttp -ljpeg -lzzip -lz -lpspgum -lpspgu -lm -lpsprtc -lpspsdk -lstdc++
 
 # Compiler Flags
 CFLAGS = -Wall $(COMPILER_DEFINES) -falign-functions=64

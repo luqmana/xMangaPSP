@@ -277,7 +277,7 @@ namespace xM {
 	        mangaAPIMbx = sceKernelCreateMbx("MangaAPIBox", 0, NULL);
 	        	    
 	        // Create the thread
-	        mangaAPIThreadID = sceKernelCreateThread("MangaAPIThread", mangaAPIThread, 0x15, 0x20000, PSP_THREAD_ATTR_USER | PSP_THREAD_ATTR_USBWLAN, NULL);
+	        mangaAPIThreadID = sceKernelCreateThread("MangaAPIThread", mangaAPIThread, 0x11, 0x30000, PSP_THREAD_ATTR_USER | PSP_THREAD_ATTR_USBWLAN, NULL);
 
 	        // Store the cwd
 	        getcwd(threadWDir, sizeof(threadWDir));
