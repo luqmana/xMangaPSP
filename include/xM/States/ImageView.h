@@ -84,7 +84,8 @@ namespace xM {
         private:
 
             Ui::XMLParser parser;
-                                    
+
+            bool overlayActive;
             bool doAction;
             int action;
             

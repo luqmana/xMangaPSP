@@ -112,6 +112,10 @@ int main(int argc, char **argv) {
         if (stateManager->getCurrentState() == NULL)
             break;
 
+        // Since resetting via psplink causes crashes sometime, we try a clean shutdown
+        if (__xM_DEBUG && inputManager->pressed(PSP_CTRL_START & PSP_CTRL_LTRIGGER & PSP_CTRL_RTRIGGER))
+            break;
+
         // Begin frame
         Gfx::beginFrame();
         

@@ -62,22 +62,15 @@ namespace xM {
 		    // Load the right modules
 		    sceUtilityLoadNetModule(PSP_NET_MODULE_COMMON);
             sceUtilityLoadNetModule(PSP_NET_MODULE_INET);
-			sceUtilityLoadNetModule(PSP_NET_MODULE_PARSEURI);
+            sceUtilityLoadNetModule(PSP_NET_MODULE_PARSEURI);
 			sceUtilityLoadNetModule(PSP_NET_MODULE_PARSEHTTP);
-            sceUtilityLoadNetModule(PSP_NET_MODULE_HTTP);
-            sceUtilityLoadNetModule(PSP_NET_MODULE_SSL);
+			sceUtilityLoadNetModule(PSP_NET_MODULE_SSL);
 
             // mem, thrd priority, stack, thread priority, stack
             sceNetInit(0x20000, 0x20, 0x1000, 0x20, 0x1000);
             sceNetInetInit();
             sceNetResolverInit();
             sceNetApctlInit(0x1600, 0x42);
-
-            sceSslInit(0x28000);
-            sceHttpInit(0x25800);
-            sceHttpsInit(0, 0, 0, 0);
-            sceHttpsLoadDefaultCert(0, 0);
-            sceHttpLoadSystemCookie();
 		
 		}
 		
@@ -97,21 +90,7 @@ namespace xM {
 		    return state == PSP_NET_APCTL_STATE_GOT_IP;
 		
 		}
-		
-		/**
-         * Write for cUrl response.
-         */
-        /*static int writer(char *data, size_t size, size_t nmemb, std::string* writerData) {
-         
-	        if (writerData == NULL)
-		        return false;
-                                
-	        writerData->append(data, size * nmemb);
-	
-	        return size * nmemb;
-                
-        }*/
-        
+
         /**
          * Download a file using cURL.
          * 
@@ -120,105 +99,21 @@ namespace xM {
          * 
          * @return bool Success
          */ 
-        /*bool downloadFile(const std::string& url, std::string &response) {
-
-	        // Error buffer
-	        char errorBuffer[CURL_ERROR_SIZE];
-	
-	        // cURL Handle
-	        CURL *curl = curl_easy_init();
-	
-	        // cURL Code
-	        CURLcode res;
-	
-	        // HTTP Header list
-	        struct curl_slist *headersList = NULL;
-	
-	        // Make sure we have a valid handle
-	        if (curl != NULL) {
-	
-		        // Setup error buffer
-		        curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, errorBuffer);
-		
-		        // Set Options:
-		
-		        // Allow following 'Location' headers
-		        curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
-		
-		        // Set URL
-		        curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-		
-		        // User Agent
-		        std::stringstream uAgent;
-                uAgent << "User-Agent: xMangaPSP/" << _MAJOR_VERSION << "." << _MINOR_VERSION << " API/" << _API_VERSION;
-                
-                // Add User Agent to headers list
-                headersList = curl_slist_append(headersList, uAgent.str().c_str());
-                
-                // Set Connection to close
-                headersList = curl_slist_append(headersList, "Connection: Close");
-                
-                // Set encoding to ALL
-                curl_easy_setopt(curl, CURLOPT_ENCODING, "");
-                
-                // Set HTTP Headers
-                curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headersList);
-                
-                // Set writer function
-                curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writer);
-                
-                // Set write buffer
-                curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
-
-                // Set timeout to 10 seconds
-                curl_easy_setopt(curl, CURLOPT_TIMEOUT, 10);
-                
-                // Perform request
-                res = curl_easy_perform(curl);
-                
-                // Error
-                if (res != CURLE_OK) {
-                
-                	// Set response to error message
-                	response.assign(errorBuffer);
-                	
-                	// Cleanup
-                	curl_easy_cleanup(curl);
-			        curl_slist_free_all(headersList);
-                
-                	return false;
-                
-                }
-	
-	        } else {
-	
-		        // Unable to create curl connection
-		
-		        // Set response to error message
-                response.assign("Unable to create cURL connection.");
-                	
-                // Cleanup
-                curl_easy_cleanup(curl);
-		        curl_slist_free_all(headersList);
-                
-                return false;
-	
-	        }
-	
-	        // Cleanup
-	        curl_easy_cleanup(curl);
-	        curl_slist_free_all(headersList);
-
-	        return true;
-
-        }*/
-
 		bool downloadFile(const std::string& urlString, std::string &response) {
 
 			const char* url = urlString.c_str();
 			int templateThingy, connection, request, ret, status, dataEnd, bytesWritten;
 			unsigned char readBuffer[8192];
 		
+			// Have to load/unload per download cause otherwise reset via psplink is broken
+			// TODO: add a debug switch so that non-debug version only needs to load/unload once
+            sceUtilityLoadNetModule(PSP_NET_MODULE_HTTP);
+			sceSslInit(0x28000);
+			sceHttpInit(0x25800);            
+            sceHttpsInit(0, 0, 0, 0);
+            sceHttpsLoadDefaultCert(0, 0);
+            sceHttpLoadSystemCookie();
+
 			// User Agent
 			std::stringstream uAgent;
 			uAgent << "User-Agent: xMangaPSP/" << _MAJOR_VERSION << "." << _MINOR_VERSION << " API/" << _API_VERSION;
@@ -283,6 +178,14 @@ namespace xM {
 			sceHttpDeleteConnection(connection);
 			sceHttpDeleteTemplate(templateThingy);
 
+			// Have to load/unload per download cause otherwise reset via psplink is broken
+			// TODO: add a debug switch so that non-debug version only needs to load/unload once
+			sceHttpSaveSystemCookie();
+			sceHttpsEnd();
+			sceHttpEnd();
+			sceSslEnd();
+			sceUtilityUnloadNetModule(PSP_NET_MODULE_HTTP);
+			
 			return true;
 
 		}
@@ -292,21 +195,16 @@ namespace xM {
 		 */
 		void shutdown() {
 		
-			sceHttpSaveSystemCookie();
-			sceHttpsEnd();
-			sceHttpEnd();
-			sceSslEnd();
 		    sceNetApctlTerm();
 		    sceNetResolverTerm();
 		    sceNetInetTerm();
 		    sceNetTerm();
 		
-			sceUtilityUnloadNetModule(PSP_NET_MODULE_SSL);
-			sceUtilityUnloadNetModule(PSP_NET_MODULE_HTTP);
-			sceUtilityUnloadNetModule(PSP_NET_MODULE_PARSEHTTP);
-			sceUtilityUnloadNetModule(PSP_NET_MODULE_PARSEURI);
 		    sceUtilityUnloadNetModule(PSP_NET_MODULE_INET);
 		    sceUtilityUnloadNetModule(PSP_NET_MODULE_COMMON);
+		    sceUtilityUnloadNetModule(PSP_NET_MODULE_PARSEHTTP);
+			sceUtilityUnloadNetModule(PSP_NET_MODULE_PARSEURI);
+			sceUtilityUnloadNetModule(PSP_NET_MODULE_SSL);
 		
 		}
 			

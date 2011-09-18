@@ -58,10 +58,17 @@ namespace xM {
         
         	// init/reset some vars
             this->doAction = false;
+            this->overlayActive = false;
             this->action = 0;
             this->activeDialog = 0;
             this->y = 0;
             this->image = Manga::mapImp->getImage();
+
+
+            //this->parser.addTextSubstitute("mangaCount", Util::toString(this->mangaList.names.size()));
+            
+            // read in the XML and generate the UI
+            this->parser.parseFile("ui/image-overlay.xml");
 
             // Aligns to the right since that's how most manga is read (RTL)
             // @TODO: Make this an option?
@@ -106,6 +113,16 @@ namespace xM {
 
 			// Get pointer to input manager
             Engine::InputManager* iM = Engine::InputManager::getInstance();
+
+#if __xM_DEBUG
+            // DEBUG: Reload XML on-the-fly            
+            if (iM->pressed(PSP_CTRL_START)) {
+            
+                Util::logMsg("Reloading XML ui file.");
+                this->parser.parseFile("ui/image-overlay.xml");    
+            
+            }
+#endif
             
             if (this->activeDialog == 0) {
 
@@ -131,6 +148,10 @@ namespace xM {
                     this->action = 2; // 2 = Prev image
 
                 }
+
+                // (De)Activate overlay
+                if (iM->pressed(PSP_CTRL_TRIANGLE))
+                    this->overlayActive = !this->overlayActive;
                     
                 // Leave state
                 if (iM->pressed(PSP_CTRL_CIRCLE))
@@ -390,8 +411,11 @@ namespace xM {
          */
         void ImageView::draw(void) {
                  
-            //if (this->activeDialog == 0)
-                this->image->img->draw(this->x, this->y);     
+            this->image->img->draw(this->x, this->y);
+            
+            // Draw image info overlay
+            if (this->overlayActive)
+                this->parser.draw();
             
             if (this->activeDialog == 1 || this->activeDialog == 5)
                 Gfx::drawLoadingOverlay("Loading next image...");

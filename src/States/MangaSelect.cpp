@@ -77,6 +77,7 @@ namespace xM {
 
                     if (c == 64 && this->nList.size() == 1) {
                         
+                        // Non-alphabetic characters
                         if (k < 65 || (k > 90 && k < 97) || k > 122)
                             this->nList.push_back("#");
 
@@ -235,6 +236,7 @@ namespace xM {
                         
                         if (l == '#') {
 
+                            // Non-alphabetic characters
                             if (k < 65 || (k > 90 && k < 97) || k > 122)
                                 this->vMangaList.push_back(this->mangaList.names[i]);
 

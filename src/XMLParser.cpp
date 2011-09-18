@@ -834,7 +834,7 @@ namespace xM {
      	 */
         void XMLParser::addTextSubstitute(const std::string& key, const std::string& replace) {
         
-        	this->textSubstitutes.insert(std::pair<std::string, std::string>(key, replace));
+        	this->textSubstitutes[key] = replace;
         
         }
 
