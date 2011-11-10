@@ -119,20 +119,19 @@ int main(int argc, char **argv) {
         // Begin frame
         Gfx::beginFrame();
         
-        // Read input and handle events unless dialog active
-		// The built-in dialog system handles its own input/events
+		// The built-in dialog system handles its own input/events/logic
         if (!Ui::Dialog::isDialogActive()) {
         
+        	// Read input and handle events
             inputManager->readInput();
             stateManager->handleEvents();
             
-        }
-        
-        // Handle logic and update unless dialog active    
-        if (!Ui::Dialog::isDialogActive())
+            // Do the magic logic
             stateManager->handleLogic();
-                    
-        // Draw
+            
+        }
+             
+        // Draw ALL the things!
         stateManager->draw();
                 
         // Toggle stats
@@ -150,13 +149,16 @@ int main(int argc, char **argv) {
         // Draw any active dialogs
         if (Ui::Dialog::isDialogActive())            
             Ui::Dialog::renderDialogs();
+		else {
 
-        // Show some stats
-        if (showFPSMEM) {
-            
-            Util::MEM();
-            Util::FPS();
-            
+		    // Show some stats
+		    if (showFPSMEM) {
+		        
+		        Util::MEM();
+		        Util::FPS();
+		        
+		    }
+        
         }
         
         // V-Sync and swap buffers

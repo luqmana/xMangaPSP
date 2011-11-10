@@ -157,8 +157,8 @@ $(BUILD_DIR)/LodePNG:
 	mkdir $(BUILD_DIR)/LodePNG
 
 # Rule to build image class with optimization
-#$(BUILD_DIR)/Image.o: $(SRC_DIR)/Image.cpp
-#	$(CXX) $(CXXFLAGS) -O3 -G4 -ffast-math -c -o $@ $<
+$(BUILD_DIR)/Image.o: $(SRC_DIR)/Image.cpp
+	$(CXX) $(CXXFLAGS) -O3 -G4 -ffast-math -c -o $@ $<
 
 # Rule to build xml parser class with optimization as well an extra definition
 $(BUILD_DIR)/XMLParser.o: $(SRC_DIR)/XMLParser.cpp
