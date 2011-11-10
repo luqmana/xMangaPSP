@@ -89,6 +89,13 @@ namespace xM {
                  * @param PspCtrlButton Which button to check
                  */
                 bool pressed(unsigned int button);
+                
+                /**
+                 * Returns a copy of the current pad data.
+                 * 
+                 * @return SceCtrlData
+                 */
+                SceCtrlData getCtrlData();
 		        		        		
 		};
 			

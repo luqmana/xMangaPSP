@@ -126,7 +126,7 @@ namespace xM {
             
             if (this->activeDialog == 0) {
 
-                // Handle moving
+                // Handle moving with the d-pad
                 if (iM->pressed(PSP_CTRL_DOWN))
                     this->y -= 30;
                 if (iM->pressed(PSP_CTRL_UP))
@@ -135,6 +135,17 @@ namespace xM {
                     this->x += 30;
                 if (iM->pressed(PSP_CTRL_RIGHT))
                     this->x -= 30;
+                    
+                // Handle moving with the analog stick
+                SceCtrlData pad = iM->getCtrlData();
+                int cx = -(pad.Lx - 128);
+                int cy = -(pad.Ly - 128);
+                // ignore the little fluctuations
+                cx = (cx > -10 && cx < 10) ? 0 : cx;
+                cy = (cy > -10 && cy < 10) ? 0 : cy;
+                this->x += cx/25.6 * 3;
+                this->y += cy/25.6 * 3;
+                
 
                 // Navigating to next/prev image
                 if (iM->pressed(PSP_CTRL_RTRIGGER)) {

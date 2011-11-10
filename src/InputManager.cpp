@@ -134,6 +134,17 @@ namespace xM {
             return (this->buttons != 0) && (this->buttons & button);
         
         }
+        
+        /**
+         * Returns a copy of the current pad data.
+         * 
+         * @return SceCtrlData
+         */
+        SceCtrlData InputManager::getCtrlData() {
+        
+        	return this->pad;
+        
+        }
 
     }
 
