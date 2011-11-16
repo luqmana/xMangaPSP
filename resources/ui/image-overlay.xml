@@ -2,7 +2,7 @@
             
     <!-- Background -->
     <quad x="20" y="20" width="440" height="232" colour="73,73,73,250" />
-    
+
 	<text x="25" y="245" font="fonts/arib.pgf" align="left" size="1.0" colour="white" value="" />
 	<text x="45" y="241" font="{LATIN_SERIF_REGULAR_SMALL}" align="left" size="1.0" colour="white" value="- Select" />
                 

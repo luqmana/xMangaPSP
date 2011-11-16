@@ -95,12 +95,16 @@ namespace xM {
          */
         inline int nextPow2(int j) {
 
-            int k = 1;
+            uint32_t n = j > 0 ? j - 1 : 0;
 
-            while (k < j)
-                k <<= 1;
+            n |= n >> 1;
+            n |= n >> 2;
+            n |= n >> 4;
+            n |= n >> 8;
+            n |= n >> 16;
+            n++;
 
-            return k;
+            return n;
 
         }
         
@@ -113,12 +117,16 @@ namespace xM {
          */
         inline unsigned int nextPow2(unsigned int j) {
 
-            unsigned int k = 1;
+            uint32_t n = j > 0 ? j - 1 : 0;
 
-            while (k < j)
-                k <<= 1;
+            n |= n >> 1;
+            n |= n >> 2;
+            n |= n >> 4;
+            n |= n >> 8;
+            n |= n >> 16;
+            n++;
 
-            return k;
+            return n;
 
         }
 

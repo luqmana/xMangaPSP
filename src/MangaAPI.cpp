@@ -288,7 +288,7 @@ namespace xM {
 	            
 	        //mapImp = new MAP("http://omp.leonex.co.cc/api/");
 	        //mapImp = new MAP("http://omp.leonex.co.cc/api/prv:MangaStream/");
-	        mapImp = new MAP("http://192.168.1.100/~xmp/api/");
+	        mapImp = new MAP("http://192.168.1.101/~xmp/api/");
 	    
 	    }
 	    

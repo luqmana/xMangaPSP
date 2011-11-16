@@ -141,8 +141,8 @@ namespace xM {
                 int cx = -(pad.Lx - 128);
                 int cy = -(pad.Ly - 128);
                 // ignore the little fluctuations
-                cx = (cx > -10 && cx < 10) ? 0 : cx;
-                cy = (cy > -10 && cy < 10) ? 0 : cy;
+                cx = (cx > -20 && cx < 20) ? 0 : cx;
+                cy = (cy > -20 && cy < 20) ? 0 : cy;
                 this->x += cx/25.6 * 3;
                 this->y += cy/25.6 * 3;
                 
