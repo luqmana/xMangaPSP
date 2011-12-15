@@ -123,29 +123,28 @@ namespace xM {
             
             }
 #endif
-            
-            if (this->activeDialog == 0) {
 
-                // Handle moving with the d-pad
-                if (iM->pressed(PSP_CTRL_DOWN))
-                    this->y -= 30;
-                if (iM->pressed(PSP_CTRL_UP))
-                    this->y += 30;
-                if (iM->pressed(PSP_CTRL_LEFT))
-                    this->x += 30;
-                if (iM->pressed(PSP_CTRL_RIGHT))
-                    this->x -= 30;
-                    
-                // Handle moving with the analog stick
-                SceCtrlData pad = iM->getCtrlData();
-                int cx = -(pad.Lx - 128);
-                int cy = -(pad.Ly - 128);
-                // ignore the little fluctuations
-                cx = (cx > -20 && cx < 20) ? 0 : cx;
-                cy = (cy > -20 && cy < 20) ? 0 : cy;
-                this->x += cx/25.6 * 3;
-                this->y += cy/25.6 * 3;
+            // Handle moving with the d-pad
+            if (iM->pressed(PSP_CTRL_DOWN))
+                this->y -= 30;
+            if (iM->pressed(PSP_CTRL_UP))
+                this->y += 30;
+            if (iM->pressed(PSP_CTRL_LEFT))
+                this->x += 30;
+            if (iM->pressed(PSP_CTRL_RIGHT))
+                this->x -= 30;
                 
+            // Handle moving with the analog stick
+            SceCtrlData pad = iM->getCtrlData();
+            int cx = -(pad.Lx - 128);
+            int cy = -(pad.Ly - 128);
+            // ignore the little fluctuations
+            cx = (cx > -25 && cx < 25) ? 0 : cx;
+            cy = (cy > -25 && cy < 25) ? 0 : cy;
+            this->x += cx/25.6 * 3;
+            this->y += cy/25.6 * 3;
+
+			if (this->activeDialog == 0) {                
 
                 // Navigating to next/prev image
                 if (iM->pressed(PSP_CTRL_RTRIGGER)) {
