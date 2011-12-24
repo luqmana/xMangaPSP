@@ -68,6 +68,26 @@ namespace xM {
             return this->swizzled;
 
         }
+        
+        /**
+         * Whether rendered image is scaled or not.
+         * 
+         * @return bool Scale status.
+         */
+        bool Image::isScaled() {
+        
+        	return this->scaled;
+        
+        }
+        
+        /**
+         * Toggle scale status.
+         */
+        void Image::toggleScale() {
+        
+        	this->scaled = !this->scaled;
+        
+        }
 
         /**
          * Load an image from memory.
@@ -87,19 +107,24 @@ namespace xM {
                              
             mainSegment->p2Width = Util::nextPow2(mainSegment->width);
             mainSegment->p2Height = Util::nextPow2(mainSegment->height);
+            
+        	mainSegment->sWidth = 480;
+            mainSegment->sHeight = ceil(((float)mainSegment->height / mainSegment->width) * mainSegment->sWidth);
 
             this->width = mainSegment->width;
             this->height = mainSegment->height;
+            this->sWidth = mainSegment->sWidth;
+            this->sHeight = mainSegment->sHeight;
             this->p2Width = mainSegment->p2Width;
             this->p2Height = mainSegment->p2Height;
-
+            
             loadTimer.start();
             if (mainSegment->width < 512 && mainSegment->height < 512) {
 
                 // No need to create more segments but just pretend there is only one segment
 
-                mainSegment->x = 0;
-                mainSegment->y = 0;
+                mainSegment->x = mainSegment->sX = 0;
+                mainSegment->y = mainSegment->sY = 0;
 
                 this->segments.push_back(mainSegment);
 
@@ -114,7 +139,9 @@ namespace xM {
                 // First we figure out roughly how many segments of 512x512 we need
                 int wFit = ceil((float) mainSegment->width / 512);
                 int hFit = ceil((float) mainSegment->height / 512);
-
+                
+                printf("Segments: \t\t%d\n", hFit * wFit);
+                                
                 int i = 0;
 
                 do {
@@ -122,7 +149,7 @@ namespace xM {
                     int k = 0;
 
                     do {
-
+                    
                         ImageSegment* segment = new ImageSegment;
 
                         // Handle case for final segment which might not be 512px
@@ -131,22 +158,26 @@ namespace xM {
                         else
                             segment->width = 512;
 
+						segment->sWidth = ceil(((float)segment->width / mainSegment->width) * mainSegment->sWidth);
                         segment->p2Width = Util::nextPow2(segment->width);
-
+                        
                         // Handle case for final segment which might not be 512px
                         if (i == (hFit - 1))
                             segment->height = mainSegment->height - (512 * (hFit - 1));
                         else
                             segment->height = 512;
 
+						segment->sHeight = ceil(((float)segment->height / mainSegment->height) * mainSegment->sHeight);
                         segment->p2Height = Util::nextPow2(segment->height);
 
                         // Calculate coordinate of segment in terms of the whole image
                         segment->x = 512 * k;
                         segment->y = 512 * i;
-
+                        
+                        segment->sX = ceil(((float)segment->x / segment->width) * segment->sWidth);
+                        segment->sY = ceil(((float)segment->y / segment->height) * segment->sHeight);
+                        
                         // Reserve enough size                        
-                        //segment->pixels = (unsigned char*) memalign(16, segment->width * segment->height * 4);
                         segment->pixels = (unsigned char*) malloc(segment->width * segment->height * 4);
 
                         for (unsigned int line = 0; line < (segment->height); ++line)
@@ -387,11 +418,12 @@ namespace xM {
 
             }
 
-            this->width = 0;
-            this->height = 0;
+            this->width = this->sWidth = 0;
+            this->height = this->sHeight = 0;
             this->p2Width = 0;
             this->p2Height = 0;
             this->swizzled = false;
+            this->scaled = false;
             
         }
 
@@ -494,7 +526,7 @@ namespace xM {
                 
                 w = this->segments[seg]->width;
                 h = this->segments[seg]->height;
-
+                
                 offsetX = 0;
                 offsetY = 0;
 
@@ -545,12 +577,19 @@ namespace xM {
             sceGuTexMode(GU_PSM_8888, 0, 0, this->isSwizzled());
             sceGuTexFunc(GU_TFX_REPLACE, GU_TCC_RGBA);
             sceGuTexFilter(GU_LINEAR, GU_LINEAR);
-            sceGuTexScale(1.0f, 1.0f);
             sceGuTexOffset(0.0f, 0.0f);
+            
+            if (!this->scaled)
+            	sceGuTexScale(1.0f, 1.0f);
+            else
+            	sceGuTexScale((float)this->width / this->sWidth, (float)this->height / this->sHeight);
 
             for (unsigned int k = 0; k < this->segments.size(); ++k) {
                 
-                this->render(x + this->segments[k]->x, y + this->segments[k]->y, clip, k);
+                if (!this->scaled)
+                	this->render(x + this->segments[k]->x, y + this->segments[k]->y, clip, k);
+                else
+                	this->render(x + this->segments[k]->sX, y + this->segments[k]->sY, clip, k);
 
             }
 

@@ -63,20 +63,31 @@ namespace xM {
             this->activeDialog = 0;
             this->y = 0;
             this->image = Manga::mapImp->getImage();
-
-
-            //this->parser.addTextSubstitute("mangaCount", Util::toString(this->mangaList.names.size()));
             
             // read in the XML and generate the UI
             this->parser.parseFile("ui/image-overlay.xml");
 
-            // Aligns to the right since that's how most manga is read (RTL)
-            // @TODO: Make this an option?
-            if (this->image->img->width > 480)
-                this->x = -this->image->img->width + 480;
-            else
-                this->x = 0;
-                                                
+			// Scale by default [if height > 480]
+			// @TODO: Option
+            if (!this->image->img->isScaled() && this->image->img->width > 480)
+            	this->image->img->toggleScale();
+            	
+            this->scaled = this->image->img->isScaled();
+            
+            if (!this->scaled) {
+                	
+        		// Reset vars
+                this->y = 0;
+                // Aligns to the right since that's how most manga is read (RTL)
+                // @TODO: Make this an option?
+                if (this->image->img->width > 480)
+                    this->x = -this->image->img->width + 480;
+                else
+                    this->x = 0;
+        	
+        	} else
+        		this->x = this->y = 0;
+                                                            
             // Create our local mailbox
             this->localBox = sceKernelCreateMbx("ImageViewStateBox", 0, NULL);
             
@@ -129,10 +140,15 @@ namespace xM {
                 this->y -= 30;
             if (iM->pressed(PSP_CTRL_UP))
                 this->y += 30;
-            if (iM->pressed(PSP_CTRL_LEFT))
-                this->x += 30;
-            if (iM->pressed(PSP_CTRL_RIGHT))
-                this->x -= 30;
+                
+            if (!this->scaled) {
+            
+		        if (iM->pressed(PSP_CTRL_LEFT))
+		            this->x += 30;
+		        if (iM->pressed(PSP_CTRL_RIGHT))
+		            this->x -= 30;
+                
+			}
                 
             // Handle moving with the analog stick
             SceCtrlData pad = iM->getCtrlData();
@@ -141,8 +157,8 @@ namespace xM {
             // ignore the little fluctuations
             cx = (cx > -25 && cx < 25) ? 0 : cx;
             cy = (cy > -25 && cy < 25) ? 0 : cy;
-            this->x += cx/25.6 * 3;
             this->y += cy/25.6 * 3;
+            if (!this->scaled) this->x += cx/25.6 * 3;
 
 			if (this->activeDialog == 0) {                
 
@@ -163,6 +179,28 @@ namespace xM {
                 if (iM->pressed(PSP_CTRL_TRIANGLE))
                     this->overlayActive = !this->overlayActive;
                     
+                // Toggle scaling
+                if (iM->pressed(PSP_CTRL_CROSS) && this->image->img->width > 480) {
+                
+                	this->image->img->toggleScale();
+                	this->scaled = this->image->img->isScaled();
+                	                	
+                	if (!this->scaled) {
+                	
+                		// Reset vars
+                        this->y = 0;
+                        // Aligns to the right since that's how most manga is read (RTL)
+                        // @TODO: Make this an option?
+                        if (this->image->img->width > 480)
+                            this->x = -this->image->img->width + 480;
+                        else
+                            this->x = 0;
+                	
+                	} else
+                		this->x = this->y = 0;
+                
+                }
+                    
                 // Leave state
                 if (iM->pressed(PSP_CTRL_CIRCLE))
                 	Engine::StateManager::getInstance()->popState();
@@ -176,21 +214,32 @@ namespace xM {
          */
         void ImageView::handleLogic(void) {
 
-            if (this->x > 0)
-                this->x = 0;
-
             if (this->y > 0)
                 this->y = 0;
 
-            if ((this->image->img->width > 480) && this->x < (signed)(-this->image->img->width) + 480)
-                this->x = -this->image->img->width + 480;
-            else if (this->image->img->width <= 480 && this->x < 0)
-                this->x = 0;
+			if (this->scaled) {
+			
+				if ((this->image->img->sHeight > 272) && this->y < (signed)(-this->image->img->sHeight) + 272)
+		            this->y = -this->image->img->sHeight + 272;
+		        else if (this->image->img->sHeight <= 272 && this->y < 0)
+		            this->y = 0;
+			
+			} else {
+			
+				if (this->x > 0)
+                	this->x = 0;
 
-            if ((this->image->img->height > 272) && this->y < (signed)(-this->image->img->height) + 272)
-                this->y = -this->image->img->height + 272;
-            else if (this->image->img->height <= 272 && this->y < 0)
-                this->y = 0;
+		        if ((this->image->img->width > 480) && this->x < (signed)(-this->image->img->width) + 480)
+		            this->x = -this->image->img->width + 480;
+		        else if (this->image->img->width <= 480 && this->x < 0)
+		            this->x = 0;
+
+		        if ((this->image->img->height > 272) && this->y < (signed)(-this->image->img->height) + 272)
+		            this->y = -this->image->img->height + 272;
+		        else if (this->image->img->height <= 272 && this->y < 0)
+		            this->y = 0;
+                
+			}
         
         	//Check for any new messages in mailbox
             Manga::APIMessage* rMsg = NULL;
@@ -305,15 +354,25 @@ namespace xM {
                             
                         // Loaded successfully, switch to new image
                         if (rMsg->type == Manga::RequestImage && rMsg->result == true) {
-                              
-                            // Reset vars
-                            this->y = 0;
-                            // Aligns to the right since that's how most manga is read (RTL)
-                            // @TODO: Make this an option?
-                            if (this->image->img->width > 480)
-                                this->x = -this->image->img->width + 480;
-                            else
-                                this->x = 0;
+                        
+                        	if (this->scaled && this->image->img->width > 480)
+                        		this->image->img->toggleScale();
+                        		
+                        	this->scaled = this->image->img->isScaled();
+                        	  
+                            if (!this->scaled) {
+                	
+				        		// Reset vars
+				                this->y = 0;
+				                // Aligns to the right since that's how most manga is read (RTL)
+				                // @TODO: Make this an option?
+				                if (this->image->img->width > 480)
+				                    this->x = -this->image->img->width + 480;
+				                else
+				                    this->x = 0;
+				        	
+				        	} else
+				        		this->x = this->y = 0;
 
                             this->activeDialog = 0;
 

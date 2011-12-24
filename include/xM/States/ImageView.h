@@ -95,6 +95,7 @@ namespace xM {
             SceUID localBox;
 
             Manga::MangaImage* image;
+            bool scaled;
 
             int x, y;
 

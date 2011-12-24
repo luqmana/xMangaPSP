@@ -74,9 +74,9 @@ EXT_LIB_OBJS += $(patsubst %.c, $(BUILD_DIR)/%.o, $(filter %.c, $(EXT_SRC_C)))
 # Defines
 MAJOR_VERSION = 0
 MINOR_VERSION = 1
-EXTRA_VERSION = a2
+EXTRA_VERSION = a4
 VERSION_STRING= v$(MAJOR_VERSION).$(MINOR_VERSION) $(EXTRA_VERSION)
-API_VERSION   = 5
+API_VERSION   = 6
 
 # Debug mode
 DEBUG = 1
@@ -90,15 +90,15 @@ INCDIR = $(SRC_DIR) $(INC_DIR) $(EXT_SRC_DIR) $(EXT_INC_DIR) $(PSPDEV)/psp/inclu
 LIBS = -lpspssl -lpsphttp -ljpeg -lzzip -lz -lpspgum -lpspgu -lm -lpsprtc -lpspsdk -lstdc++
 
 # Compiler Flags
-CFLAGS = -Wall $(COMPILER_DEFINES) -falign-functions=64
+CFLAGS = -Wall $(COMPILER_DEFINES) -falign-functions=64 -G4
 CXXFLAGS = $(CFLAGS) -fno-rtti -fno-exceptions
 ASFLAGS =
 
 # Enable the debug options
 ifeq ($(DEBUG), 1)
-CFLAGS += -g -G4
+CFLAGS += -g
 else
-CFLAGS += -O3 -G4 -ffast-math
+CFLAGS += -O3 -ffast-math
 endif
 
 # Linker Flags
@@ -109,13 +109,13 @@ PSP_FW_VERSION = 600
 
 # Extra Memory on SLIM and Lite
 # This option combined with the SIGN option below doesn't seem to work
-#PSP_LARGE_MEMORY = 1
+PSP_LARGE_MEMORY = 1
 
 # Build as prx
 BUILD_PRX = 1
  
 # [Fake] Sign
-SIGN = 1
+SIGN = 0
  
 # User Libraries
 USE_USER_LIBS = 1
@@ -152,13 +152,13 @@ $(BUILD_DIR)/%.o: $(SRC_DIR)/States/%.cpp
 	
 # Rule to build bundled LodePNG with optimization
 $(BUILD_DIR)/LodePNG/LodePNG.o: $(EXT_SRC_DIR)/LodePNG/LodePNG.c | $(BUILD_DIR)/LodePNG
-	$(CXX) $(CXXFLAGS) -I$(EXT_INC_DIR)/LodePNG/ -O3 -G4 -ffast-math -c -o $@ $<
+	$(CXX) $(CXXFLAGS) -I$(EXT_INC_DIR)/LodePNG/ -O3 -ffast-math -c -o $@ $<
 $(BUILD_DIR)/LodePNG:
 	mkdir $(BUILD_DIR)/LodePNG
 
 # Rule to build image class with optimization
 $(BUILD_DIR)/Image.o: $(SRC_DIR)/Image.cpp
-	$(CXX) $(CXXFLAGS) -O3 -G4 -ffast-math -c -o $@ $<
+	$(CXX) $(CXXFLAGS) -O3 -ffast-math -c -o $@ $<
 
 # Rule to build xml parser class with optimization as well an extra definition
 $(BUILD_DIR)/XMLParser.o: $(SRC_DIR)/XMLParser.cpp

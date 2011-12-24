@@ -65,12 +65,23 @@ namespace xM {
             sceUtilityLoadNetModule(PSP_NET_MODULE_PARSEURI);
 			sceUtilityLoadNetModule(PSP_NET_MODULE_PARSEHTTP);
 			sceUtilityLoadNetModule(PSP_NET_MODULE_SSL);
+#if !(__xM_DEBUG)
+			sceUtilityLoadNetModule(PSP_NET_MODULE_HTTP);
+#endif
 
             // mem, thrd priority, stack, thread priority, stack
             sceNetInit(0x20000, 0x20, 0x1000, 0x20, 0x1000);
             sceNetInetInit();
             sceNetResolverInit();
             sceNetApctlInit(0x1600, 0x42);
+            
+#if !(__xM_DEBUG)
+			sceSslInit(0x28000);
+			sceHttpInit(0x25800);            
+            sceHttpsInit(0, 0, 0, 0);
+            sceHttpsLoadDefaultCert(0, 0);
+            sceHttpLoadSystemCookie();
+#endif
 		
 		}
 		
@@ -104,15 +115,16 @@ namespace xM {
 			const char* url = urlString.c_str();
 			int templateThingy, connection, request, ret, status, dataEnd, bytesWritten;
 			unsigned char readBuffer[8192];
-		
+
+#if __xM_DEBUG		
 			// Have to load/unload per download cause otherwise reset via psplink is broken
-			// TODO: add a debug switch so that non-debug version only needs to load/unload once
             sceUtilityLoadNetModule(PSP_NET_MODULE_HTTP);
 			sceSslInit(0x28000);
 			sceHttpInit(0x25800);            
             sceHttpsInit(0, 0, 0, 0);
             sceHttpsLoadDefaultCert(0, 0);
             sceHttpLoadSystemCookie();
+#endif
 
 			// User Agent
 			std::stringstream uAgent;
@@ -178,13 +190,14 @@ namespace xM {
 			sceHttpDeleteConnection(connection);
 			sceHttpDeleteTemplate(templateThingy);
 
+#if __xM_DEBUG
 			// Have to load/unload per download cause otherwise reset via psplink is broken
-			// TODO: add a debug switch so that non-debug version only needs to load/unload once
 			sceHttpSaveSystemCookie();
 			sceHttpsEnd();
 			sceHttpEnd();
 			sceSslEnd();
 			sceUtilityUnloadNetModule(PSP_NET_MODULE_HTTP);
+#endif
 			
 			return true;
 
@@ -195,11 +208,22 @@ namespace xM {
 		 */
 		void shutdown() {
 		
+#if !(__xM_DEBUG)
+			// Have to load/unload per download cause otherwise reset via psplink is broken
+			sceHttpSaveSystemCookie();
+			sceHttpsEnd();
+			sceHttpEnd();
+			sceSslEnd();
+#endif
+		
 		    sceNetApctlTerm();
 		    sceNetResolverTerm();
 		    sceNetInetTerm();
 		    sceNetTerm();
 		
+#if !(__xM_DEBUG)
+			sceUtilityUnloadNetModule(PSP_NET_MODULE_HTTP);
+#endif
 		    sceUtilityUnloadNetModule(PSP_NET_MODULE_INET);
 		    sceUtilityUnloadNetModule(PSP_NET_MODULE_COMMON);
 		    sceUtilityUnloadNetModule(PSP_NET_MODULE_PARSEHTTP);

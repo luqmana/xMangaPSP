@@ -45,21 +45,21 @@ namespace xM {
         typedef struct {
             float x, y;
             unsigned int width, height;
-
         } ImageClip;
 
         typedef struct {
             int x, y;
+            int sX, sY;
             unsigned int width, height;
+            unsigned int sWidth, sHeight;
             unsigned int p2Width, p2Height;
             unsigned char* pixels;
-
         } ImageSegment;
 
         class Image {
         private:
             std::vector<ImageSegment*> segments;
-            bool swizzled;
+            bool swizzled, scaled;
             
             /**
              * Determine if this is a PNG image.
@@ -93,6 +93,7 @@ namespace xM {
         public:
         
             unsigned int width, height;
+            unsigned int sWidth, sHeight;
             unsigned int p2Width, p2Height;
 
             /**
@@ -115,6 +116,18 @@ namespace xM {
              * @return bool Swizzle status.
              */
             bool isSwizzled();
+            
+            /**
+             * Whether rendered image is scaled or not.
+             * 
+             * @return bool Scale status.
+             */
+            bool isScaled();
+            
+            /**
+             * Toggle scale status.
+             */
+            void toggleScale();
 
             /**
              * Load an image from a file.

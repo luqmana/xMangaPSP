@@ -139,7 +139,18 @@ namespace xM {
                     
                     return false;
                 
-                }                
+                }
+                
+                cJSON* err = cJSON_GetObjectItem(root, "Error");
+                if (err != 0) {
+                
+                    this->error = "API Error: ";
+                    this->error.append(cJSON_GetObjectItem(err, "msg")->valuestring);
+                    Util::logMsg("%s", this->error.c_str());
+                    
+                    return false;
+                
+                }
                 
                 cJSON* mangas = cJSON_GetObjectItem(root, "Manga");
                 if (!mangas) {
