@@ -147,6 +147,8 @@ namespace xM {
                     this->error = "API Error: ";
                     this->error.append(cJSON_GetObjectItem(err, "msg")->valuestring);
                     Util::logMsg("%s", this->error.c_str());
+
+					cJSON_Delete(root);
                     
                     return false;
                 
@@ -157,6 +159,8 @@ namespace xM {
                     
                     this->error = "JSON Error: Improperly structured response.";
                     Util::logMsg("%s", this->error.c_str());
+
+					cJSON_Delete(root);
 
                     return false;
 
@@ -257,6 +261,8 @@ namespace xM {
                     this->error.append(cJSON_GetObjectItem(err, "msg")->valuestring);
                     this->error.append(" [" + mangaSlug + "]");
                     Util::logMsg("%s", this->error.c_str());
+
+					cJSON_Delete(root);
                     
                     return false;
                 
@@ -268,6 +274,8 @@ namespace xM {
                     this->error = "JSON Error: Improperly structured response.";
                     this->error.append(" [" + mangaSlug + "]");
                     Util::logMsg("%s", this->error.c_str());
+
+					cJSON_Delete(root);
 
                     return false;
 
@@ -368,6 +376,8 @@ namespace xM {
                     this->error.append(cJSON_GetObjectItem(err, "msg")->valuestring);
                     this->error.append(" [" + mangaSlug + ":" + chapterSlug + "]");
                     Util::logMsg("%s", this->error.c_str());
+
+					cJSON_Delete(root);
                     
                     return false;
                 
@@ -379,6 +389,8 @@ namespace xM {
                     this->error = "JSON Error: Improperly structured response.";
                     this->error.append(" [" + mangaSlug + ":" + chapterSlug + "]");
                     Util::logMsg("%s", this->error.c_str());
+
+					cJSON_Delete(root);
 
                     return false;
 
@@ -471,6 +483,8 @@ namespace xM {
                         this->error.append(" [" + mangaSlug + ":" + chapterSlug + ":" + imageSlug + "]");
                         Util::logMsg("%s", this->error.c_str());
                         
+						cJSON_Delete(root);
+
                         return false;
                     
                     }
@@ -514,11 +528,9 @@ namespace xM {
                     
                 }
 
-                //* Swizzling not functioning well, so disabled till further notice
                 loadTimer.start();
                 this->mangaImage->img->swizzle();
                 Util::logMsg("swizzle - %f", loadTimer.getDeltaTicks(true));
-                //*/
 
                 return true;
 
