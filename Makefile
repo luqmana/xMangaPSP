@@ -71,6 +71,9 @@ OBJS += $(patsubst %.c, $(BUILD_DIR)/%.o, $(filter %.c, $(SRC_C)))
 EXT_LIB_OBJS += $(patsubst %.cpp, $(BUILD_DIR)/%.o, $(filter %.cpp, $(EXT_SRC_CPP)))
 EXT_LIB_OBJS += $(patsubst %.c, $(BUILD_DIR)/%.o, $(filter %.c, $(EXT_SRC_C)))
 
+# Add the external libs
+OBJS += $(EXT_LIB_OBJS)
+
 # Defines
 MAJOR_VERSION = 0
 MINOR_VERSION = 1
@@ -175,15 +178,6 @@ $(BUILD_DIR)/intraFontG/%.o: $(EXT_SRC_DIR)/intraFontG/%.c | $(BUILD_DIR)/intraF
 	$(CC) $(CFLAGS) -O3 -ffast-math -c -o $@ $<
 $(BUILD_DIR)/intraFontG:
 	mkdir $(BUILD_DIR)/intraFontG
-
-# Override the one in the base makefile
-# since we want to include the external libraries we use
-$(TARGET).elf: $(OBJS) $(EXT_LIB_OBJS) $(EXPORT_OBJ)
-	$(LINK.c) $^ $(LIBS) -o $@
-	$(FIXUP) $@
-
-cleanext: 
-	-rm -f $(EXT_LIB_OBJS)
 
 psar:
 	-cd $(RES_DIR); rm ../$(PSAR_PAK); zip ../$(PSAR_PAK) $(RESOURCES)
