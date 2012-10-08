@@ -20,20 +20,20 @@
  */
 
 /**
- * Chapter selection state class.
+ * Image selection state class.
  * 
  * @package xMangaPSP
  */
 
-#ifndef _ChapterSelectState_CPP
-#define _ChapterSelectState_CPP
+#ifndef _ImageSelectState_CPP
+#define _ImageSelectState_CPP
 
 // BEGIN Includes
 #include "xM/Engine/InputManager.h"
 #include "xM/Engine/StateManager.h"
+#include "xM/States/ImageView.h"
 #include "xM/States/ImageSelect.h"
-#include "xM/States/ChapterSelect.h"
-#include "xM/States/MangaSelect.h"
+#include "xM/States/ImageSelect.h"
 #include "xM/Manga/MangaElements.h"
 #include "xM/Ui/Dialogs.h"
 #include "xM/Util/Log.h"
@@ -47,10 +47,10 @@ namespace xM {
         /**
          * Start up code.
          */
-        void ChapterSelect::init(void) {
+        void ImageSelect::init(void) {
         
-        	// Make sure the chapter list has actually been loaded
-        	if (Manga::mapImp->getChapterList() == NULL) {
+        	// Make sure the image list has actually been loaded
+        	if (Manga::mapImp->getImageList() == NULL) {
         	
         		Engine::StateManager::getInstance()->popState();
         		return;
@@ -61,24 +61,24 @@ namespace xM {
             this->doAction = false;
             this->activeDialog = 0;
             this->selected = 0;
-            this->chapterList = *Manga::mapImp->getChapterList();      
+            this->imageList = *Manga::mapImp->getImageList();      
                         
 			// setup the list element
             this->lInfo.selected = &this->selected;
-            this->lInfo.list = &this->chapterList.names;
+            this->lInfo.list = &this->imageList.images;
 
 			// Register the XML UI parsers
             this->parser.registerCustomElementHandler("list", &this->extraElements, (void*)&this->lInfo);
             this->parser.registerCustomElementHandler("bouncyBox", &this->extraElements);
             
             // The replace thingies
-            this->parser.addTextSubstitute("chapterCount", Util::toString(this->chapterList.names.size()));
+            this->parser.addTextSubstitute("imageCount", Util::toString(this->imageList.images.size()));
             
             // read in the XML and generate the UI
-            this->parser.parseFile("ui/chapter.xml");
+            this->parser.parseFile("ui/images.xml");
                         
             // Create our local mailbox
-            this->localBox = sceKernelCreateMbx("ChapterSelectStateBox", 0, NULL);
+            this->localBox = sceKernelCreateMbx("ImageSelectStateBox", 0, NULL);
             
             // Setup the defaults for the message struct
             SceKernelMsgPacket hdr = {0};
@@ -90,7 +90,7 @@ namespace xM {
         /**
          * Clean up code.
          */
-        void ChapterSelect::cleanUp(void) {
+        void ImageSelect::cleanUp(void) {
 
 			sceKernelDeleteMbx(this->localBox);
 
@@ -102,17 +102,17 @@ namespace xM {
         /**
          * Pause state.
          */
-        void ChapterSelect::pause(void) { }
+        void ImageSelect::pause(void) { }
 
         /**
          * Resume state.
          */
-        void ChapterSelect::resume(void) { }
+        void ImageSelect::resume(void) { }
 
         /**
          * Poll for input, read event state etc
          */
-        void ChapterSelect::handleEvents(void) {
+        void ImageSelect::handleEvents(void) {
 
 			// Get pointer to input manager
             Engine::InputManager* iM = Engine::InputManager::getInstance();
@@ -122,7 +122,7 @@ namespace xM {
             if (iM->pressed(PSP_CTRL_START)) {
             
                 Util::logMsg("Reloading XML ui file.");
-                this->parser.parseFile("ui/chapter.xml");    
+                this->parser.parseFile("ui/images.xml");    
             
             }
 #endif
@@ -135,7 +135,7 @@ namespace xM {
                 else if (iM->pressed(PSP_CTRL_UP))
                     this->selected -= 1;
                 else if (iM->pressed(PSP_CTRL_RTRIGGER))
-                    this->selected = this->chapterList.names.size() - 1;
+                    this->selected = this->imageList.images.size() - 1;
                 else if (iM->pressed(PSP_CTRL_LTRIGGER))
                     this->selected = 0;
                     
@@ -154,7 +154,7 @@ namespace xM {
         /**
          * Now do something with the data we got from events and what not.
          */
-        void ChapterSelect::handleLogic(void) {
+        void ImageSelect::handleLogic(void) {
         
         	//Check for any new messages in mailbox
             Manga::APIMessage* rMsg = NULL;
@@ -163,8 +163,8 @@ namespace xM {
 	        // BEGIN Menu Traversing Logic
 	        if ((signed int)this->selected < 0)
                 this->selected = 0;
-            if (this->selected > (this->chapterList.names.size() - 1))
-                this->selected = this->chapterList.names.size() - 1;
+            if (this->selected > (this->imageList.images.size() - 1))
+                this->selected = this->imageList.images.size() - 1;
             // END Menu Traversing Logic
             
             // Handle any active requests
@@ -175,9 +175,9 @@ namespace xM {
             	
             		if (this->doAction) {
             
-            			// Send the image list request
-				        this->msg.type = Manga::RequestImageList;
-				        this->msg.what = (void*)new std::string(this->chapterList.apiHandles[selected]);
+            			// Send the image request
+				        this->msg.type = Manga::RequestImage;
+				        this->msg.what = (void*)new std::string(this->imageList.images[selected]);
                         this->msg.index = selected;
 				        sceKernelSendMbx(Manga::mangaAPIMbx, (void*)&this->msg);
 				    
@@ -196,15 +196,14 @@ namespace xM {
 					// There's a response in the mailbox!
             		if (rMsg != NULL) {
                             
-                        // Loaded successfully
-		            	if (rMsg->type == Manga::RequestImageList && rMsg->result == true) {
-		            	
-                            // Now that the image list is loaded, let's go to image select
-                            Engine::StateManager::getInstance()->pushState(new States::ImageSelect());
+                        // Loaded successfully, switch to a new state
+		            	if (rMsg->type == Manga::RequestImage && rMsg->result == true) {
+		            
+							Engine::StateManager::getInstance()->pushState(new States::ImageView());
 
 							this->activeDialog = 0;
-							return;
-
+							return;	
+		            	
 		            	} else if (rMsg->type == Manga::RequestImageList && rMsg->result == false) {
 		            	
 		            		// Something failed, display error message                	
@@ -218,7 +217,7 @@ namespace xM {
 					}
 					
 					break;
-
+            
             }
                                         	        	        	        
         }
@@ -226,13 +225,13 @@ namespace xM {
         /**
          * Done with the logic? Draw what's needed then.
          */
-        void ChapterSelect::draw(void) {
+        void ImageSelect::draw(void) {
                                 
             // Draw based on XML
             this->parser.draw();
 
             if (this->activeDialog == 1)
-                Gfx::drawLoadingOverlay("Loading image list...");
+                Gfx::drawLoadingOverlay("Loading image...");
                         
         }
                 
@@ -240,4 +239,4 @@ namespace xM {
 
 }
 
-#endif /* _ChapterSelectState_CPP */
+#endif /* _ImageSelectState_CPP */

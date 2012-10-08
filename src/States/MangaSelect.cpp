@@ -65,7 +65,7 @@ namespace xM {
             this->navSel = 0;
             this->mangaList = *Manga::mapImp->getMangaList();      
 
-            this->nList.reserve(27);
+            this->nList.reserve(28);
             this->nList.push_back("All");
             for (int c = 64; c < 91; c++) {
 
