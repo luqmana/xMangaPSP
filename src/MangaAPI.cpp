@@ -286,7 +286,7 @@ namespace xM {
             if (mangaAPIThreadID > 0)
                 sceKernelStartThread(mangaAPIThreadID, 0, NULL);
                 
-            mapImp = new MAP("http://xmangapsp.appspot.com/api/");
+            mapImp = new MAP("http://xmp.luqman.ca/api/");
         
         }
         
