@@ -1,7 +1,7 @@
 /**
  * This file is part of the xMangaPSP application.
  *
- * Copyright (C) Luqman Aden <www.luqmanrocks.co.cc>.
+ * Copyright (C) Luqman Aden <www.luqman.ca>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,9 +65,9 @@ PSP_MAIN_THREAD_ATTR(PSP_THREAD_ATTR_USER);
 
 /**
  * Set the PSP heap size.
- * Use everything but about 6MB as heap
+ * Use everything but about 5MB as heap
  */
-PSP_HEAP_SIZE_KB(-1024 * 6);
+PSP_HEAP_SIZE_KB(-1024 * 5);
 
 bool Engine::running = true;
 
@@ -78,7 +78,7 @@ int main(int argc, char **argv) {
 
     // Init psp debug screen
     pspDebugScreenInit();
-        	
+            
     // Init intraFont font library
     intraFontInit();
     
@@ -112,17 +112,19 @@ int main(int argc, char **argv) {
         if (stateManager->getCurrentState() == NULL)
             break;
 
+#if __xM_DEBUG        
         // Since resetting via psplink causes crashes sometime, we try a clean shutdown
-        if (__xM_DEBUG && inputManager->pressed(PSP_CTRL_START & PSP_CTRL_LTRIGGER & PSP_CTRL_RTRIGGER))
+        if (inputManager->pressed(PSP_CTRL_START & PSP_CTRL_LTRIGGER & PSP_CTRL_RTRIGGER))
             break;
+#endif
 
         // Begin frame
         Gfx::beginFrame();
         
-		// The built-in dialog system handles its own input/events/logic
+        // The built-in dialog system handles its own input/events/logic
         if (!Ui::Dialog::isDialogActive()) {
         
-        	// Read input and handle events
+            // Read input and handle events
             inputManager->readInput();
             stateManager->handleEvents();
             
@@ -133,11 +135,12 @@ int main(int argc, char **argv) {
              
         // Draw ALL the things!
         stateManager->draw();
-                
+            
+#if __xM_DEBUG        
         // Toggle stats
-        if (__xM_DEBUG && inputManager->pressed(PSP_CTRL_SELECT))
+        if (inputManager->pressed(PSP_CTRL_SELECT))
             showFPSMEM = !showFPSMEM;
-                
+#endif                
         // Render a semi-transparent black quad covering the whole screen to
         // make dialogs better visible
         if (Ui::Dialog::isDialogActive())
@@ -149,15 +152,15 @@ int main(int argc, char **argv) {
         // Draw any active dialogs
         if (Ui::Dialog::isDialogActive())            
             Ui::Dialog::renderDialogs();
-		else {
+        else {
 
-		    // Show some stats
-		    if (showFPSMEM) {
-		        
-		        Util::MEM();
-		        Util::FPS();
-		        
-		    }
+            // Show some stats
+            if (showFPSMEM) {
+                
+                Util::MEM();
+                Util::FPS();
+                
+            }
         
         }
         

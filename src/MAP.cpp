@@ -1,7 +1,7 @@
 /**
  * This file is part of the xMangaPSP application.
  *
- * Copyright (C) luqman Aden <www.luqmanrocks.co.cc>.
+ * Copyright (C) Luqman Aden <www.luqman.ca>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -110,31 +110,31 @@ namespace xM {
                 return true;
         
             std::string response;
-
+#if __xM_DEBUG
             Util::Timer loadTimer;
             loadTimer.start();
-                                  
+#endif                                  
             // Attempt to download mangalist
             if (Net::downloadFile(this->endpoint, response)) {
-
+#if __xM_DEBUG
                 Util::logMsg("downloadFile - %f", loadTimer.getDeltaTicks(true));
-                                                          
+#endif                                                          
                 // clear mangalist
                 this->mangaList->names.clear();
                 this->mangaList->apiHandles.clear();
                                                                  
                 // No error, try to parse JSON
-                
+#if __xM_DEBUG                
                 loadTimer.start();
-
+#endif
                 cJSON* root = cJSON_Parse(response.c_str());
-
+#if __xM_DEBUG
                 Util::logMsg("Parse JSON - %f", loadTimer.getDeltaTicks(true));
-                
+#endif                
                 if (root == 0) {
-                
+#if __xM_DEBUG                
                     Util::logMsg("Can't parse JSON [%s] [%s].", this->endpoint.c_str(), response.c_str());
-                    
+#endif                    
                     this->error = "Unable to parse JSON.";
                     
                     return false;
@@ -146,9 +146,10 @@ namespace xM {
                 
                     this->error = "API Error: ";
                     this->error.append(cJSON_GetObjectItem(err, "msg")->valuestring);
+#if __xM_DEBUG                    
                     Util::logMsg("%s", this->error.c_str());
-
-					cJSON_Delete(root);
+#endif
+                    cJSON_Delete(root);
                     
                     return false;
                 
@@ -158,16 +159,17 @@ namespace xM {
                 if (!mangas) {
                     
                     this->error = "JSON Error: Improperly structured response.";
+#if __xM_DEBUG                    
                     Util::logMsg("%s", this->error.c_str());
-
-					cJSON_Delete(root);
+#endif
+                    cJSON_Delete(root);
 
                     return false;
 
                 }
-
+#if __xM_DEBUG
                 loadTimer.start();
-
+#endif
                 int size = cJSON_GetArraySize(mangas);
 
                 this->mangaList->names.reserve(size);
@@ -179,9 +181,9 @@ namespace xM {
                     this->mangaList->apiHandles.push_back(cJSON_GetObjectItem(cJSON_GetArrayItem(mangas, i), "apiHandle")->valuestring);
                                     
                 }
-
+#if __xM_DEBUG
                 Util::logMsg("Populate list - %f", loadTimer.getDeltaTicks(true));
-
+#endif
                 cJSON_Delete(root);
                                     
                 this->loadedMangaList = true;
@@ -189,9 +191,9 @@ namespace xM {
                 return true;
                 
             } else {
-            
+#if __xM_DEBUG            
                 Util::logMsg("Can't download [%s] [%s].", this->endpoint.c_str(), response.c_str());
-                
+#endif                
                 this->error = "Net Error: " + response;
                 
                 return false;
@@ -222,32 +224,32 @@ namespace xM {
                 
             std::string response;
             std::string url = this->endpoint + mangaSlug + "/";
-
+#if __xM_DEBUG
             Util::Timer loadTimer;
             loadTimer.start();
-                                  
+#endif                                  
             // Attempt to download chapterlist
             if (Net::downloadFile(url, response)) {
-
+#if __xM_DEBUG
                 Util::logMsg("downloadFile - %f", loadTimer.getDeltaTicks(true));
-                                                          
+#endif                                                          
                 // clear chapterlist
                 this->chapterList->mangaSlug = mangaSlug;
                 this->chapterList->names.clear();
                 this->chapterList->apiHandles.clear();
                                                                  
                 // No error, try to parse JSON
-                
+#if __xM_DEBUG                
                 loadTimer.start();
-
+#endif
                 cJSON* root = cJSON_Parse(response.c_str());
-
+#if __xM_DEBUG
                 Util::logMsg("Parse JSON - %f", loadTimer.getDeltaTicks(true));
-                
+#endif                
                 if (root == 0) {
-                
+#if __xM_DEBUG                
                     Util::logMsg("Can't parse JSON [%s] [%s].", this->endpoint.c_str(), response.c_str());
-                    
+#endif                    
                     this->error = "Unable to parse JSON.";
                     
                     return false;
@@ -260,9 +262,10 @@ namespace xM {
                     this->error = "API Error: ";
                     this->error.append(cJSON_GetObjectItem(err, "msg")->valuestring);
                     this->error.append(" [" + mangaSlug + "]");
+#if __xM_DEBUG                    
                     Util::logMsg("%s", this->error.c_str());
-
-					cJSON_Delete(root);
+#endif
+                    cJSON_Delete(root);
                     
                     return false;
                 
@@ -273,16 +276,18 @@ namespace xM {
                     
                     this->error = "JSON Error: Improperly structured response.";
                     this->error.append(" [" + mangaSlug + "]");
+#if __xM_DEBUG                    
                     Util::logMsg("%s", this->error.c_str());
+#endif                    
 
-					cJSON_Delete(root);
+                    cJSON_Delete(root);
 
                     return false;
 
                 }
-
+#if __xM_DEBUG
                 loadTimer.start();
-
+#endif
                 int size = cJSON_GetArraySize(chapters);
 
                 this->chapterList->names.reserve(size);
@@ -294,17 +299,17 @@ namespace xM {
                     this->chapterList->apiHandles.push_back(cJSON_GetObjectItem(cJSON_GetArrayItem(chapters, i), "apiHandle")->valuestring);
                                     
                 }
-
+#if __xM_DEBUG
                 Util::logMsg("Populate list - %f", loadTimer.getDeltaTicks(true));
-
+#endif
                 cJSON_Delete(root);
                                     
                 return true;
                 
             } else {
-            
+#if __xM_DEBUG            
                 Util::logMsg("Can't download [%s] [%s].", url.c_str(), response.c_str());
-                
+#endif                
                 this->error = "Net Error: " + response;
                 
                 return false;
@@ -337,32 +342,32 @@ namespace xM {
             
             std::string response;
             std::string url = this->endpoint + mangaSlug + "/" + chapterSlug + "/";
-
+#if __xM_DEBUG
             Util::Timer loadTimer;
             loadTimer.start();
-                                  
+#endif                                  
             // Attempt to download imagelist
             if (Net::downloadFile(url, response)) {
-
+#if __xM_DEBUG
                 Util::logMsg("downloadFile - %f", loadTimer.getDeltaTicks(true));
-                
+#endif                
                 // clear imagelist
                 this->imageList->mangaSlug = mangaSlug;
                 this->imageList->chapterSlug = chapterSlug;
                 this->imageList->images.clear();
                                                                  
                 // No error, try to parse JSON
-                
+#if __xM_DEBUG                
                 loadTimer.start();
-
+#endif
                 cJSON* root = cJSON_Parse(response.c_str());
-
+#if __xM_DEBUG
                 Util::logMsg("Parse JSON - %f", loadTimer.getDeltaTicks(true));
-                
+#endif                
                 if (root == 0) {
-                
+#if __xM_DEBUG                
                     Util::logMsg("Can't parse JSON [%s] [%s].", this->endpoint.c_str(), response.c_str());
-                    
+#endif                    
                     this->error = "Unable to parse JSON.";
                     
                     return false;
@@ -375,9 +380,10 @@ namespace xM {
                     this->error = "API Error: ";
                     this->error.append(cJSON_GetObjectItem(err, "msg")->valuestring);
                     this->error.append(" [" + mangaSlug + ":" + chapterSlug + "]");
+#if __xM_DEBUG                    
                     Util::logMsg("%s", this->error.c_str());
-
-					cJSON_Delete(root);
+#endif
+                    cJSON_Delete(root);
                     
                     return false;
                 
@@ -388,25 +394,26 @@ namespace xM {
                     
                     this->error = "JSON Error: Improperly structured response.";
                     this->error.append(" [" + mangaSlug + ":" + chapterSlug + "]");
+#if __xM_DEBUG                    
                     Util::logMsg("%s", this->error.c_str());
-
-					cJSON_Delete(root);
+#endif
+                    cJSON_Delete(root);
 
                     return false;
 
                 }
-
+#if __xM_DEBUG
                 loadTimer.start();
-
+#endif
                 int size = cJSON_GetArraySize(images);
 
                 this->imageList->images.reserve(size);
 
                 for (int i = 0; i < size; i++)
                     this->imageList->images.push_back(cJSON_GetObjectItem(cJSON_GetArrayItem(images, i), "image")->valuestring);
-
+#if __xM_DEBUG
                 Util::logMsg("Populate list - %f", loadTimer.getDeltaTicks(true));
-
+#endif
                 cJSON_Delete(root);
 
                 this->imageList->index = index;
@@ -414,9 +421,9 @@ namespace xM {
                 return true;
                 
             } else {
-            
+#if __xM_DEBUG            
                 Util::logMsg("Can't download [%s] [%s].", url.c_str(), response.c_str());
-                
+#endif                
                 this->error = "Net Error: " + response;
                 
                 return false;
@@ -450,15 +457,15 @@ namespace xM {
             
             std::string response;
             std::string url = this->endpoint + mangaSlug + "/" + chapterSlug + "/" + imageSlug + "/";
-
+#if __xM_DEBUG
             Util::Timer loadTimer;
             loadTimer.start();
-                                  
+#endif                                  
             // Attempt to download imagelist
             if (Net::downloadFile(url, response)) {
-
+#if __xM_DEBUG
                 Util::logMsg("downloadFile - %f", loadTimer.getDeltaTicks(true));
-
+#endif
                 unsigned char jCheck[6] = { '{', '"', 'A', 'P', 'I', '"' };
 
                 // 'Tis a JSON message?
@@ -469,8 +476,9 @@ namespace xM {
                     if (root == 0) {
                         
                         this->error = "Something is just wack yo!";
+#if __xM_DEBUG                        
                         Util::logMsg("%s", this->error.c_str());
-                    
+#endif                    
                         return false;
 
                     }
@@ -481,9 +489,10 @@ namespace xM {
                         this->error = "API Error: ";
                         this->error.append(cJSON_GetObjectItem(err, "msg")->valuestring);
                         this->error.append(" [" + mangaSlug + ":" + chapterSlug + ":" + imageSlug + "]");
+#if __xM_DEBUG                        
                         Util::logMsg("%s", this->error.c_str());
-                        
-						cJSON_Delete(root);
+#endif                        
+                        cJSON_Delete(root);
 
                         return false;
                     
@@ -491,52 +500,61 @@ namespace xM {
 
                     this->error = "Format Error: No clue what kinda data we got.";
                     this->error.append(" [" + mangaSlug + ":" + chapterSlug + ":" + imageSlug + "]");
+#if __xM_DEBUG                    
                     Util::logMsg("%s", this->error.c_str());
-                    
+#endif                    
                     return false;
 
                 }
                     
                 // so probably an image...hopefully
 
+                // Delete the old image
                 delete this->mangaImage->img;
 
                 this->mangaImage->img = new Gfx::Image;
                 this->mangaImage->index = index;
-
+#if __xM_DEBUG
                 loadTimer.start();
+#endif
                 if (!this->mangaImage->img->loadData(response)) {
                     
                     this->error = "Image Error: Can't load image.";
                     this->error.append(" [" + mangaSlug + ":" + chapterSlug + ":" + imageSlug + "]");
+#if __xM_DEBUG                    
                     Util::logMsg("%s", this->error.c_str());
-                    
+#endif                    
                     return false;
 
                 }
+#if __xM_DEBUG                
                 Util::logMsg("loadData - %f", loadTimer.getDeltaTicks(true));
-
+#endif
                 response.clear();
 
                 if (!this->mangaImage->img->isLoaded()) {
                     
                     this->error = "Image Error: Can't load image.";
                     this->error.append(" [" + mangaSlug + ":" + chapterSlug + ":" + imageSlug + "]");
+#if __xM_DEBUG                    
                     Util::logMsg("%s", this->error.c_str());
-                    
+#endif                    
                     return false;
                     
                 }
-
+#if __xM_DEBUG
                 loadTimer.start();
+#endif                
                 this->mangaImage->img->swizzle();
+#if __xM_DEBUG                
                 Util::logMsg("swizzle - %f", loadTimer.getDeltaTicks(true));
-
+#endif
                 return true;
 
             } else {
-                
+#if __xM_DEBUG                
                 Util::logMsg("Can't download [%s] [%s].", url.c_str(), response.c_str());
+#endif                
                 
                 this->error = "Net Error: " + response;
                 

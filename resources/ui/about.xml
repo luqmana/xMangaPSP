@@ -11,6 +11,13 @@
     <quad x="0" y="0" width="480" height="30" colour="black,200" />
     <text x="240" y="20" font="{LATIN_SANS_SERIF_BOLD}" align="center" size="1.0" colour="red" shadowColour="90,0,0" value="About &amp; Credits" />
     <!--<image whence="online" x="475" y="3" align="right" src="wifi.png" />-->
+	<battery>
+		<image whence="charging" x="470" y="3" align="right" src="bat-charging.png" />
+		<image whence="0,25" x="475" y="3" align="right" src="bat-1.png" />
+		<image whence="26,50" x="475" y="3" align="right" src="bat-2.png" />
+		<image whence="51,75" x="475" y="3" align="right" src="bat-3.png" />
+		<image whence="76,100" x="475" y="3" align="right" src="bat-4.png" />
+	</battery>
     
     <text x="5" y="50" font="{LATIN_SANS_SERIF_BOLD_SMALL}" size="1.0" colour="23,23,23" value="Thanks for using xMangaPSP!" />
     <text x="5" y="70" font="{LATIN_SANS_SERIF_REGULAR_SMALL}" size="1.0" colour="23,23,23" value="xMangaPSP wouldn't be possible without the help of various people:" />

@@ -1,7 +1,7 @@
 /**
  * This file is part of the xMangaPSP application.
  *
- * Copyright (C) Luqman Aden <www.luqmanrocks.co.cc>.
+ * Copyright (C) Luqman Aden <www.luqman.ca>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,10 +42,10 @@
 
 namespace xM {
 
-	namespace Engine {
-	
-		class InputManager {
-		
+    namespace Engine {
+    
+        class InputManager {
+        
             private:
             
                 /**
@@ -63,27 +63,27 @@ namespace xM {
                 unsigned int buttons;
                 unsigned int lastButtons;
                 unsigned int repeatButtons;
-                                                            		
-		    public:
-		    
-		        /**
+                                                                    
+            public:
+            
+                /**
                  * The singleton instance.
                  */
                 static InputManager* iMInstance;
-		    
-		        /**
-		         * Get an instance of the class.
-		         * 
-		         * @return InputManager* Singleton instance.
-		         */
-		        static InputManager* getInstance(void);
-		    		        
-		        /**
-		         * Reads input.
-		         */
-		        void readInput(void);
-		        
-		        /**
+            
+                /**
+                 * Get an instance of the class.
+                 * 
+                 * @return InputManager* Singleton instance.
+                 */
+                static InputManager* getInstance(void);
+                            
+                /**
+                 * Reads input.
+                 */
+                void readInput(void);
+                
+                /**
                  * Check whether a certain button has been pressed.
                  * 
                  * @param PspCtrlButton Which button to check
@@ -96,10 +96,10 @@ namespace xM {
                  * @return SceCtrlData
                  */
                 SceCtrlData getCtrlData();
-		        		        		
-		};
-			
-	}
+                                        
+        };
+            
+    }
 
 }
 

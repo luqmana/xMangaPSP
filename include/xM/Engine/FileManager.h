@@ -1,7 +1,7 @@
 /**
  * This file is part of the xMangaPSP application.
  *
- * Copyright (C) Luqman Aden <www.luqmanrocks.co.cc>.
+ * Copyright (C) Luqman Aden <www.luqman.ca>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,17 +58,17 @@ namespace xM {
                                             		
             public:
 		    
-	           /**
-                * The singleton instance.
-                */
-               static FileManager* fMInstance;
+                /**
+                 * The singleton instance.
+                 */
+                static FileManager* fMInstance;
 		    
-	        /**
-	         * Get an instance of the class.
-	         * 
-	         * @return FileManager* Singleton instance.
-	         */
-	        static FileManager* getInstance(void);
+                /**
+                 * Get an instance of the class.
+                 * 
+                 * @return FileManager* Singleton instance.
+                 */
+                static FileManager* getInstance(void);
 		                        
                 /**
                  * Magic read function!
@@ -85,7 +85,7 @@ namespace xM {
                  */
                 std::string read(const std::string& file);
 		        
-		/**
+        		/**
                  * Read a file in from the PSAR archive (zip file) in the EBOOT.
                  * 
                  * @param const std::string& file The file within the PSAR.

@@ -1,7 +1,7 @@
 /**
  * This file is part of the xMangaPSP application.
  *
- * Copyright (C) Luqman Aden <www.luqmanrocks.co.cc>.
+ * Copyright (C) Luqman Aden <www.luqman.ca>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,15 +64,15 @@ namespace xM {
             ALIGN_FULL           
         
         };
-		
-		enum Scrolling {
-		
-			SCROLL_NONE,
-			SCROLL_LEFT,
-			SCROLL_THROUGH,
-			SCROLL_SEESAW
-		
-		};
+        
+        enum Scrolling {
+        
+            SCROLL_NONE,
+            SCROLL_LEFT,
+            SCROLL_THROUGH,
+            SCROLL_SEESAW
+        
+        };
     
         typedef struct Element {
         
@@ -84,7 +84,7 @@ namespace xM {
             std::string text;
             double size, rotate;
             Alignment align;
-			Scrolling scroll;
+            Scrolling scroll;
             std::string whence;
             Gfx::Text font;
             Gfx::Image* image;

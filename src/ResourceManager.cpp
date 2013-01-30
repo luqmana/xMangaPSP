@@ -1,7 +1,7 @@
 /**
  * This file is part of the xMangaPSP application.
  *
- * Copyright (C) Luqman Aden <www.luqmanrocks.co.cc>.
+ * Copyright (C) Luqman Aden <www.luqman.ca>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,8 +35,8 @@
 
 namespace xM {
 
-	namespace Engine {
-	
+    namespace Engine {
+    
         /**
          * The singleton instance.
          */
@@ -77,8 +77,8 @@ namespace xM {
             
             if (!img->loadFile(image)) {
             
-            	delete img;
-            	
+                delete img;
+                
                 return NULL;
                 
             }
@@ -150,8 +150,8 @@ namespace xM {
             return FileManager::getInstance()->readFromPSAR(file);
         
         }
-		    		        					
-	}
+                                                
+    }
 
 }
 

@@ -1,7 +1,7 @@
 /**
  * This file is part of the xMangaPSP application.
  *
- * Copyright (C) Luqman Aden <www.luqmanrocks.co.cc>.
+ * Copyright (C) Luqman Aden <www.luqman.ca>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,10 +44,10 @@
 
 namespace xM {
 
-	namespace Engine {
-	
-		class ResourceManager {
-		
+    namespace Engine {
+    
+        class ResourceManager {
+        
             private:
             
                 /**
@@ -57,55 +57,55 @@ namespace xM {
                 
                 std::map<std::pair<const std::string, unsigned int>, intraFont*> fonts;
                 std::map<const std::string, Gfx::Image*> images;
-                                            		
-		    public:
-		    
-		        /**
+                                                    
+            public:
+            
+                /**
                  * The singleton instance.
                  */
                 static ResourceManager* rMInstance;
-		    
-		        /**
-		         * Get an instance of the class.
-		         * 
-		         * @return ResourceManager* Singleton instance.
-		         */
-		        static ResourceManager* getInstance(void);
-		        
-		        /**
-		         * Returns a cached image. If not cached, loads it.
-		         * 
-		         * @param const std::string& image The image.
-		         * 
-		         * @return Gfx::Image* The image.
-		         */
-		        Gfx::Image* getImage(const std::string& image);
-		        
-		        /**
-		         * Returns a cached font. If not cached, loads it.
-		         * 
-		         * @param const std::string& font The font.
-		         * @param unsigned int loadOps Font loading options.
-		         *
-		         * @return intraFont* The font.
-		         */
-		        intraFont* getFont(const std::string& font, unsigned int loadOps);
-		        
-		        /**
-		         * A magic wrapper for the FileManager.
-		         * 
-		         * Tries to load a resource from different sources.
-		         * (FileSystem, Resource File (resources.zip), PSAR) (in that order)
-		         * 
-		         * @param const std::string& file The file.
-		         * 
-		         * @return std::string The resource.
-		         */
-		        std::string getRes(const std::string& file);
-		    		        		
-		};
-			
-	}
+            
+                /**
+                 * Get an instance of the class.
+                 * 
+                 * @return ResourceManager* Singleton instance.
+                 */
+                static ResourceManager* getInstance(void);
+                
+                /**
+                 * Returns a cached image. If not cached, loads it.
+                 * 
+                 * @param const std::string& image The image.
+                 * 
+                 * @return Gfx::Image* The image.
+                 */
+                Gfx::Image* getImage(const std::string& image);
+                
+                /**
+                 * Returns a cached font. If not cached, loads it.
+                 * 
+                 * @param const std::string& font The font.
+                 * @param unsigned int loadOps Font loading options.
+                 *
+                 * @return intraFont* The font.
+                 */
+                intraFont* getFont(const std::string& font, unsigned int loadOps);
+                
+                /**
+                 * A magic wrapper for the FileManager.
+                 * 
+                 * Tries to load a resource from different sources.
+                 * (FileSystem, Resource File (resources.zip), PSAR) (in that order)
+                 * 
+                 * @param const std::string& file The file.
+                 * 
+                 * @return std::string The resource.
+                 */
+                std::string getRes(const std::string& file);
+                                    
+        };
+            
+    }
 
 }
 

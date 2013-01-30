@@ -1,7 +1,7 @@
 /**
  * This file is part of the xMangaPSP application.
  *
- * Copyright (C) Luqman Aden <www.luqmanrocks.co.cc>.
+ * Copyright (C) Luqman Aden <www.luqman.ca>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,25 +49,25 @@ namespace xM {
          */
         void ChapterSelect::init(void) {
         
-        	// Make sure the chapter list has actually been loaded
-        	if (Manga::mapImp->getChapterList() == NULL) {
-        	
-        		Engine::StateManager::getInstance()->popState();
-        		return;
-        		
-        	}
+            // Make sure the chapter list has actually been loaded
+            if (Manga::mapImp->getChapterList() == NULL) {
+            
+                Engine::StateManager::getInstance()->popState();
+                return;
+                
+            }
         
-        	// init/reset some vars
+            // init/reset some vars
             this->doAction = false;
             this->activeDialog = 0;
             this->selected = 0;
             this->chapterList = *Manga::mapImp->getChapterList();      
                         
-			// setup the list element
+            // setup the list element
             this->lInfo.selected = &this->selected;
             this->lInfo.list = &this->chapterList.names;
 
-			// Register the XML UI parsers
+            // Register the XML UI parsers
             this->parser.registerCustomElementHandler("list", &this->extraElements, (void*)&this->lInfo);
             this->parser.registerCustomElementHandler("bouncyBox", &this->extraElements);
             
@@ -92,7 +92,7 @@ namespace xM {
          */
         void ChapterSelect::cleanUp(void) {
 
-			sceKernelDeleteMbx(this->localBox);
+            sceKernelDeleteMbx(this->localBox);
 
             this->parser.deRegisterCustomElementHandler("list");
             this->parser.deRegisterCustomElementHandler("bouncyBox");
@@ -114,7 +114,7 @@ namespace xM {
          */
         void ChapterSelect::handleEvents(void) {
 
-			// Get pointer to input manager
+            // Get pointer to input manager
             Engine::InputManager* iM = Engine::InputManager::getInstance();
             
 #if __xM_DEBUG
@@ -145,7 +145,7 @@ namespace xM {
                     
                 // Leave state
                 if (iM->pressed(PSP_CTRL_CIRCLE))
-                	Engine::StateManager::getInstance()->popState();
+                    Engine::StateManager::getInstance()->popState();
 
             }
             
@@ -156,12 +156,12 @@ namespace xM {
          */
         void ChapterSelect::handleLogic(void) {
         
-        	//Check for any new messages in mailbox
+            //Check for any new messages in mailbox
             Manga::APIMessage* rMsg = NULL;
             sceKernelPollMbx(this->localBox, (void**)&rMsg);
-                            	        
-	        // BEGIN Menu Traversing Logic
-	        if ((signed int)this->selected < 0)
+                                        
+            // BEGIN Menu Traversing Logic
+            if ((signed int)this->selected < 0)
                 this->selected = 0;
             if (this->selected > (this->chapterList.names.size() - 1))
                 this->selected = this->chapterList.names.size() - 1;
@@ -170,57 +170,57 @@ namespace xM {
             // Handle any active requests
             switch (this->activeDialog) {
             
-            	// No outstanding requests
-            	case 0:
-            	
-            		if (this->doAction) {
+                // No outstanding requests
+                case 0:
+                
+                    if (this->doAction) {
             
-            			// Send the image list request
-				        this->msg.type = Manga::RequestImageList;
-				        this->msg.what = (void*)new std::string(this->chapterList.apiHandles[selected]);
+                        // Send the image list request
+                        this->msg.type = Manga::RequestImageList;
+                        this->msg.what = (void*)new std::string(this->chapterList.apiHandles[selected]);
                         this->msg.index = selected;
-				        sceKernelSendMbx(Manga::mangaAPIMbx, (void*)&this->msg);
-				    
-				        // not really a dialog
-				        // but allows some control
-				        this->activeDialog = 1;			
-            			
-						this->doAction = false;
-				
-					}
-            	
-					break;
-					
-				case 1:
-				
-					// There's a response in the mailbox!
-            		if (rMsg != NULL) {
+                        sceKernelSendMbx(Manga::mangaAPIMbx, (void*)&this->msg);
+                    
+                        // not really a dialog
+                        // but allows some control
+                        this->activeDialog = 1;         
+                        
+                        this->doAction = false;
+                
+                    }
+                
+                    break;
+                    
+                case 1:
+                
+                    // There's a response in the mailbox!
+                    if (rMsg != NULL) {
                             
                         // Loaded successfully
-		            	if (rMsg->type == Manga::RequestImageList && rMsg->result == true) {
-		            	
+                        if (rMsg->type == Manga::RequestImageList && rMsg->result == true) {
+                        
                             // Now that the image list is loaded, let's go to image select
                             Engine::StateManager::getInstance()->pushState(new States::ImageSelect());
 
-							this->activeDialog = 0;
-							return;
+                            this->activeDialog = 0;
+                            return;
 
-		            	} else if (rMsg->type == Manga::RequestImageList && rMsg->result == false) {
-		            	
-		            		// Something failed, display error message                	
-		            		Ui::Dialog::msg(*(std::string*)rMsg->what);                	
-		            		delete (std::string*)rMsg->what;
+                        } else if (rMsg->type == Manga::RequestImageList && rMsg->result == false) {
+                        
+                            // Something failed, display error message                  
+                            Ui::Dialog::msg(*(std::string*)rMsg->what);                 
+                            delete (std::string*)rMsg->what;
 
                             this->activeDialog = 0;
-		            		
-		            	}
-		            			                
-					}
-					
-					break;
+                            
+                        }
+                                                
+                    }
+                    
+                    break;
 
             }
-                                        	        	        	        
+                                                                            
         }
 
         /**

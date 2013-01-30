@@ -1,7 +1,7 @@
 /**
  * This file is part of the xMangaPSP application.
  *
- * Copyright (C) Luqman Aden <www.luqmanrocks.co.cc>.
+ * Copyright (C) Luqman Aden <www.luqman.ca>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,15 +49,15 @@ namespace xM {
          */
         void MangaSelect::init(void) {
         
-        	// Make sure the manga list has actually been loaded
-        	if (Manga::mapImp->getMangaList() == NULL) {
-        	
-        		Engine::StateManager::getInstance()->popState();
-        		return;
-        		
-        	}
+            // Make sure the manga list has actually been loaded
+            if (Manga::mapImp->getMangaList() == NULL) {
+            
+                Engine::StateManager::getInstance()->popState();
+                return;
+                
+            }
         
-        	// init/reset some vars
+            // init/reset some vars
             this->doAction = false;
             this->navChange = true; // Set to true initially to populate the list
             this->activeDialog = 0;
@@ -96,13 +96,13 @@ namespace xM {
 
             }
                         
-			// setup the list elements
+            // setup the list elements
             this->mLInfo.selected = &this->selected;
             this->mLInfo.list = &this->vMangaList;
             this->nLInfo.selected = &this->navSel;
             this->nLInfo.list = &this->nList;
 
-			// Register the XML UI parsers
+            // Register the XML UI parsers
             this->parser.registerCustomElementHandler("mangalist", &this->extraElements, (void*)&this->mLInfo);
             this->parser.registerCustomElementHandler("navlist", &this->extraElements, (void*)&this->nLInfo);
             this->parser.registerCustomElementHandler("bouncyBox", &this->extraElements);
@@ -127,7 +127,7 @@ namespace xM {
          */
         void MangaSelect::cleanUp(void) {
 
-			sceKernelDeleteMbx(this->localBox);
+            sceKernelDeleteMbx(this->localBox);
 
             this->parser.deRegisterCustomElementHandler("mangalist");
             this->parser.deRegisterCustomElementHandler("navlist");
@@ -150,7 +150,7 @@ namespace xM {
          */
         void MangaSelect::handleEvents(void) {
 
-			// Get pointer to input manager
+            // Get pointer to input manager
             Engine::InputManager* iM = Engine::InputManager::getInstance();
             
 #if __xM_DEBUG
@@ -192,7 +192,7 @@ namespace xM {
                     
                 // Leave state
                 if (iM->pressed(PSP_CTRL_CIRCLE))
-                	Engine::StateManager::getInstance()->changeState(new States::Menu());
+                    Engine::StateManager::getInstance()->changeState(new States::Menu());
 
             }
             
@@ -203,12 +203,12 @@ namespace xM {
          */
         void MangaSelect::handleLogic(void) {
         
-        	//Check for any new messages in mailbox
+            //Check for any new messages in mailbox
             Manga::APIMessage* rMsg = NULL;
             sceKernelPollMbx(this->localBox, (void**)&rMsg);
-                            	        
-	        // BEGIN Menu Traversing Logic
-	        if ((signed int)this->selected < 0)
+                                        
+            // BEGIN Menu Traversing Logic
+            if ((signed int)this->selected < 0)
                 this->selected = 0;
             if (this->selected > (this->vMangaList.size() - 1))
                 this->selected = this->vMangaList.size() - 1;
@@ -258,10 +258,10 @@ namespace xM {
             // Handle any active requests
             switch (this->activeDialog) {
             
-            	// No outstanding requests
-            	case 0:
-            	
-            		if (this->doAction) {
+                // No outstanding requests
+                case 0:
+                
+                    if (this->doAction) {
 
                         // First need to find the real index
                         // 'selected' is not to be trusted as it relates to the alphabetical lists
@@ -271,50 +271,50 @@ namespace xM {
                                 rIndex = i;
                         }
             
-            			// Send the chapter list request
-				        this->msg.type = Manga::RequestChapterList;
-				        this->msg.what = (void*)new std::string(this->mangaList.apiHandles[rIndex]);
+                        // Send the chapter list request
+                        this->msg.type = Manga::RequestChapterList;
+                        this->msg.what = (void*)new std::string(this->mangaList.apiHandles[rIndex]);
                         this->msg.index = rIndex;
-				        sceKernelSendMbx(Manga::mangaAPIMbx, (void*)&this->msg);
-				    
-				        // not really a dialog
-				        // but allows some control
-				        this->activeDialog = 1;			
-            			
-						this->doAction = false;
-				
-					}
-            	
-					break;
-					
-				case 1:
-				
-					// There's a response in the mailbox!
-            		if (rMsg != NULL) {
+                        sceKernelSendMbx(Manga::mangaAPIMbx, (void*)&this->msg);
+                    
+                        // not really a dialog
+                        // but allows some control
+                        this->activeDialog = 1;         
+                        
+                        this->doAction = false;
+                
+                    }
+                
+                    break;
+                    
+                case 1:
+                
+                    // There's a response in the mailbox!
+                    if (rMsg != NULL) {
                             
                         // Loaded successfully, switch to new state
-		            	if (rMsg->type == Manga::RequestChapterList && rMsg->result == true) {
-		            	
-		            		Engine::StateManager::getInstance()->pushState(new States::ChapterSelect());
+                        if (rMsg->type == Manga::RequestChapterList && rMsg->result == true) {
+                        
+                            Engine::StateManager::getInstance()->pushState(new States::ChapterSelect());
                             this->activeDialog = 0;
-		            		return;
-		            	
-		            	} else if (rMsg->type == Manga::RequestChapterList && rMsg->result == false) {
-		            	
-		            		// Something failed, display error message                	
-		            		Ui::Dialog::msg(*(std::string*)rMsg->what);                	
-		            		delete (std::string*)rMsg->what;
-		            		
-		            	}
-		            	
-		                this->activeDialog = 0;
-		                
-					}
-					
-					break;
+                            return;
+                        
+                        } else if (rMsg->type == Manga::RequestChapterList && rMsg->result == false) {
+                        
+                            // Something failed, display error message                  
+                            Ui::Dialog::msg(*(std::string*)rMsg->what);                 
+                            delete (std::string*)rMsg->what;
+                            
+                        }
+                        
+                        this->activeDialog = 0;
+                        
+                    }
+                    
+                    break;
             
             }
-                                        	        	        	        
+                                                                            
         }
 
         /**

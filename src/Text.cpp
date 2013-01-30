@@ -1,7 +1,7 @@
 /**
  * This file is part of the xMangaPSP application.
  *
- * Copyright (C) Luqman Aden <www.luqmanrocks.co.cc>.
+ * Copyright (C) Luqman Aden <www.luqman.ca>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -157,10 +157,9 @@ namespace xM {
             intraFont* f = Engine::ResourceManager::getInstance()->getFont(file.str().c_str(), loadOps);
             
             if (!f || f == NULL) {
-            
-                if (__xM_DEBUG)
-                    Util::logMsg("Text::loadFont — Unable to load font from resource manager [%s].", file.str().c_str());
-                
+#if __xM_DEBUG            
+                Util::logMsg("Text::loadFont — Unable to load font from resource manager [%s].", file.str().c_str());
+#endif              
                 return;
                 
             }
@@ -169,10 +168,9 @@ namespace xM {
             this->font = new intraFont(*f);
                         
             if (!this->font) {
-            
-                if (__xM_DEBUG)
-                    Util::logMsg("Text::loadFont — Unable to load font.");
-                    
+#if __xM_DEBUG            
+                Util::logMsg("Text::loadFont — Unable to load font.");
+#endif                    
                 this->font = NULL;
             
                 return;
@@ -195,10 +193,9 @@ namespace xM {
             intraFont* f = Engine::ResourceManager::getInstance()->getFont(font.c_str(), loadOps);
             
             if (!f || f == NULL) {
-            
-                if (__xM_DEBUG)
-                    Util::logMsg("Text::loadFont — Unable to load font from resource manager [%s].", font.c_str());
-                
+#if __xM_DEBUG            
+                Util::logMsg("Text::loadFont — Unable to load font from resource manager [%s].", font.c_str());
+#endif                
                 return;
                 
             }
@@ -207,10 +204,9 @@ namespace xM {
             this->font = new intraFont(*f);
                         
             if (!this->font) {
-            
-                if (__xM_DEBUG)
-                    Util::logMsg("Text::loadFont — Unable to load font.");
-                    
+#if __xM_DEBUG            
+                Util::logMsg("Text::loadFont — Unable to load font.");
+#endif                    
                 this->font = NULL;
             
                 return;
@@ -298,10 +294,9 @@ namespace xM {
             intraFont* f = Engine::ResourceManager::getInstance()->getFont(file.str().c_str(), loadOps);
             
             if (!f || f == NULL) {
-            
-                if (__xM_DEBUG)
-                    Util::logMsg("Text::loadAltFont — Unable to load font from resource manager [%s].", file.str().c_str());
-                
+#if __xM_DEBUG            
+                Util::logMsg("Text::loadAltFont — Unable to load font from resource manager [%s].", file.str().c_str());
+#endif                
                 return;
                 
             }
@@ -310,10 +305,9 @@ namespace xM {
             altFont = new intraFont(*f);
                         
             if (!altFont) {
-            
-                if (__xM_DEBUG)
-                    Util::logMsg("Text::loadAltFont — Unable to load font.");
-                    
+#if __xM_DEBUG            
+                Util::logMsg("Text::loadAltFont — Unable to load font.");
+#endif                    
                 altFont = NULL;
             
                 return;
@@ -347,10 +341,9 @@ namespace xM {
             intraFont* f = Engine::ResourceManager::getInstance()->getFont(font.c_str(), loadOps);
             
             if (!f || f == NULL) {
-            
-                if (__xM_DEBUG)
-                    Util::logMsg("Text::loadAltFont — Unable to load font from resource manager [%s].", font.c_str());
-                
+#if __xM_DEBUG            
+                Util::logMsg("Text::loadAltFont — Unable to load font from resource manager [%s].", font.c_str());
+#endif                
                 return;
                 
             }
@@ -359,10 +352,9 @@ namespace xM {
             altFont = new intraFont(*f);
                         
             if (!altFont) {
-            
-                if (__xM_DEBUG)
-                    Util::logMsg("Text::loadAltFont — Unable to load font.");
-                    
+#if __xM_DEBUG            
+                Util::logMsg("Text::loadAltFont — Unable to load font.");
+#endif                    
                 altFont = NULL;
             
                 return;
@@ -387,8 +379,8 @@ namespace xM {
          * @param float x X position.
          * @param float y Y position.
          * @param const char* text The text to draw.
-		 * 
-		 * @return float The x position after the last char.
+         * 
+         * @return float The x position after the last char.
          */
         float Text::draw(float x, float y, const char* text, ...) {
         
@@ -414,8 +406,8 @@ namespace xM {
             
             // Because intraFont messes them up
             resetRenderStates();
-			
-			return xPos;
+            
+            return xPos;
         
         }
         
@@ -426,8 +418,8 @@ namespace xM {
          * @param float y Y position.
          * @param float width Maximum width before automatic linebreak.
          * @param const char* text The text to draw.
-		 * 
-		 * @return float The x position after the last char.
+         * 
+         * @return float The x position after the last char.
          */
         float Text::drawColumn(float x, float y, float width, const char* text, ...) {
         
@@ -446,9 +438,9 @@ namespace xM {
             // Format text
             vsnprintf(buffer, (size_t) sizeof (buffer), text, options);
             
-			if (width == -1)
-				width = intraFontMeasureText(this->font, buffer);
-			
+            if (width == -1)
+                width = intraFontMeasureText(this->font, buffer);
+            
             float xPos = intraFontPrintColumn(this->font, x, y, width, buffer);
             
             // Quit option list
@@ -456,8 +448,8 @@ namespace xM {
                             
             // Because intraFont messes them up
             resetRenderStates();
-			
-			return xPos;
+            
+            return xPos;
         
         }
         

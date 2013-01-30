@@ -1,7 +1,7 @@
 /**
  * This file is part of the xMangaPSP application.
  *
- * Copyright (C) luqman Aden <www.luqmanrocks.co.cc>.
+ * Copyright (C) Luqman Aden <www.luqman.ca>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,44 +38,44 @@
 
 namespace xM {
 
-	namespace Manga {
-			
-	    // Manga list
-		typedef struct {
+    namespace Manga {
+            
+        // Manga list
+        typedef struct {
 
-			std::vector<std::string> names;
-			std::vector<std::string> apiHandles;
+            std::vector<std::string> names;
+            std::vector<std::string> apiHandles;
 
-		} MangaList;
-		
-		// Chapter list
-		typedef struct {
+        } MangaList;
+        
+        // Chapter list
+        typedef struct {
 
-			std::string mangaSlug;
-			std::vector<std::string> names;
-			std::vector<std::string> apiHandles;
+            std::string mangaSlug;
+            std::vector<std::string> names;
+            std::vector<std::string> apiHandles;
 
-		} ChapterList;
+        } ChapterList;
 
-		// Image list
-		typedef struct {
+        // Image list
+        typedef struct {
 
-			int index;
-			std::string mangaSlug;
-			std::string chapterSlug;
-			std::vector<std::string> images;
+            int index;
+            std::string mangaSlug;
+            std::string chapterSlug;
+            std::vector<std::string> images;
 
-		} ImageList;
+        } ImageList;
 
-		// Manga Image
-		typedef struct {
-			
-			int index;
-			Gfx::Image* img;
+        // Manga Image
+        typedef struct {
+            
+            int index;
+            Gfx::Image* img;
 
-		} MangaImage;
-			
-	}
+        } MangaImage;
+            
+    }
 
 }
 

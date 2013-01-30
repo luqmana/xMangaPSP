@@ -1,7 +1,7 @@
 /**
  * This file is part of the xMangaPSP application.
  *
- * Copyright (C) Luqman Aden <www.luqmanrocks.co.cc>.
+ * Copyright (C) Luqman Aden <www.luqman.ca>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,22 +39,22 @@
 
 namespace xM {
 
-	namespace Engine {
-	
-		extern bool running;
-		
-		/**
-		 * Whether the app is currently 'running'. If false, shutdown will being.
-		 * 
-		 * @return bool
-		 */
-		inline bool isRunning() {
-		
-		    return running;
-		
-		}
-					
-	}
+    namespace Engine {
+    
+        extern bool running;
+        
+        /**
+         * Whether the app is currently 'running'. If false, shutdown will being.
+         * 
+         * @return bool
+         */
+        inline bool isRunning() {
+        
+            return running;
+        
+        }
+                    
+    }
 
 }
 

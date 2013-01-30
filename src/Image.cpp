@@ -1,7 +1,7 @@
 /**
  * This file is part of the xMangaPSP application.
  *
- * Copyright (C) Luqman Aden <www.luqmanrocks.co.cc>.
+ * Copyright (C) Luqman Aden <www.luqman.ca>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,6 @@
 
 /**
  * Image loading and stuff.
- * Header file.
  * 
  * @package xMangaPSP
  */
@@ -56,8 +55,10 @@ namespace xM {
 
     namespace Gfx {
         
+#if __xM_DEBUG
         Util::Timer loadTimer;
-    
+#endif
+
         /**
          * Return whether the image is swizzled or not.
          * 
@@ -76,7 +77,7 @@ namespace xM {
          */
         bool Image::isScaled() {
         
-        	return this->scaled;
+            return this->scaled;
         
         }
         
@@ -85,7 +86,7 @@ namespace xM {
          */
         void Image::toggleScale() {
         
-        	this->scaled = !this->scaled;
+            this->scaled = !this->scaled;
         
         }
 
@@ -108,7 +109,7 @@ namespace xM {
             mainSegment->p2Width = Util::nextPow2(mainSegment->width);
             mainSegment->p2Height = Util::nextPow2(mainSegment->height);
             
-        	mainSegment->sWidth = 480;
+            mainSegment->sWidth = 480;
             mainSegment->sHeight = ceil(((float)mainSegment->height / mainSegment->width) * mainSegment->sWidth);
 
             this->width = mainSegment->width;
@@ -117,8 +118,10 @@ namespace xM {
             this->sHeight = mainSegment->sHeight;
             this->p2Width = mainSegment->p2Width;
             this->p2Height = mainSegment->p2Height;
-            
+        
+#if __xM_DEBUG            
             loadTimer.start();
+#endif
             if (mainSegment->width < 512 && mainSegment->height < 512) {
 
                 // No need to create more segments but just pretend there is only one segment
@@ -127,9 +130,9 @@ namespace xM {
                 mainSegment->y = mainSegment->sY = 0;
 
                 this->segments.push_back(mainSegment);
-
+#if __xM_DEBUG
                 Util::logMsg("segmentizer - %f", loadTimer.getDeltaTicks(true));
-
+#endif
                 return true;
 
             } else {
@@ -139,8 +142,9 @@ namespace xM {
                 // First we figure out roughly how many segments of 512x512 we need
                 int wFit = ceil((float) mainSegment->width / 512);
                 int hFit = ceil((float) mainSegment->height / 512);
-                
-                printf("Segments: \t\t%d\n", hFit * wFit);
+#if __xM_DEBUG
+                Util::logMsg("Segments: \t\t%d\n", hFit * wFit);
+#endif
                                 
                 int i = 0;
 
@@ -158,7 +162,7 @@ namespace xM {
                         else
                             segment->width = 512;
 
-						segment->sWidth = ceil(((float)segment->width / mainSegment->width) * mainSegment->sWidth);
+                        segment->sWidth = ceil(((float)segment->width / mainSegment->width) * mainSegment->sWidth);
                         segment->p2Width = Util::nextPow2(segment->width);
                         
                         // Handle case for final segment which might not be 512px
@@ -167,7 +171,7 @@ namespace xM {
                         else
                             segment->height = 512;
 
-						segment->sHeight = ceil(((float)segment->height / mainSegment->height) * mainSegment->sHeight);
+                        segment->sHeight = ceil(((float)segment->height / mainSegment->height) * mainSegment->sHeight);
                         segment->p2Height = Util::nextPow2(segment->height);
 
                         // Calculate coordinate of segment in terms of the whole image
@@ -199,9 +203,9 @@ namespace xM {
 
             free(mainSegment->pixels);
             delete mainSegment;
-
+#if __xM_DEBUG
             Util::logMsg("segmentizer - %f", loadTimer.getDeltaTicks(true));
-            
+#endif
             return true;
 
         }
@@ -215,12 +219,12 @@ namespace xM {
          */
         bool Image::loadFile(const std::string& file) {
 
-            if (__xM_DEBUG)
-                Util::logMsg("Image::loadFile — %s", file.c_str());
-
+#if __xM_DEBUG
+            Util::logMsg("Image::loadFile — %s", file.c_str());
+#endif
             this->reset();
 
-			// Load the image from wherever (FS, cache, PSAR, zip)
+            // Load the image from wherever (FS, cache, PSAR, zip)
             std::string imageBuffer = Engine::ResourceManager::getInstance()->getRes(file);      
             if (imageBuffer == "")
                 return false;
@@ -237,19 +241,17 @@ namespace xM {
          * @return bool Yes or no.
          */
         bool Image::isPNG(const std::string& imgBuffer) {
-        	
-        	// PNG `magic` sequence
-        	unsigned char sig[8] = { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A };
-        	
-        	unsigned char rsig[8];
-        	
-        	// Read in from the supposed png data
-        	memcpy(rsig, &imgBuffer[0], 8);
-        	
-        	// Compare away!
-        	int r = memcmp(sig, rsig, 8);
-        	
-        	return (r == 0);
+            
+            // PNG `magic` sequence
+            unsigned char sig[8] = { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A };
+            
+            unsigned char rsig[8];
+            
+            // Read in from the supposed png data
+            memcpy(rsig, &imgBuffer[0], 8);
+            
+            // Compare away!
+            return memcmp(sig, rsig, 8) == 0;
         
         }
         
@@ -262,24 +264,24 @@ namespace xM {
          */
         bool Image::isJPEG(const std::string& imgBuffer) {
         
-        	// JPEG `magic` at beginning of file
-        	unsigned char bMagic[2] = { 0xFF, 0xD8 };
-        	
-        	// JPEG `magic` at end of file
-        	unsigned char eMagic[2] = { 0xFF, 0xD9 };
-        	
-        	unsigned char cB[2];
-        	unsigned char cE[2];
-        	
-        	// Read in from the supposed jpg data
-        	memcpy(cB, &imgBuffer[0], 2);
-        	memcpy(cE, &imgBuffer[0] + (imgBuffer.size() - 2), 2);
-        	        	
-        	// Compare away!
-        	int rB = memcmp(bMagic, cB, 2);
-        	int rE = memcmp(eMagic, cE, 2);
-        	        
-        	return (rB == 0) && (rE == 0);
+            // JPEG `magic` at beginning of file
+            unsigned char bMagic[2] = { 0xFF, 0xD8 };
+            
+            // JPEG `magic` at end of file
+            unsigned char eMagic[2] = { 0xFF, 0xD9 };
+            
+            unsigned char cB[2];
+            unsigned char cE[2];
+            
+            // Read in from the supposed jpg data
+            memcpy(cB, &imgBuffer[0], 2);
+            memcpy(cE, &imgBuffer[0] + (imgBuffer.size() - 2), 2);
+                        
+            // Compare away!
+            int rB = memcmp(bMagic, cB, 2);
+            int rE = memcmp(eMagic, cE, 2);
+                    
+            return (rB == 0) && (rE == 0);
         
         }
         
@@ -293,59 +295,60 @@ namespace xM {
          * @return bool Whether it all worked out.
          */
         bool Image::loadImage(const std::string& imgBuffer, ImageSegment* destImg) {
-                	
-        	// Figure out what type of image this is
-        	if (this->isPNG(imgBuffer)) {
-        	
-        		// well, what dya know? It's a PNG! Rejoice!
-        		
-        		// Decode the png
+                    
+            // Figure out what type of image this is
+            if (this->isPNG(imgBuffer)) {
+            
+                // well, what dya know? It's a PNG! Rejoice!
+                
+                // Decode the png
                 int r = LodePNG_decode32(&destImg->pixels, &destImg->width, &destImg->height, (const unsigned char*)imgBuffer.c_str(), imgBuffer.size());
-            	
-            	if (r != 0)
-            		return false;
+                
+                if (r != 0)
+                    return false;
 
-            	return true;
-        		
-        	} else if (this->isJPEG(imgBuffer)) {
+                return true;
+                
+            } else if (this->isJPEG(imgBuffer)) {
 
-				struct jpeg_decompress_struct cinfo;
-				struct jpeg_error_mgr jerr;
-				cinfo.err = jpeg_std_error(&jerr);
+                struct jpeg_decompress_struct cinfo;
+                struct jpeg_error_mgr jerr;
+                cinfo.err = jpeg_std_error(&jerr);
 
-				unsigned int loc = 0;
+                unsigned int loc = 0;
 
-				// Initialize JPEG decompression object
-				jpeg_create_decompress(&cinfo);
+                // Initialize JPEG decompression object
+                jpeg_create_decompress(&cinfo);
 
-				// Specify data source (our buffer in this case)
-				jpeg_mem_src(&cinfo, (unsigned char*)imgBuffer.c_str(), imgBuffer.size());
+                // Specify data source (our buffer in this case)
+                jpeg_mem_src(&cinfo, (unsigned char*)imgBuffer.c_str(), imgBuffer.size());
 
-				// Read in jpeg parameters
-				jpeg_read_header(&cinfo, true);
+                // Read in jpeg parameters
+                jpeg_read_header(&cinfo, true);
 
-				// Start decompressor
-				jpeg_start_decompress(&cinfo);
+                // Start decompressor
+                jpeg_start_decompress(&cinfo);
 
-				// Set the width, height and allocate enough space
-				destImg->width = cinfo.output_width;
-				destImg->height = cinfo.output_height;
+                // Set the width, height and allocate enough space
+                destImg->width = cinfo.output_width;
+                destImg->height = cinfo.output_height;
 
-				unsigned int sz = destImg->width * destImg->height * 4;
-				
+                unsigned int sz = destImg->width * destImg->height * 4;
+                
                 //destImg->pixels = (unsigned char*) memalign(16, sz);
                 destImg->pixels = (unsigned char*) malloc(sz);
 
-				unsigned int stride = cinfo.output_width * cinfo.output_components;
-				unsigned char* line = (unsigned char*) malloc(stride);
+                unsigned int stride = cinfo.output_width * cinfo.output_components;
+                unsigned char* line = (unsigned char*) malloc(stride);
                 unsigned int pos = 0;
-		
-				loadTimer.start();
-				// Read in image
-				while (cinfo.output_scanline < cinfo.output_height) {
-					
-					// read!
-					jpeg_read_scanlines(&cinfo, &line, 1);
+#if __xM_DEBUG        
+                loadTimer.start();
+#endif
+                // Read in image
+                while (cinfo.output_scanline < cinfo.output_height) {
+                    
+                    // read!
+                    jpeg_read_scanlines(&cinfo, &line, 1);
 
                     // Add an alpha component for every pixel
                     int l = 0;
@@ -365,27 +368,28 @@ namespace xM {
 
 
                     }
-					
-				}
-				Util::logMsg("read_image - %f", loadTimer.getDeltaTicks(true));
-
-				// Cleanup
-				jpeg_finish_decompress(&cinfo);
-				jpeg_destroy_decompress(&cinfo);
-				free(line);
-        	
+                    
+                }
+#if __xM_DEBUG
+                Util::logMsg("read_image - %f", loadTimer.getDeltaTicks(true));
+#endif
+                // Cleanup
+                jpeg_finish_decompress(&cinfo);
+                jpeg_destroy_decompress(&cinfo);
+                free(line);
+            
                 return true;
-				        		        	
-        	} else {
-        	
-        		// Bah, we don't support you!
-        		Util::logMsg("Unknown image format...");
-        		
-        		return false;
-        	
-        	}
-        	        
-        	return false;
+                                            
+            } else {
+            
+                // Bah, we don't support you!
+                Util::logMsg("Unknown image format...");
+                
+                return false;
+            
+            }
+                    
+            return false;
         
         }
         
@@ -568,8 +572,8 @@ namespace xM {
          */
         void Image::draw(float x, float y, const ImageClip* clip) {
 
-			if (this->segments.size() == 0)
-				return;
+            if (this->segments.size() == 0)
+                return;
 
             // Enable 2D textures
             sceGuEnable(GU_TEXTURE_2D);
@@ -580,16 +584,16 @@ namespace xM {
             sceGuTexOffset(0.0f, 0.0f);
             
             if (!this->scaled)
-            	sceGuTexScale(1.0f, 1.0f);
+                sceGuTexScale(1.0f, 1.0f);
             else
-            	sceGuTexScale((float)this->width / this->sWidth, (float)this->height / this->sHeight);
+                sceGuTexScale((float)this->width / this->sWidth, (float)this->height / this->sHeight);
 
             for (unsigned int k = 0; k < this->segments.size(); ++k) {
                 
                 if (!this->scaled)
-                	this->render(x + this->segments[k]->x, y + this->segments[k]->y, clip, k);
+                    this->render(x + this->segments[k]->x, y + this->segments[k]->y, clip, k);
                 else
-                	this->render(x + this->segments[k]->sX, y + this->segments[k]->sY, clip, k);
+                    this->render(x + this->segments[k]->sX, y + this->segments[k]->sY, clip, k);
 
             }
 

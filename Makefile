@@ -1,6 +1,6 @@
 # This file is part of the xMangaPSP application.
 #
-# Copyright (C) Luqman Aden <www.luqmanrocks.co.cc>.
+# Copyright (C) Luqman Aden <www.luqman.ca>.
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -90,7 +90,7 @@ COMPILER_DEFINES = -D_MAJOR_VERSION=$(MAJOR_VERSION) -D_MINOR_VERSION=$(MINOR_VE
 INCDIR = $(SRC_DIR) $(INC_DIR) $(EXT_SRC_DIR) $(EXT_INC_DIR) $(PSPDEV)/psp/include/
 
 # Libraries
-LIBS = -lpspssl -lpsphttp -ljpeg -lzzip -lz -lpspgum -lpspgu -lm -lpsprtc -lpspsdk -lstdc++
+LIBS = -lpsppower -lpspssl -lpsphttp -ljpeg -lzzip -lz -lpspgum -lpspgu -lm -lpsprtc -lpspsdk -lstdc++
 
 # Compiler Flags
 CFLAGS = -Wall $(COMPILER_DEFINES) -falign-functions=64 -G4

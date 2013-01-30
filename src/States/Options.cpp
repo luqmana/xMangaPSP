@@ -1,12 +1,12 @@
 /**
  * This file is part of the xMangaPSP application.
  *
- * Copyright (C) Luqman Aden <www.luqmanrocks.co.cc>.
+ * Copyright (C) Luqman Aden <www.luqman.ca>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
- * (at your options) any later version.
+ * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -44,7 +44,7 @@ namespace xM {
          */
         void Options::init(void) {
                   
-			// Register the XML UI parsers
+            // Register the XML UI parsers
             this->parser.registerCustomElementHandler("bouncyBox", &this->extraElements);
                                                             
         }
@@ -73,7 +73,7 @@ namespace xM {
          */
         void Options::handleEvents(void) {
 
-			// Get pointer to input manager
+            // Get pointer to input manager
             Engine::InputManager* iM = Engine::InputManager::getInstance();
             
 #if __xM_DEBUG
@@ -87,7 +87,7 @@ namespace xM {
             }
 #endif
             
-			// Return to previous state
+            // Return to previous state
             if (iM->pressed(PSP_CTRL_CIRCLE))
                 Engine::StateManager::getInstance()->popState();
             

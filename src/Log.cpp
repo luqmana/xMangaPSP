@@ -1,7 +1,7 @@
 /**
  * This file is part of the xMangaPSP application.
  *
- * Copyright (C) Luqman Aden <www.luqmanrocks.co.cc>.
+ * Copyright (C) Luqman Aden <www.luqman.ca>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,6 +47,17 @@ namespace xM {
 
     namespace Util {
 
+        // FD for log file
+        // Should probably close this somewhere…
+        SceUID logFd = -1;
+
+        /**
+         * Close log file.
+         */
+        void closeLogFile() {
+            sceIoClose(logFd);
+        }
+
         /**
          * Log a message to a log file.
          * 
@@ -59,8 +70,11 @@ namespace xM {
             // Holds the log msg
             std::stringstream logMsg;
 
-            // Open the file
-            SceUID fD = sceIoOpen("xMLog.log", PSP_O_WRONLY | PSP_O_APPEND | PSP_O_CREAT, 0777);
+            // Open the file if necessary
+            if (logFd == -1) {
+                logFd = sceIoOpen("xMLog.log", PSP_O_WRONLY | PSP_O_APPEND | PSP_O_CREAT, 0777);
+                atexit(closeLogFile);
+            }
 
             // Construct log msg
             logMsg << time(NULL) << ": " << format << "\n";
@@ -78,16 +92,13 @@ namespace xM {
             vsnprintf(buffer, (size_t) sizeof (buffer), logMsg.str().c_str(), options);
 
             // Write the data to file
-            sceIoWrite(fD, buffer, strlen(buffer));
+            sceIoWrite(logFd, buffer, strlen(buffer));
 
             // Write the data to console
             printf(buffer);
 
             // Quit option list
             va_end(options);
-
-            // Close the file
-            sceIoClose(fD);
 
         }
 

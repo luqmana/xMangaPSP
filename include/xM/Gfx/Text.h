@@ -1,7 +1,7 @@
 /**
  * This file is part of the xMangaPSP application.
  *
- * Copyright (C) Luqman Aden <www.luqmanrocks.co.cc>.
+ * Copyright (C) Luqman Aden <www.luqman.ca>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -150,8 +150,8 @@ namespace xM {
              * @param float x X position.
              * @param float y Y position.
              * @param const char* text The text to draw.
-			 * 
-			 * @return float The x position after the last char.
+             * 
+             * @return float The x position after the last char.
              */
             float draw(float x, float y, const char* text, ...);
             
@@ -162,8 +162,8 @@ namespace xM {
              * @param float y Y position.
              * @param float width Maximum width before automatic linebreak.
              * @param const char* text The text to draw.
-			 * 
-			 * @return float The x position after the last char.
+             * 
+             * @return float The x position after the last char.
              */
             float drawColumn(float x, float y, float width, const char* text, ...);
                         

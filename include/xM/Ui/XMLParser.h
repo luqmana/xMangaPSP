@@ -1,7 +1,7 @@
 /**
  * This file is part of the xMangaPSP application.
  *
- * Copyright (C) Luqman Aden <www.luqmanrocks.co.cc>.
+ * Copyright (C) Luqman Aden <www.luqman.ca>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -114,12 +114,12 @@ namespace xM {
              */
             void deRegisterCustomElementHandler(const std::string& element);
          
-         	/**
-         	 * Add a token to be replaced in text elements.
-         	 * 
-         	 * @param const std::string& key The token to replace.
-         	 * @param const std::string& replace What to replace with.
-         	 */
+            /**
+             * Add a token to be replaced in text elements.
+             * 
+             * @param const std::string& key The token to replace.
+             * @param const std::string& replace What to replace with.
+             */
             void addTextSubstitute(const std::string& key, const std::string& replace);
                     
         };

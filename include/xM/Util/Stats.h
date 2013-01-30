@@ -1,7 +1,7 @@
 /**
  * This file is part of the xMangaPSP application.
  *
- * Copyright (C) Luqman Aden <www.luqmanrocks.co.cc>.
+ * Copyright (C) Luqman Aden <www.luqman.ca>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,19 +41,19 @@
 
 namespace xM {
 
-	namespace Util {
-			
-		/**
-		 * Displays the FPS.
-		 */
-		void FPS(void);
-		
-		/**
-		 * Displays free memory.
-		 */
-		void MEM(void);
-			
-	}
+    namespace Util {
+            
+        /**
+         * Displays the FPS.
+         */
+        void FPS(void);
+        
+        /**
+         * Displays free memory.
+         */
+        void MEM(void);
+            
+    }
 
 }
 

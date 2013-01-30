@@ -1,7 +1,7 @@
 /**
  * This file is part of the xMangaPSP application.
  *
- * Copyright (C) Luqman Aden <www.luqmanrocks.co.cc>.
+ * Copyright (C) Luqman Aden <www.luqman.ca>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -253,17 +253,17 @@ namespace xM {
             
             // Temporary buffer
             char *buffer;
-	
+    
             // Obtain filesize
             // Seek to end
             zzip_seek(fP, 0, SEEK_END);
-	
+    
             // Get position [so since we're at the end means filesize]
             long filesize = zzip_tell(fP);
             
             // Go back to start of the file
             zzip_rewind(fP);
-	
+    
             // Alloc enough memory for file
             buffer = (char *) malloc(sizeof(char) * filesize);
             
@@ -273,23 +273,23 @@ namespace xM {
                     Util::logMsg("FileManager::readFromPSAR — Unable to allocate memory.");
 
             }
-	
+    
             // Read file
             int read = zzip_fread(buffer, 1, filesize, fP);
-	
+    
             if (read != filesize) {
-	
-	            if (__xM_DEBUG)
+    
+                if (__xM_DEBUG)
                     Util::logMsg("FileManager::readFromPSAR - Unable to completely read resource from psar [%s][R: %d - F: %d].", file.c_str(), read, filesize);
-	
+    
             }
-				
-            // Alloc to std::string		
+                
+            // Alloc to std::string     
             out.assign(buffer, filesize);
-	
+    
             // Close handle
             zzip_fclose(fP);
-	
+    
             // Free memory
             free(buffer);
                                 
@@ -328,17 +328,17 @@ namespace xM {
             
             // Temporary buffer
             char *buffer;
-	
+    
             // Obtain filesize
             // Seek to end
             zzip_seek(fP, 0, SEEK_END);
-	
+    
             // Get position [so since we're at the end means filesize]
             long filesize = zzip_tell(fP);
             
             // Go back to start of the file
             zzip_rewind(fP);
-	
+    
             // Alloc enough memory for file
             buffer = (char *) malloc(sizeof(char) * filesize);
             
@@ -348,23 +348,23 @@ namespace xM {
                     Util::logMsg("FileManager::readFromZIP — Unable to allocate memory.");
 
             }
-	
+    
             // Read file
             int read = zzip_fread(buffer, 1, filesize, fP);
-	
+    
             if (read != filesize) {
-	
-	            if (__xM_DEBUG)
+    
+                if (__xM_DEBUG)
                     Util::logMsg("FileManager::readFromZIP - Unable to completely read resource from zip [%s@%s][R: %d - F: %d].", zip.c_str(), file.c_str(), read, filesize);
-	
+    
             }
-				
-            // Alloc to std::string		
+                
+            // Alloc to std::string     
             out.assign(buffer, filesize);
-	
+    
             // Close handle
             zzip_fclose(fP);
-	
+    
             // Free memory
             free(buffer);
             
@@ -414,18 +414,18 @@ namespace xM {
             int read = sceIoRead(fD, buffer, filesize);
             
             if (read != filesize) {
-	
-	            if (__xM_DEBUG)
+    
+                if (__xM_DEBUG)
                     Util::logMsg("FileManager::readFromFS - Unable to completely read file [%s][R: %d - F: %d].", file.c_str(), read, filesize);
-	
+    
             }
             
-            // Alloc to std::string		
+            // Alloc to std::string     
             out.assign(buffer, filesize);
-	
+    
             // Close handle
             sceIoClose(fD);
-	
+    
             // Free memory
             free(buffer);
             

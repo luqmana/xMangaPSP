@@ -1,7 +1,7 @@
 /**
  * This file is part of the xMangaPSP application.
  *
- * Copyright (C) luqman Aden <www.luqmanrocks.co.cc>.
+ * Copyright (C) Luqman Aden <www.luqman.ca>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,20 +39,20 @@
 
 namespace xM {
 
-	namespace Manga {
-	
-		enum RequestType {
-		
-			SetEndpoint,
-			RequestMangaList,
-			RequestChapterList,
-			RequestImageList,
-			RequestImage
-		
-		};
-	
-	    struct APIMessage {
-	    
+    namespace Manga {
+    
+        enum RequestType {
+        
+            SetEndpoint,
+            RequestMangaList,
+            RequestChapterList,
+            RequestImageList,
+            RequestImage
+        
+        };
+    
+        struct APIMessage {
+        
             SceKernelMsgPacket header;
             SceUID* returnBox;
             RequestType type;
@@ -61,21 +61,21 @@ namespace xM {
             bool result;
             
         };
-	
-	    extern SceUID mangaAPIMbx;
-	    extern MAP* mapImp;
-			
-		/**
-		 * Setups the manga API handler thread.
-		 */
-	    void initMangaAPIThread();
-	    
-	    /**
-	     * Shuts down the manga API handler thread.
-	     */
-	    void shutdownMangaAPIThread();
-			
-	}
+    
+        extern SceUID mangaAPIMbx;
+        extern MAP* mapImp;
+            
+        /**
+         * Setups the manga API handler thread.
+         */
+        void initMangaAPIThread();
+        
+        /**
+         * Shuts down the manga API handler thread.
+         */
+        void shutdownMangaAPIThread();
+            
+    }
 
 }
 

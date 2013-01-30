@@ -1,7 +1,7 @@
 /**
  * This file is part of the xMangaPSP application.
  *
- * Copyright (C) Luqman Aden <www.luqmanrocks.co.cc>.
+ * Copyright (C) Luqman Aden <www.luqman.ca>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +32,8 @@
 #include "xM/Ui/ExtraElements.h"
 #include "xM/Util/Timer.h"
 #include "xM/Util/Utils.h"
+
+#include <psppower.h>
 // END Includes
 
 namespace xM {
@@ -89,7 +91,11 @@ namespace xM {
                 // actually maxList
                 customElement->height = customElement->width + customElement->colour;
                                             
-            }
+            } /* else if (customElement->name == "battery") {
+
+                // No actual init needed    
+
+            }*/
                     
         }
         
@@ -148,14 +154,14 @@ namespace xM {
                 // BEGIN Menu Traversing Logic
                 if (selected < minList) {
 
-	                minList = customElement->width = selected;
-	                maxList = customElement->height = minList + maxItems;	
-	
+                    minList = customElement->width = selected;
+                    maxList = customElement->height = minList + maxItems;   
+    
                 }
                 if (selected > maxList) {
 
-	                maxList = customElement->height = selected;
-	                minList = customElement->width = maxList - maxItems;
+                    maxList = customElement->height = selected;
+                    minList = customElement->width = maxList - maxItems;
 
                 }
                 // END Menu Traversing Logic
@@ -167,17 +173,17 @@ namespace xM {
                 
                 do {
 
-	                if (i >= list->size())
-		                break;
-	
-	                // Get the item name
-	                itemText = (*list)[i];
-	                
-	                if (i == selected) {
-				
+                    if (i >= list->size())
+                        break;
+    
+                    // Get the item name
+                    itemText = (*list)[i];
+                    
+                    if (i == selected) {
+                
                         for (unsigned int k = 0; k < customElement->children.size(); k++) {
-	                    
-	                        if (customElement->children[k]->whence == "active") {
+                        
+                            if (customElement->children[k]->whence == "active") {
                                 
                                 customElement->children[k]->x = x;
                                 customElement->children[k]->y = y;
@@ -198,14 +204,14 @@ namespace xM {
                                 customElement->children[k]->text = format;
                                     
                             }
-                            	            
+                                            
                         }
                     
                     } else {
-				
+                
                         for (unsigned int k = 0; k < customElement->children.size(); k++) {
-	                    
-	                        if (customElement->children[k]->whence == "inactive") {
+                        
+                            if (customElement->children[k]->whence == "inactive") {
                             
                                 customElement->children[k]->x = x;
                                 customElement->children[k]->y = y;
@@ -226,7 +232,7 @@ namespace xM {
                                 customElement->children[k]->text = format;
                             
                             }
-                            	            
+                                            
                         }
                     
                     }
@@ -242,15 +248,44 @@ namespace xM {
                             parser->renderElement(customElement->children[k]);
                         
                         }
-                        	            
+                                        
                     }
-                    	                	
-	                x += customElement->offsetX;
-	                y += customElement->offsetY;
-	                i++;
+                                            
+                    x += customElement->offsetX;
+                    y += customElement->offsetY;
+                    i++;
 
                 } while (i <= maxList);
                 
+            } else if (customElement->name == "battery") {
+
+                unsigned int batteryLevel = scePowerGetBatteryLifePercent();
+
+                for (unsigned int k = 0; k < customElement->children.size(); k++) {
+
+                    if (customElement->children[k]->whence == "charging" && scePowerIsBatteryCharging()) {
+
+                        parser->renderElement(customElement->children[k]);
+
+                    } else if (customElement->children[k]->whence.find(",") != std::string::npos) {
+
+                        std::vector<std::string> range;
+                        Util::tokenize(customElement->children[k]->whence, range, ",");
+
+                        if (range.size() == 2) {
+
+                            unsigned int from = Util::stringToInt(range[0]);
+                            unsigned int to = Util::stringToInt(range[1]);
+
+                            if (batteryLevel >= from && batteryLevel <= to)
+                                parser->renderElement(customElement->children[k]);
+
+                        }
+
+                    }
+
+                }   
+
             }
         
         }

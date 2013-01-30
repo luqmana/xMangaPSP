@@ -1,7 +1,7 @@
 /**
  * This file is part of the xMangaPSP application.
  *
- * Copyright (C) Luqman Aden <www.luqmanrocks.co.cc>.
+ * Copyright (C) Luqman Aden <www.luqman.ca>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,16 +44,16 @@ namespace xM {
          * Start up code.
          */
         void Test::init(void) {
-		
-			// Parse the required UI file
+        
+            // Parse the required UI file
             this->parser.parseFile("ui/test.xml");
 
-			x = 120;
-		
-			fontTest.loadFont(Gfx::Font::LATIN_SANS_SERIF_REGULAR, 1.0, Gfx::Colour::RED,
-						Gfx::Colour::GREEN, 0, INTRAFONT_ALIGN_LEFT | INTRAFONT_SCROLL_LEFT, 0);
+            x = 120;
+        
+            fontTest.loadFont(Gfx::Font::LATIN_SANS_SERIF_REGULAR, 1.0, Gfx::Colour::RED,
+                        Gfx::Colour::GREEN, 0, INTRAFONT_ALIGN_LEFT | INTRAFONT_SCROLL_LEFT, 0);
 
-		}
+        }
 
         /**
          * Clean up code.
@@ -61,7 +61,7 @@ namespace xM {
         void Test::cleanUp(void) {
 
             
-			
+            
         }
 
         /**
@@ -78,15 +78,15 @@ namespace xM {
          * Poll for input, read event state etc
          */
         void Test::handleEvents(void) {
-		
-			// Get pointer to input manager
+        
+            // Get pointer to input manager
             Engine::InputManager* iM = Engine::InputManager::getInstance();
-		
-			// Return to previous state
+        
+            // Return to previous state
             if (iM->pressed(PSP_CTRL_CIRCLE))
                 Engine::StateManager::getInstance()->popState();
-				
-			// DEBUG: Reload XML on-the-fly            
+                
+            // DEBUG: Reload XML on-the-fly            
             if (iM->pressed(PSP_CTRL_START)) {
             
                 Util::logMsg("Reloading XML ui file.");
@@ -94,25 +94,25 @@ namespace xM {
             
             }
 
-		}
+        }
 
         /**
          * Now do something with the data we got from events and what not.
          */
         void Test::handleLogic(void) { 
-		
-			
-		
-		}
+        
+            
+        
+        }
 
         /**
          * Done with the logic? Draw what's needed then.
          */
         void Test::draw(void) {
 
-			// Render UI from XML
+            // Render UI from XML
             this->parser.draw();
-		
+        
             x = fontTest.drawColumn(x, 120, -1, "Bra bra blah!~");
             
         }

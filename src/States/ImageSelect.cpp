@@ -1,7 +1,7 @@
 /**
  * This file is part of the xMangaPSP application.
  *
- * Copyright (C) Luqman Aden <www.luqmanrocks.co.cc>.
+ * Copyright (C) Luqman Aden <www.luqman.ca>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,25 +49,25 @@ namespace xM {
          */
         void ImageSelect::init(void) {
         
-        	// Make sure the image list has actually been loaded
-        	if (Manga::mapImp->getImageList() == NULL) {
-        	
-        		Engine::StateManager::getInstance()->popState();
-        		return;
-        		
-        	}
+            // Make sure the image list has actually been loaded
+            if (Manga::mapImp->getImageList() == NULL) {
+            
+                Engine::StateManager::getInstance()->popState();
+                return;
+                
+            }
         
-        	// init/reset some vars
+            // init/reset some vars
             this->doAction = false;
             this->activeDialog = 0;
             this->selected = 0;
             this->imageList = *Manga::mapImp->getImageList();      
                         
-			// setup the list element
+            // setup the list element
             this->lInfo.selected = &this->selected;
             this->lInfo.list = &this->imageList.images;
 
-			// Register the XML UI parsers
+            // Register the XML UI parsers
             this->parser.registerCustomElementHandler("list", &this->extraElements, (void*)&this->lInfo);
             this->parser.registerCustomElementHandler("bouncyBox", &this->extraElements);
             
@@ -92,7 +92,7 @@ namespace xM {
          */
         void ImageSelect::cleanUp(void) {
 
-			sceKernelDeleteMbx(this->localBox);
+            sceKernelDeleteMbx(this->localBox);
 
             this->parser.deRegisterCustomElementHandler("list");
             this->parser.deRegisterCustomElementHandler("bouncyBox");
@@ -114,7 +114,7 @@ namespace xM {
          */
         void ImageSelect::handleEvents(void) {
 
-			// Get pointer to input manager
+            // Get pointer to input manager
             Engine::InputManager* iM = Engine::InputManager::getInstance();
             
 #if __xM_DEBUG
@@ -145,7 +145,7 @@ namespace xM {
                     
                 // Leave state
                 if (iM->pressed(PSP_CTRL_CIRCLE))
-                	Engine::StateManager::getInstance()->popState();
+                    Engine::StateManager::getInstance()->popState();
 
             }
             
@@ -156,12 +156,12 @@ namespace xM {
          */
         void ImageSelect::handleLogic(void) {
         
-        	//Check for any new messages in mailbox
+            //Check for any new messages in mailbox
             Manga::APIMessage* rMsg = NULL;
             sceKernelPollMbx(this->localBox, (void**)&rMsg);
-                            	        
-	        // BEGIN Menu Traversing Logic
-	        if ((signed int)this->selected < 0)
+                                        
+            // BEGIN Menu Traversing Logic
+            if ((signed int)this->selected < 0)
                 this->selected = 0;
             if (this->selected > (this->imageList.images.size() - 1))
                 this->selected = this->imageList.images.size() - 1;
@@ -170,56 +170,56 @@ namespace xM {
             // Handle any active requests
             switch (this->activeDialog) {
             
-            	// No outstanding requests
-            	case 0:
-            	
-            		if (this->doAction) {
+                // No outstanding requests
+                case 0:
+                
+                    if (this->doAction) {
             
-            			// Send the image request
-				        this->msg.type = Manga::RequestImage;
-				        this->msg.what = (void*)new std::string(this->imageList.images[selected]);
+                        // Send the image request
+                        this->msg.type = Manga::RequestImage;
+                        this->msg.what = (void*)new std::string(this->imageList.images[selected]);
                         this->msg.index = selected;
-				        sceKernelSendMbx(Manga::mangaAPIMbx, (void*)&this->msg);
-				    
-				        // not really a dialog
-				        // but allows some control
-				        this->activeDialog = 1;			
-            			
-						this->doAction = false;
-				
-					}
-            	
-					break;
-					
-				case 1:
-				
-					// There's a response in the mailbox!
-            		if (rMsg != NULL) {
+                        sceKernelSendMbx(Manga::mangaAPIMbx, (void*)&this->msg);
+                    
+                        // not really a dialog
+                        // but allows some control
+                        this->activeDialog = 1;         
+                        
+                        this->doAction = false;
+                
+                    }
+                
+                    break;
+                    
+                case 1:
+                
+                    // There's a response in the mailbox!
+                    if (rMsg != NULL) {
                             
                         // Loaded successfully, switch to a new state
-		            	if (rMsg->type == Manga::RequestImage && rMsg->result == true) {
-		            
-							Engine::StateManager::getInstance()->pushState(new States::ImageView());
-
-							this->activeDialog = 0;
-							return;	
-		            	
-		            	} else if (rMsg->type == Manga::RequestImageList && rMsg->result == false) {
-		            	
-		            		// Something failed, display error message                	
-		            		Ui::Dialog::msg(*(std::string*)rMsg->what);                	
-		            		delete (std::string*)rMsg->what;
+                        if (rMsg->type == Manga::RequestImage && rMsg->result == true) {
+                    
+                            Engine::StateManager::getInstance()->pushState(new States::ImageView());
 
                             this->activeDialog = 0;
-		            		
-		            	}
-		            			                
-					}
-					
-					break;
+                            return; 
+                        
+                        } else if (rMsg->type == Manga::RequestImageList && rMsg->result == false) {
+                        
+                            // Something failed, display error message                  
+                            Ui::Dialog::msg(*(std::string*)rMsg->what);                 
+                            delete (std::string*)rMsg->what;
+
+                            this->activeDialog = 0;
+                            
+                        }
+                                                
+                    }
+                    
+                    break;
             
             }
-                                        	        	        	        
+                                                                            
         }
 
         /**

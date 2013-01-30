@@ -1,7 +1,7 @@
 /**
  * This file is part of the xMangaPSP application.
  *
- * Copyright (C) Luqman Aden <www.luqmanrocks.co.cc>.
+ * Copyright (C) Luqman Aden <www.luqman.ca>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,8 +44,9 @@ namespace xM {
          */
         void About::init(void) {
                   
-			// Register the XML UI parsers
+            // Register the XML UI parsers
             this->parser.registerCustomElementHandler("bouncyBox", &this->extraElements);
+            this->parser.registerCustomElementHandler("battery", &this->extraElements);
             
             // About XML file is special in that it's
             // loaded from any location ONLY during 
@@ -66,6 +67,7 @@ namespace xM {
         void About::cleanUp(void) {
 
             this->parser.deRegisterCustomElementHandler("bouncyBox");
+            this->parser.deRegisterCustomElementHandler("battery");
                         
         }
 
@@ -79,14 +81,14 @@ namespace xM {
          */
         void About::resume(void) {
 
-			// Reload XML ui
+            // Reload XML ui
             // About XML file is special in that it's
             // loaded from any location ONLY during 
             // testing, otherwise it's loaded from the
             // PSAR. All other states do not have this
             // restriction.
 #if __xM_DEBUG            
-			this->parser.parseFile("ui/about.xml");
+            this->parser.parseFile("ui/about.xml");
 #else
             this->parser.parseFile("PSAR@ui/about.xml");
 #endif
@@ -98,7 +100,7 @@ namespace xM {
          */
         void About::handleEvents(void) {
 
-			// Get pointer to input manager
+            // Get pointer to input manager
             Engine::InputManager* iM = Engine::InputManager::getInstance();
             
 #if __xM_DEBUG
@@ -117,7 +119,7 @@ namespace xM {
             }
 #endif
             
-			// Return to previous state
+            // Return to previous state
             if (iM->pressed(PSP_CTRL_CIRCLE))
                 Engine::StateManager::getInstance()->popState();
             

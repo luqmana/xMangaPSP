@@ -1,7 +1,7 @@
 /**
  * This file is part of the xMangaPSP application.
  *
- * Copyright (C) Luqman Aden <www.luqmanrocks.co.cc>.
+ * Copyright (C) Luqman Aden <www.luqman.ca>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,7 +54,7 @@ namespace xM {
             ResponseType dialogRes = RESPONSE_NONE;
             
             /**
-             * Close any dialogs currently.
+             * Close any dialogs currently open.
              */
             void abortDialogs() {
             
@@ -162,8 +162,8 @@ namespace xM {
                         case PSP_UTILITY_DIALOG_NONE: // Shouldn't happen
                         case PSP_UTILITY_DIALOG_FINISHED:
                         
-                        	// but for some reason it does
-                        	// particulary when a large image is also being rendered behind
+                            // but for some reason it does
+                            // particulary when a large image is also being rendered behind
                         
                             msgDialogActive = false;
                                                         
@@ -212,8 +212,8 @@ namespace xM {
                         case PSP_UTILITY_DIALOG_NONE: // Shouldn't happen
                         case PSP_UTILITY_DIALOG_FINISHED:
 
-							// but for some reason it does
-                        	// particulary when a large image is also being rendered behind
+                            // but for some reason it does
+                            // particulary when a large image is also being rendered behind
                         
                             netDialogActive = false;
                                                                                                     

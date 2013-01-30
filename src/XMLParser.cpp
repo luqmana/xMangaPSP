@@ -1,7 +1,7 @@
 /**
  * This file is part of the xMangaPSP application.
  *
- * Copyright (C) Luqman Aden <www.luqmanrocks.co.cc>.
+ * Copyright (C) Luqman Aden <www.luqman.ca>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -215,16 +215,16 @@ namespace xM {
                 // handle var substitutions
                 for (std::map<std::string, std::string>::const_iterator iter = this->textSubstitutes.begin(); iter != this->textSubstitutes.end(); ++iter) {
                 
-                	std::string tag = "{" + iter->first + "}";
-                	
-                	size_t pos = uiElement->text.find(tag);
-                	
-                	if (pos != std::string::npos) {
-                	
-                		uiElement->text.replace(pos, tag.size(), iter->second);
-                	
-                	} else
-                		continue;
+                    std::string tag = "{" + iter->first + "}";
+                    
+                    size_t pos = uiElement->text.find(tag);
+                    
+                    if (pos != std::string::npos) {
+                    
+                        uiElement->text.replace(pos, tag.size(), iter->second);
+                    
+                    } else
+                        continue;
                 
                 }
                 
@@ -273,30 +273,30 @@ namespace xM {
                         break;
                 
                 }
-				
-				if (xmlElement->Attribute("scroll") != NULL) {
-				
-					std::string scroll = xmlElement->Attribute("scroll");
-					
-					if (scroll == "left") {
-					
-						uiElement->scroll = SCROLL_LEFT;
-						fontStyleOps |= INTRAFONT_SCROLL_LEFT;
-						
-					} else if (scroll == "through") {
-					
-						uiElement->scroll = SCROLL_THROUGH;
-						fontStyleOps |= INTRAFONT_SCROLL_THROUGH;
-						
-					} else if (scroll == "seesaw") {
-					
-						uiElement->scroll = SCROLL_SEESAW;
-						fontStyleOps |= INTRAFONT_SCROLL_SEESAW;
-						
-					}
-					
-				} else
-					uiElement->scroll = SCROLL_NONE;
+                
+                if (xmlElement->Attribute("scroll") != NULL) {
+                
+                    std::string scroll = xmlElement->Attribute("scroll");
+                    
+                    if (scroll == "left") {
+                    
+                        uiElement->scroll = SCROLL_LEFT;
+                        fontStyleOps |= INTRAFONT_SCROLL_LEFT;
+                        
+                    } else if (scroll == "through") {
+                    
+                        uiElement->scroll = SCROLL_THROUGH;
+                        fontStyleOps |= INTRAFONT_SCROLL_THROUGH;
+                        
+                    } else if (scroll == "seesaw") {
+                    
+                        uiElement->scroll = SCROLL_SEESAW;
+                        fontStyleOps |= INTRAFONT_SCROLL_SEESAW;
+                        
+                    }
+                    
+                } else
+                    uiElement->scroll = SCROLL_NONE;
                 
                 if (xmlElement->Attribute("font") == NULL) {
                     
@@ -536,12 +536,12 @@ namespace xM {
                     
                     if (uiElement->image == NULL) {
                     
-                    	delete uiElement;
-                    	return NULL;
+                        delete uiElement;
+                        return NULL;
                     
                     }
                     
-					if (xmlElement->Attribute("swizzle") != NULL && strcmp(xmlElement->Attribute("swizzle"), "true") == 0)
+                    if (xmlElement->Attribute("swizzle") != NULL && strcmp(xmlElement->Attribute("swizzle"), "true") == 0)
                         uiElement->image->swizzle();
                       
                 }
@@ -702,23 +702,23 @@ namespace xM {
                     break;
 
                 case TEXT:
-				    
-					if (e->scroll == SCROLL_NONE) {
-						
-						if (e->width == 0)
-							e->font.draw(e->x + e->paddingLeft, e->y + e->paddingTop, e->text.c_str());
-						else
-							e->font.drawColumn(e->x + e->paddingLeft, e->y + e->paddingTop, e->width, e->text.c_str());
-						
-					} else {
-					
-						if (e->width == 0)
-							e->x = e->font.drawColumn(e->x + e->paddingLeft, e->y + e->paddingTop, -1, e->text.c_str());
-						else
-							e->x = e->font.drawColumn(e->x + e->paddingLeft, e->y + e->paddingTop, e->width, e->text.c_str());
-						
-					}
-					
+                    
+                    if (e->scroll == SCROLL_NONE) {
+                        
+                        if (e->width == 0)
+                            e->font.draw(e->x + e->paddingLeft, e->y + e->paddingTop, e->text.c_str());
+                        else
+                            e->font.drawColumn(e->x + e->paddingLeft, e->y + e->paddingTop, e->width, e->text.c_str());
+                        
+                    } else {
+                    
+                        if (e->width == 0)
+                            e->x = e->font.drawColumn(e->x + e->paddingLeft, e->y + e->paddingTop, -1, e->text.c_str());
+                        else
+                            e->x = e->font.drawColumn(e->x + e->paddingLeft, e->y + e->paddingTop, e->width, e->text.c_str());
+                        
+                    }
+                    
                     break;
 
                 case IMAGE:
@@ -827,14 +827,14 @@ namespace xM {
         }
         
         /**
-     	 * Add a token to be replaced in text elements.
-     	 * 
-     	 * @param const std::string& key The token to replace.
-     	 * @param const std::string& replace What to replace with.
-     	 */
+         * Add a token to be replaced in text elements.
+         * 
+         * @param const std::string& key The token to replace.
+         * @param const std::string& replace What to replace with.
+         */
         void XMLParser::addTextSubstitute(const std::string& key, const std::string& replace) {
         
-        	this->textSubstitutes[key] = replace;
+            this->textSubstitutes[key] = replace;
         
         }
 

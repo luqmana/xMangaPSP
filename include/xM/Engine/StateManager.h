@@ -1,7 +1,7 @@
 /**
  * This file is part of the xMangaPSP application.
  *
- * Copyright (C) Luqman Aden <www.luqmanrocks.co.cc>.
+ * Copyright (C) Luqman Aden <www.luqman.ca>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,10 +41,10 @@
 
 namespace xM {
 
-	namespace Engine {
-	
-		class StateManager {
-		
+    namespace Engine {
+    
+        class StateManager {
+        
             private:
             
                 /**
@@ -56,70 +56,70 @@ namespace xM {
                  * The stack of states.
                  */
                 std::vector<States::Base*> states;
-		
-		    public:
+        
+            public:
 
-		    	/**
-		    	 * Destructor.
-		    	 */
-		    	~StateManager();
-		    
-		        /**
+                /**
+                 * Destructor.
+                 */
+                ~StateManager();
+            
+                /**
                  * The singleton instance.
                  */
                 static StateManager* sMInstance;
-		    
-		        /**
-		         * Get an instance of the class.
-		         * 
-		         * @return StateManager* Singleton instance.
-		         */
-		        static StateManager* getInstance(void);
-		    		        
-		        /**
-		         * Go to a new state. Delete previous state, allowing it to cleanup.
-		         * 
-		         * @param Base* state The new state.
-		         */
-		        void changeState(States::Base* state);
-		        
-		        /**
-		         * Go to a new state. Pause previous state.
-		         * 
-		         * @param Base* state The new State.
-		         */
-		        void pushState(States::Base* state);
-		        
-		        /**
-		         * Delete current state, allowing it to cleanup. Resume previous state.
-		         */
-		        void popState(void);
-		        
-		        /**
-		         * Return a pointer to the current state.
-		         * 
-		         * @return Base* The current state.
-		         */
-		        States::Base* getCurrentState(void);
-		        		        
-		        /**
-		         * Poll for input, read event state etc
-		         */
-		        void handleEvents(void);
-		        
-		        /**
-		         * Now do something with the data we got from events and what not.
-		         */
-		        void handleLogic(void);
-		        
-		        /**
-		         * Done with the logic? Draw what's needed then.
-		         */
-		        void draw(void);
-		        		
-		};
-			
-	}
+            
+                /**
+                 * Get an instance of the class.
+                 * 
+                 * @return StateManager* Singleton instance.
+                 */
+                static StateManager* getInstance(void);
+                            
+                /**
+                 * Go to a new state. Delete previous state, allowing it to cleanup.
+                 * 
+                 * @param Base* state The new state.
+                 */
+                void changeState(States::Base* state);
+                
+                /**
+                 * Go to a new state. Pause previous state.
+                 * 
+                 * @param Base* state The new State.
+                 */
+                void pushState(States::Base* state);
+                
+                /**
+                 * Delete current state, allowing it to cleanup. Resume previous state.
+                 */
+                void popState(void);
+                
+                /**
+                 * Return a pointer to the current state.
+                 * 
+                 * @return Base* The current state.
+                 */
+                States::Base* getCurrentState(void);
+                                
+                /**
+                 * Poll for input, read event state etc
+                 */
+                void handleEvents(void);
+                
+                /**
+                 * Now do something with the data we got from events and what not.
+                 */
+                void handleLogic(void);
+                
+                /**
+                 * Done with the logic? Draw what's needed then.
+                 */
+                void draw(void);
+                        
+        };
+            
+    }
 
 }
 

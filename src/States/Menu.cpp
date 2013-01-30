@@ -1,7 +1,7 @@
 /**
  * This file is part of the xMangaPSP application.
  *
- * Copyright (C) Luqman Aden <www.luqmanrocks.co.cc>.
+ * Copyright (C) Luqman Aden <www.luqman.ca>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,7 +53,7 @@ namespace xM {
          */
         void Menu::init(void) {
                            
-			// init/reset some vars                         
+            // init/reset some vars                         
             this->doAction = false;
             this->activeDialog = 0;
             this->selected = 0;
@@ -66,11 +66,11 @@ namespace xM {
             this->menuList.push_back("About");
             this->menuList.push_back("Quit");
                       
-			// setup the list element
+            // setup the list element
             this->lInfo.selected = &this->selected;
             this->lInfo.list = &this->menuList;
             
-			// Register the XML UI parsers
+            // Register the XML UI parsers
             this->parser.registerCustomElementHandler("list", &this->extraElements, (void*)&this->lInfo);
             this->parser.registerCustomElementHandler("bouncyBox", &this->extraElements);
             
@@ -85,9 +85,9 @@ namespace xM {
             this->msg.header = hdr;
             this->msg.returnBox = &this->localBox;
                        
-			// Call up the net dialog if not connected
-			if (!Net::isConnected())                        
-            	Ui::Dialog::net();
+            // Call up the net dialog if not connected
+            if (!Net::isConnected())                        
+                Ui::Dialog::net();
                                                             
         }
 
@@ -96,7 +96,7 @@ namespace xM {
          */
         void Menu::cleanUp(void) {
 
-			sceKernelDeleteMbx(this->localBox);
+            sceKernelDeleteMbx(this->localBox);
 
             this->parser.deRegisterCustomElementHandler("list");
             this->parser.deRegisterCustomElementHandler("bouncyBox");
@@ -118,17 +118,17 @@ namespace xM {
          */
         void Menu::handleEvents(void) {
         
-        	// Get pointer to input manager
+            // Get pointer to input manager
             Engine::InputManager* iM = Engine::InputManager::getInstance();
             
 #if __xM_DEBUG
-			// DEBUG: Go to Test State
-			if (iM->pressed(PSP_CTRL_LTRIGGER) && iM->pressed(PSP_CTRL_RTRIGGER)) {
-			
-				Engine::StateManager::getInstance()->pushState(new States::Test());
-				return;
-			
-			}
+            // DEBUG: Go to Test State
+            if (iM->pressed(PSP_CTRL_LTRIGGER) && iM->pressed(PSP_CTRL_RTRIGGER)) {
+            
+                Engine::StateManager::getInstance()->pushState(new States::Test());
+                return;
+            
+            }
             
             // DEBUG: Reload XML on-the-fly            
             if (iM->pressed(PSP_CTRL_START)) {
@@ -160,126 +160,126 @@ namespace xM {
          */
         void Menu::handleLogic(void) {
         
-        	//Check for any new messages in mailbox
+            //Check for any new messages in mailbox
             Manga::APIMessage* rMsg = NULL;
             sceKernelPollMbx(this->localBox, (void**)&rMsg);
                 
             // Handle any active requests
             switch (this->activeDialog) {
             
-            	// Request confirmation for quiting
-            	case 1:
-            	
-            		// User asked to confirm if quiting, act accordingly	        
-			        if (Ui::Dialog::getMsgDialogResult() == Ui::Dialog::RESPONSE_YES) {
-			        
-			            Engine::StateManager::getInstance()->popState();			            
-			        	return;
-			        	
-			        }
-			            
-			        this->activeDialog = 0;
-            	
-            		break;
-            		
-            	// Requested manga list
-            	case 2:
-            	
-            		// There's a response in the mailbox!
-            		if (rMsg != NULL) {
+                // Request confirmation for quiting
+                case 1:
+                
+                    // User asked to confirm if quiting, act accordingly            
+                    if (Ui::Dialog::getMsgDialogResult() == Ui::Dialog::RESPONSE_YES) {
+                    
+                        Engine::StateManager::getInstance()->popState();                        
+                        return;
+                        
+                    }
+                        
+                    this->activeDialog = 0;
+                
+                    break;
+                    
+                // Requested manga list
+                case 2:
+                
+                    // There's a response in the mailbox!
+                    if (rMsg != NULL) {
                             
                         // Loaded successfully, switch to new state
-		            	if (rMsg->type == Manga::RequestMangaList && rMsg->result == true) {
-		            	
-		            		Engine::StateManager::getInstance()->changeState(new States::MangaSelect());
-		            		return;
-		            	
-		            	} else if (rMsg->type == Manga::RequestMangaList && rMsg->result == false) {
-		            	
-		            		// Something failed, display error message                	
-		            		Ui::Dialog::msg(*(std::string*)rMsg->what);                	
-		            		delete (std::string*)rMsg->what;
-		            		
-		            	}
-		            	
-		                this->activeDialog = 0;
-		                
-					}
-                                            	
-            		break;
-            		
-            	// No outstanding requests
-            	case 0:
-            	
-            		// An item was selected
-            		if (this->doAction) {
-            		
-            			// Handle based on the selection
-            			switch (this->selected) {
-            			
-            				// Read Manga
-						    case 0:
-						    	                    
-						    	// Send the manga list request
-						        this->msg.type = Manga::RequestMangaList;
+                        if (rMsg->type == Manga::RequestMangaList && rMsg->result == true) {
+                        
+                            Engine::StateManager::getInstance()->changeState(new States::MangaSelect());
+                            return;
+                        
+                        } else if (rMsg->type == Manga::RequestMangaList && rMsg->result == false) {
+                        
+                            // Something failed, display error message                  
+                            Ui::Dialog::msg(*(std::string*)rMsg->what);                 
+                            delete (std::string*)rMsg->what;
+                            
+                        }
+                        
+                        this->activeDialog = 0;
+                        
+                    }
+                                                
+                    break;
+                    
+                // No outstanding requests
+                case 0:
+                
+                    // An item was selected
+                    if (this->doAction) {
+                    
+                        // Handle based on the selection
+                        switch (this->selected) {
+                        
+                            // Read Manga
+                            case 0:
+                                                    
+                                // Send the manga list request
+                                this->msg.type = Manga::RequestMangaList;
                                 this->msg.index = -1;
-						        sceKernelSendMbx(Manga::mangaAPIMbx, (void*)&this->msg);
-						    
-						        // not really a dialog
-						        // but allows some control
-						        this->activeDialog = 2;
-						    
-						        break;
-						        
-						    case 1:
-						    
-						        break;
-						        
-						    case 2:
-						    
-						        break;
-						        
+                                sceKernelSendMbx(Manga::mangaAPIMbx, (void*)&this->msg);
+                            
+                                // not really a dialog
+                                // but allows some control
+                                this->activeDialog = 2;
+                            
+                                break;
+                                
+                            case 1:
+                            
+                                break;
+                                
+                            case 2:
+                            
+                                break;
+                                
                             // Options
-						    case 3:
+                            case 3:
 
                                 Engine::StateManager::getInstance()->pushState(new States::Options());
-						    
-						        break;
-						     
-						    // About    
-						    case 4:
-						   	
-						        Engine::StateManager::getInstance()->pushState(new States::About());
-						    
-						        break;
-						        
-						    // Quit
-						    case 5:
-						    
-						    	// Confirm user wants to leave
-						        Ui::Dialog::msg("Do you want quit xMangaPSP?", true);
-						        this->activeDialog = 1;
-						        	                
-						        break;
-            			
-            			}
-            			
-            			// Reset flag
-            			this->doAction = false;
-            		
-            		}
-            	
-            		break;
+                            
+                                break;
+                             
+                            // About    
+                            case 4:
+                            
+                                Engine::StateManager::getInstance()->pushState(new States::About());
+                            
+                                break;
+                                
+                            // Quit
+                            case 5:
+                            
+                                // Confirm user wants to leave
+                                Ui::Dialog::msg("Do you want quit xMangaPSP?", true);
+                                this->activeDialog = 1;
+                                                    
+                                break;
+                        
+                        }
+                        
+                        // Reset flag
+                        this->doAction = false;
+                    
+                    }
+                
+                    break;
             
             }
-                                	        
-	        // BEGIN Menu Traversing Logic
-	        if ((signed int)this->selected < 0)
+                                            
+            // BEGIN Menu Traversing Logic
+            if ((signed int)this->selected < 0)
                 this->selected = 0;
             if (this->selected > (this->menuList.size() - 1))
                 this->selected = this->menuList.size() - 1;
             // END Menu Traversing Logic
-                            	        	        	        
+                                                                
         }
 
         /**

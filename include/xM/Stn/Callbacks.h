@@ -1,7 +1,7 @@
 /**
  * This file is part of the xMangaPSP application.
  *
- * Copyright (C) luqman Aden <www.luqmanrocks.co.cc>.
+ * Copyright (C) Luqman Aden <www.luqman.ca>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,14 +35,14 @@
 
 namespace xM {
 
-	namespace Stn {
-			
-		/**
-		 * Sets up the standard callback handling thread.
-		 */
-		void setupCallbacks(void);
-			
-	}
+    namespace Stn {
+            
+        /**
+         * Sets up the standard callback handling thread.
+         */
+        void setupCallbacks(void);
+            
+    }
 
 }
 
