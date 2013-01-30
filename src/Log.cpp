@@ -41,6 +41,7 @@
 #include <psprtc.h>
 
 #include <stdarg.h>
+#include <stdlib.h>
 // END Includes
 
 namespace xM {
