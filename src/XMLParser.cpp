@@ -524,7 +524,7 @@ namespace xM {
                     
                 } else {
                 
-                    if (strcmp(xmlElement->Attribute("cache"), "false") == 0) {
+                    if (xmlElement->Attribute("cache") != NULL && strcmp(xmlElement->Attribute("cache"), "false") == 0) {
                         
                         uiElement->image = new Gfx::Image();
             
@@ -560,8 +560,11 @@ namespace xM {
                     TiXmlNode* innerChild = xmlNode->FirstChild();    
                     while (innerChild != NULL) {
                     
-                        if (innerChild->Type() == TiXmlNode::TINYXML_ELEMENT)
-                            uiElement->children.push_back(this->parseElement(innerChild->ToElement()));
+                        if (innerChild->Type() == TiXmlNode::TINYXML_ELEMENT) {
+                            Element *e = this->parseElement(innerChild->ToElement());
+                            if (e != NULL)
+                                uiElement->children.push_back(e);
+                        }
                     
                         innerChild = innerChild->NextSibling();    
                             
