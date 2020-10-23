@@ -102,6 +102,31 @@ namespace xM {
         
         }
 
+        class PSPLinkCleanupGuard {
+        public:
+            PSPLinkCleanupGuard() {
+#if __xM_DEBUG
+                // Have to load/unload per download cause otherwise reset via psplink is broken
+                sceUtilityLoadNetModule(PSP_NET_MODULE_HTTP);
+                sceSslInit(0x28000);
+                sceHttpInit(0x25800);
+                sceHttpsInit(0, 0, 0, 0);
+                sceHttpsLoadDefaultCert(0, 0);
+                sceHttpLoadSystemCookie();
+#endif
+            }
+            ~PSPLinkCleanupGuard() {
+#if __xM_DEBUG
+                // Have to load/unload per download cause otherwise reset via psplink is broken
+                sceHttpSaveSystemCookie();
+                sceHttpsEnd();
+                sceHttpEnd();
+                sceSslEnd();
+                sceUtilityUnloadNetModule(PSP_NET_MODULE_HTTP);
+#endif
+            }
+        };
+
         /**
          * Download a file using cURL.
          * 
@@ -116,19 +141,11 @@ namespace xM {
             int templateThingy, connection, request, ret, status, dataEnd, bytesWritten;
             unsigned char readBuffer[8192];
 
-#if __xM_DEBUG      
-            // Have to load/unload per download cause otherwise reset via psplink is broken
-            sceUtilityLoadNetModule(PSP_NET_MODULE_HTTP);
-            sceSslInit(0x28000);
-            sceHttpInit(0x25800);            
-            sceHttpsInit(0, 0, 0, 0);
-            sceHttpsLoadDefaultCert(0, 0);
-            sceHttpLoadSystemCookie();
-#endif
+            PSPLinkCleanupGuard cleanupGuard;
 
             // User Agent
             std::stringstream uAgent;
-            uAgent << "User-Agent: xMangaPSP/" << _MAJOR_VERSION << "." << _MINOR_VERSION << " API/" << _API_VERSION;
+            uAgent << "xMangaPSP/" << _MAJOR_VERSION << "." << _MINOR_VERSION << " API/" << _API_VERSION;
             templateThingy = sceHttpCreateTemplate((char*) uAgent.str().c_str(), 1, 0);
             if(templateThingy < 0) {
                 RETURN_ERROR_SET_STRING(response, "Unable to create HTTP template."); }
@@ -189,15 +206,6 @@ namespace xM {
             sceHttpDeleteRequest(request);
             sceHttpDeleteConnection(connection);
             sceHttpDeleteTemplate(templateThingy);
-
-#if __xM_DEBUG
-            // Have to load/unload per download cause otherwise reset via psplink is broken
-            sceHttpSaveSystemCookie();
-            sceHttpsEnd();
-            sceHttpEnd();
-            sceSslEnd();
-            sceUtilityUnloadNetModule(PSP_NET_MODULE_HTTP);
-#endif
             
             return true;
 
